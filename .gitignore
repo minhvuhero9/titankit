@@ -1,0 +1,19 @@
+# Xcode / Tuist generated
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+Derived/
+DerivedData/
+.build/
+Tuist/.build/
+build-*.log
+
+# Secrets: never commit
+Secrets.xcconfig
+GoogleService-Info*.plist
+*.p8
+*.p12
+*.mobileprovision
+
+.DS_Store
+.swiftpm/

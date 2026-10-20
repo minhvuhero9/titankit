@@ -1,0 +1,773 @@
+<title>TitanKit Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky tab bar over one wide working canvas; architecture view = layered stack left, module inspector right */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --sunk:#e8ecf2; --line:#d3dae4;
+  --fg:#121a26; --muted:#5a6678; --accent:#2f5bea; --accent-soft:#e3eafd;
+  --dep:#0f8a6a; --dep-soft:#dcf3ec; --use:#b4581d; --use-soft:#fbeadd;
+  --code-bg:#0f1622; --code-fg:#dbe4f2;
+  --f-display:"Sora",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d121a; --surface:#151c27; --sunk:#1b2432; --line:#2a3546;
+  --fg:#e6ecf5; --muted:#93a0b4; --accent:#7d9cff; --accent-soft:#1d2a4d;
+  --dep:#4fd1a8; --dep-soft:#123329; --use:#f0a066; --use-soft:#3a2416;
+  --code-bg:#0a0f16; --code-fg:#d6e0f0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d121a; --surface:#151c27; --sunk:#1b2432; --line:#2a3546;
+  --fg:#e6ecf5; --muted:#93a0b4; --accent:#7d9cff; --accent-soft:#1d2a4d;
+  --dep:#4fd1a8; --dep-soft:#123329; --use:#f0a066; --use-soft:#3a2416;
+  --code-bg:#0a0f16; --code-fg:#d6e0f0; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:28px 18px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-size:clamp(28px,4vw,40px);line-height:1.1;margin:6px 0 8px;letter-spacing:-.02em;text-wrap:balance}
+h1 span{color:var(--accent)}
+.lead{max-width:68ch;color:var(--muted);margin:0}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-block:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{font:500 14px var(--f-body);color:var(--muted);background:none;border:0;padding:12px 12px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible,.chip:focus-visible,.pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:24px 56px}
+h2{font-family:var(--f-display);font-size:22px;margin:0 0 6px;letter-spacing:-.01em}
+h3{font-family:var(--f-display);font-size:16px;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 20px;max-width:70ch}
+section[role="tabpanel"]{display:block}
+/* architecture */
+.arch{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.arch{grid-template-columns:1fr}}
+.stack{display:flex;flex-direction:column;gap:8px}
+.layer{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+@media (max-width:520px){.layer{grid-template-columns:1fr;gap:8px}}
+.layer-name{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.layer-name b{display:block;font-family:var(--f-display);font-size:14px;letter-spacing:0;text-transform:none;color:var(--fg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 13px var(--f-mono);padding:6px 10px;border-radius:7px;border:1px solid var(--line);background:var(--sunk);color:var(--fg);cursor:pointer;transition:background .15s,border-color .15s}
+.chip:hover{border-color:var(--accent)}
+.chip.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.dep{background:var(--dep-soft);border-color:var(--dep);color:var(--fg)}
+.chip.use{background:var(--use-soft);border-color:var(--use);color:var(--fg)}
+.chip.dim{opacity:.45}
+.arrow{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:center}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid}
+.inspector{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 60px);min-width:0}
+@media (max-width:860px){.inspector{position:static}}
+.inspector .mod{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.inspector h3{font-size:20px;margin:2px 0 6px}
+.inspector p{margin:0 0 14px}
+.kv{display:grid;gap:12px}
+.kv h4{font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.kv ul{margin:0;padding-left:18px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font:500 12px var(--f-mono);padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--fg);border:0;cursor:pointer}
+.pill.static{cursor:default}
+.file{font-family:var(--f-mono);font-size:13px;background:var(--sunk);padding:2px 6px;border-radius:5px}
+pre.code{background:var(--code-bg);color:var(--code-fg);font:13px/1.55 var(--f-mono);padding:14px;border-radius:8px;overflow-x:auto;margin:0}
+/* generic grids */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.card h3{margin-bottom:4px}
+.card .where{font:500 12px var(--f-mono);color:var(--accent);margin-bottom:8px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+/* theme lab */
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:860px){.lab{grid-template-columns:1fr}}
+.controls{display:grid;gap:14px}
+.controls label{font-weight:600;font-size:14px;display:block;margin-bottom:6px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:34px;height:34px;border-radius:8px;border:2px solid transparent;cursor:pointer}
+.sw[aria-pressed="true"]{border-color:var(--fg)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:500 13px var(--f-body);padding:7px 12px;background:var(--surface);color:var(--fg);border:0;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.phone{width:min(300px,100%);margin:0 auto;border-radius:34px;border:10px solid #1a212c;background:var(--ph-bg);color:var(--ph-fg);padding:22px 16px;font-family:var(--ph-font);min-height:520px;display:flex;flex-direction:column;gap:12px}
+.phone .ph-title{font-size:24px;font-weight:700}
+.phone .ph-sub{font-size:14px;opacity:.7}
+.phone .ph-card{background:var(--ph-card);border-radius:var(--ph-r);padding:14px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.phone .ph-badge{background:var(--ph-soft);color:var(--ph-strong);font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px}
+.phone .ph-btn{margin-top:auto;background:var(--ph-primary);color:#fff;border-radius:var(--ph-r);padding:14px;text-align:center;font-weight:600}
+.phone .ph-btn2{border:1.5px solid var(--ph-primary);color:var(--ph-strong);border-radius:var(--ph-r);padding:12px;text-align:center;font-weight:600}
+.layers3{display:flex;flex-direction:column;gap:8px}
+.l3{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.l3 .n{font:600 13px var(--f-mono);color:var(--accent);min-width:22px}
+.l3 p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.tokens{font:12.5px var(--f-mono);display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.tokens span:nth-child(odd){color:var(--muted)}
+/* backend */
+.flowcol{display:flex;flex-direction:column;align-items:stretch;gap:6px;max-width:640px}
+.fbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.fbox b{font-family:var(--f-display)}
+.fbox small{display:block;color:var(--muted)}
+.fdown{text-align:center;color:var(--muted);font:12px var(--f-mono)}
+.adapters{display:flex;gap:6px;flex-wrap:wrap}
+.adapters button{font:500 13px var(--f-mono);padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.adapters button[aria-pressed="true"]{background:var(--dep);border-color:var(--dep);color:#fff}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+td.hl{background:var(--dep-soft);font-weight:600}
+/* flow */
+.steps{display:flex;flex-direction:column;gap:0;max-width:720px}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px}
+.step .dot{width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font:600 13px var(--f-mono)}
+.step .rail{display:flex;flex-direction:column;align-items:center}
+.step .rail::after{content:"";flex:1;width:2px;background:var(--line);margin:4px 0}
+.step:last-child .rail::after{display:none}
+.step .body{padding-bottom:18px}
+.step .body b{font-family:var(--f-display)}
+.step .body p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.branch{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.branch span{font:12px var(--f-mono);padding:3px 8px;border-radius:6px;background:var(--sunk)}
+/* plan */
+.phases{display:grid;gap:10px}
+details.phase{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:0}
+details.phase summary{cursor:pointer;padding:14px 16px;display:flex;gap:12px;align-items:baseline;list-style:none}
+details.phase summary::-webkit-details-marker{display:none}
+details.phase summary .ph{font:600 13px var(--f-mono);color:var(--accent);min-width:64px}
+details.phase summary b{font-family:var(--f-display)}
+details.phase summary small{margin-left:auto;color:var(--muted);font-size:13px;white-space:nowrap}
+details.phase .in{padding:0 16px 16px 92px}
+@media (max-width:560px){details.phase .in{padding-left:16px}details.phase summary small{display:none}}
+details.phase ul{margin:6px 0 0;padding-left:18px}
+.qs{margin-top:18px}
+.qs li{margin-bottom:4px}
+/* map edges */
+.mapwrap{position:relative}
+.mapwrap .stack{gap:22px}
+#edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#edges path{fill:none;stroke-width:1.8}
+#edges path.d{stroke:var(--dep)}
+#edges path.u{stroke:var(--use)}
+#edges path.a{stroke:var(--muted);stroke-width:1;opacity:.35}
+#edges circle.d{fill:var(--dep)} #edges circle.u{fill:var(--use)}
+.allx{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:10px;cursor:pointer}
+.layer{position:relative;z-index:1;background:color-mix(in srgb,var(--surface) 82%,transparent)}
+.chip{position:relative;z-index:2}
+/* app1 */
+.pbar{height:8px;border-radius:99px;background:var(--sunk);margin-top:10px;overflow:hidden}
+.pbar span{display:block;height:100%;background:var(--accent);border-radius:99px}
+.st{font:600 11.5px var(--f-mono);padding:3px 8px;border-radius:999px;white-space:nowrap}
+.st.todo{background:var(--sunk);color:var(--muted)}
+.st.wait{background:var(--use-soft);color:var(--use)}
+.st.doing{background:var(--accent-soft);color:var(--accent)}
+.st.done{background:var(--dep-soft);color:var(--dep)}
+/* guide */
+.gform{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:20px;align-items:start}
+@media (max-width:860px){.gform{grid-template-columns:1fr}}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field > label,.field > span{font-weight:600;font-size:14px}
+.field input[type=text]{font:15px var(--f-body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);width:100%}
+.field input[type=text]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.checks label{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.term{background:var(--code-bg);color:var(--code-fg);font:13px/1.6 var(--f-mono);border-radius:8px;padding:14px;overflow-x:auto;white-space:pre;margin:0}
+.term .c{color:#7f8ea6}
+.term .p{color:#7dd3a8}
+.gsteps{display:grid;gap:12px}
+.gstep{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px}
+.gstep .dot{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:600 13px var(--f-mono)}
+.gstep h3{margin:4px 0 6px;font-size:15px}
+.gstep p{margin:0 0 8px;color:var(--muted);font-size:14px}
+.tree{font:13px/1.6 var(--f-mono);background:var(--sunk);border-radius:8px;padding:12px;white-space:pre;overflow-x:auto;margin:0}
+.tree .n{color:var(--accent);font-weight:600}
+/* start */
+.big3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.big3{grid-template-columns:1fr}}
+.big3 .card h3{font-size:18px}
+.big3 .card p{color:var(--fg);font-size:15px}
+.big3 .card .tag{font:600 12px var(--f-mono);color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.kitpic{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-top:20px}
+.kitrow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;align-items:center;margin-top:12px}
+@media (max-width:520px){.kitrow{grid-template-columns:1fr;gap:4px}}
+.kitrow b{font-family:var(--f-display)}
+.bar{display:flex;height:34px;border-radius:8px;overflow:hidden;font:500 12.5px var(--f-body)}
+.bar span{display:flex;align-items:center;padding:0 10px;white-space:nowrap;overflow:hidden}
+.bar .k{background:var(--accent);color:#fff}
+.bar .o{background:var(--use-soft);color:var(--fg);border:1px dashed var(--use)}
+.howto{margin-top:20px}
+.howto ol{margin:6px 0 0;padding-left:20px}
+.howto li{margin-bottom:6px}
+.btn{font:600 14px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}
+.btn.ghost{background:var(--surface);color:var(--fg);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* inspector plain */
+.easy{background:var(--accent-soft);border-radius:8px;padding:12px 14px;margin-bottom:14px}
+.easy h4,.ex h4{font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 4px}
+.easy p,.ex p{margin:0}
+.ex{border-left:3px solid var(--use);padding:2px 0 2px 12px;margin-bottom:14px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media (max-width:420px){.split{grid-template-columns:1fr}}
+.split > div{border-radius:8px;padding:10px 12px;font-size:14px}
+.split .own{background:var(--use-soft)}
+.split .kit{background:var(--dep-soft)}
+.split h4{font:600 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;margin:0 0 4px}
+.split ul{margin:0;padding-left:16px}
+details.tech{border-top:1px solid var(--line);padding-top:10px}
+details.tech summary{cursor:pointer;font-weight:600;color:var(--muted)}
+details.tech .kv{margin-top:12px}
+/* scenario */
+.scn-pick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.scn-pick button{font:500 14px var(--f-body);padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.scn-pick button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.scn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px;align-items:start}
+@media (max-width:860px){.scn{grid-template-columns:1fr}}
+.scn-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.scn-card .cnt{font:600 12px var(--f-mono);color:var(--muted)}
+.scn-card h3{font-size:20px;margin:4px 0 8px}
+.scn-card .who{font:500 13px var(--f-mono);color:var(--accent);margin-bottom:8px}
+.scn-nav{display:flex;gap:8px;margin-top:16px}
+.mini .layer{padding:8px 10px}
+.mini .chip{cursor:default;font-size:12px;padding:4px 8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="eyebrow">Tài liệu dự án · bản thảo chờ duyệt</div>
+  <h1>Titan<span>Kit</span> Atlas</h1>
+  <p class="lead">Giải thích bằng hình về bộ kit iOS dùng chung cho nhiều app: kit gồm những gì, một app được ghép lại ra sao, và chuyện gì xảy ra khi người dùng bấm vào app.</p>
+</div></header>
+
+<nav class="tabs" aria-label="Các phần"><div class="wrap" role="tablist">
+  <button role="tab" data-tab="start">Bắt đầu</button>
+  <button role="tab" data-tab="arch">Bản đồ module</button>
+  <button role="tab" data-tab="app1">App 1</button>
+  <button role="tab" data-tab="guide">Hướng dẫn sử dụng</button>
+  <button role="tab" data-tab="theme">Theme 3 lớp</button>
+  <button role="tab" data-tab="backend">Backend</button>
+  <button role="tab" data-tab="patterns">Design pattern</button>
+  <button role="tab" data-tab="flow">Luồng khởi động</button>
+  <button role="tab" data-tab="docs">Tài liệu</button>
+</div></nav>
+
+<main><div class="wrap">
+
+<section role="tabpanel" id="p-start">
+  <h2>TitanKit là gì, nói ngắn gọn</h2>
+  <p class="sub">Hình dung việc làm app giống như xây nhà. Thay vì mỗi lần xây lại phải tự đúc gạch, làm cửa, đi dây điện, ta làm sẵn một kho vật liệu chuẩn. Mỗi ngôi nhà mới chỉ cần lấy ra lắp và sơn màu riêng.</p>
+  <div class="big3">
+    <div class="card"><div class="tag">Kit</div><h3>Kho vật liệu dùng chung</h3><p>Nút bấm, ô nhập, màn hình đăng nhập, mua gói Pro, quảng cáo, kết nối server... làm một lần, app nào cũng dùng lại được.</p></div>
+    <div class="card"><div class="tag">App</div><h3>Ngôi nhà lắp từ kit</h3><p>Mỗi app (App 1, App 2...) lấy phần lớn từ kit. App chỉ tự làm những màn hình riêng của nó và chọn màu, font, logo riêng.</p></div>
+    <div class="card"><div class="tag">Lợi ích</div><h3>App sau nhanh hơn app trước</h3><p>App 1 làm kit kèm theo nên mất công nhất. Từ App 2 trở đi chủ yếu là lắp ráp, không cần mua design mới vẫn có giao diện chỉn chu.</p></div>
+  </div>
+  <div class="kitpic">
+    <h3>Một app được ghép từ đâu (ước lượng)</h3>
+    <p class="sub" style="margin:0">Phần xanh lấy sẵn từ kit, phần cam là app tự làm.</p>
+    <div class="kitrow"><b>App 1</b><div class="bar"><span class="k" style="flex:55">Kit (làm cùng lúc)</span><span class="o" style="flex:45">Màn hình riêng + design Figma</span></div></div>
+    <div class="kitrow"><b>App 2</b><div class="bar"><span class="k" style="flex:75">Lấy từ kit</span><span class="o" style="flex:25">Phần riêng</span></div></div>
+    <div class="kitrow"><b>App 3+</b><div class="bar"><span class="k" style="flex:82">Lấy từ kit</span><span class="o" style="flex:18">Riêng</span></div></div>
+  </div>
+  <div class="card howto">
+    <h3>Nên xem trang này theo thứ tự nào</h3>
+    <ol>
+      <li><b>Bản đồ module:</b> bấm vào từng khối để đọc giải thích bằng lời thường, đường nối cho thấy khối nào cần khối nào.</li>
+      <li><b>App 1:</b> kế hoạch làm App 1 và từng tình huống người dùng (mở app, đăng nhập, mua gói Pro), cập nhật theo tiến độ thật.</li>
+      <li><b>Hướng dẫn sử dụng:</b> thử tạo một app mới và xem kit sinh ra những gì.</li>
+      <li><b>Theme 3 lớp:</b> đổi màu, font để thấy một app không cần design vẫn có giao diện riêng.</li>
+      <li><b>Backend:</b> xem vì sao sau này đổi khỏi Firebase không phải làm lại app.</li>
+    </ol>
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="button" data-jump="app1">Xem App 1</button><button class="btn ghost" type="button" data-jump="guide">Thử tạo app mới</button></div>
+  </div>
+</section>
+
+<section role="tabpanel" id="p-app1" hidden>
+  <h2>App 1</h2>
+  <p class="sub">Trang này đi theo App 1 đang làm. Mỗi khi có tiến độ hoặc màn hình mới, phần này được cập nhật. <span class="file" id="lastUpd"></span></p>
+  <div class="seg" id="appSeg" style="margin-bottom:18px"><button type="button" data-sub="plan" aria-pressed="true">Kế hoạch</button><button type="button" data-sub="scn" aria-pressed="false">Theo tình huống</button></div>
+  <div id="sub-plan">
+    <div class="progress card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>Tiến độ</b><span id="progTxt" style="color:var(--muted)"></span></div><div class="pbar"><span id="progBar"></span></div></div>
+    <div class="phases" id="phases"></div>
+    <div class="card qs"><h3>Cần Jack trả lời trước khi bắt đầu</h3><ul id="questions"></ul></div>
+  </div>
+  <div id="sub-scn" hidden>
+  <p class="sub">Chọn một việc người dùng làm trong App 1, rồi bấm "Bước tiếp". Khối đang làm việc sẽ sáng lên trên bản đồ bên phải. Hiện các bước dựa trên màn hình dựng sẵn của kit; khi có Figma App 1, mình thay bằng màn hình thật.</p>
+  <div class="scn-pick" id="scnPick"></div>
+  <div class="scn">
+    <div class="scn-card" aria-live="polite">
+      <div class="cnt" id="scnCnt"></div>
+      <h3 id="scnTitle"></h3>
+      <div class="who" id="scnWho"></div>
+      <p id="scnText" style="margin:0"></p>
+      <div class="scn-nav"><button class="btn ghost" type="button" id="scnPrev">Bước trước</button><button class="btn" type="button" id="scnNext">Bước tiếp</button></div>
+    </div>
+    <div class="stack mini" id="scnMap"></div>
+  </div>
+  </div>
+</section>
+
+<section role="tabpanel" id="p-guide" hidden>
+  <h2>Hướng dẫn sử dụng</h2>
+  <p class="sub">Các việc thường làm với TitanKit, từng bước một. Phần "Tạo app mới" cho bạn thử điền thông tin và xem kit sẽ sinh ra những gì.</p>
+  <div class="seg" id="guideSeg" style="margin-bottom:18px;flex-wrap:wrap"></div>
+  <div id="guideBody"></div>
+</section>
+
+<section role="tabpanel" id="p-arch" hidden>
+  <h2>Bản đồ module</h2>
+  <p class="sub">Mỗi khối là một phần của kit. Bấm vào khối bất kỳ để đọc nó làm gì bằng lời thường. Tầng trên dùng tầng dưới, không bao giờ ngược lại.</p>
+  <div class="arch">
+    <div>
+      <label class="allx"><input type="checkbox" id="allEdges"> Hiện tất cả đường nối</label>
+      <div class="mapwrap" id="mapwrap"><div class="stack" id="stack"></div><svg id="edges" aria-hidden="true"></svg></div>
+      <div class="legend">
+        <span><i style="background:var(--accent);border-color:var(--accent)"></i>Đang chọn</span>
+        <span><i style="background:var(--dep-soft);border-color:var(--dep)"></i>Khối này cần dùng</span>
+        <span><i style="background:var(--use-soft);border-color:var(--use)"></i>Khối dùng tới nó</span>
+      </div>
+    </div>
+    <aside class="inspector" id="inspector" aria-live="polite"></aside>
+  </div>
+</section>
+
+<section role="tabpanel" id="p-patterns" hidden>
+  <h2>Design pattern sử dụng</h2>
+  <p class="sub">Mỗi pattern có lý do cụ thể. Bấm tên module để mở nó trong bản đồ kiến trúc.</p>
+  <div class="grid" id="patterns"></div>
+  <h3 style="margin-top:28px">Bên trong một màn hình của app: MVVM + Repository</h3>
+  <div class="flowcol" style="margin-top:8px">
+    <div class="fbox"><b>View (SwiftUI)</b><small>Chỉ vẽ giao diện từ state, gửi action cho ViewModel.</small></div>
+    <div class="fdown">↓ action &nbsp;·&nbsp; ↑ state</div>
+    <div class="fbox"><b>ViewModel</b><small>@MainActor, ObservableObject. Giữ state màn hình, gọi Repository.</small></div>
+    <div class="fdown">↓</div>
+    <div class="fbox"><b>Repository của app</b><small>UserRepository, OrderRepository... trả về model Swift thuần.</small></div>
+    <div class="fdown">↓ chỉ biết protocol</div>
+    <div class="fbox"><b>Service của kit</b><small>AuthService, DataService... được Composition Root (AppContainer) inject vào.</small></div>
+  </div>
+</section>
+
+<section role="tabpanel" id="p-theme" hidden>
+  <h2>Theme 3 lớp</h2>
+  <p class="sub">Cùng một bộ component, mỗi app chỉ đổi vài thông số thương hiệu là ra giao diện riêng. Thử đổi bên dưới: đây là cách một app mới không cần mua design.</p>
+  <div class="lab">
+    <div class="controls">
+      <div class="layers3">
+        <div class="l3"><span class="n">1</span><div><b>Base theme</b> (kit)<p>Toàn bộ token mặc định và component chuẩn. Luôn có.</p></div></div>
+        <div class="l3"><span class="n">2</span><div><b>Brand theme</b> (từng app)<p>Màu chủ đạo, font, bo góc, sáng/tối. Kit tự sinh bảng màu đầy đủ.</p></div></div>
+        <div class="l3"><span class="n">3</span><div><b>Override</b> (app có Figma riêng)<p>Ghi đè token hoặc thay component. Phần còn lại vẫn dùng của kit.</p></div></div>
+      </div>
+      <div><label>Màu chủ đạo</label><div class="swatches" id="swatches"></div></div>
+      <div><label>Font</label><div class="seg" id="fontSeg"></div></div>
+      <div><label>Bo góc</label><div class="seg" id="radiusSeg"></div></div>
+      <div><label>Chế độ</label><div class="seg" id="modeSeg"></div></div>
+      <div class="card"><h3>Token đang dùng</h3><div class="tokens" id="tokens"></div></div>
+    </div>
+    <div><div class="phone" id="phone">
+      <div class="ph-sub">Chào buổi sáng</div>
+      <div class="ph-title">Hôm nay của bạn</div>
+      <div class="ph-card"><span>Bài tập buổi sáng</span><span class="ph-badge">Mới</span></div>
+      <div class="ph-card"><span>Kế hoạch tuần</span><span class="ph-badge">3/5</span></div>
+      <div class="ph-card"><span>Nhắc nhở</span><span class="ph-badge">Bật</span></div>
+      <div class="ph-btn">TKButton · primary</div>
+      <div class="ph-btn2">TKButton · secondary</div>
+    </div><p class="sub" style="text-align:center;margin-top:10px">Màn hình mẫu dựng từ TKCard, TKBadge, TKButton</p></div>
+  </div>
+</section>
+
+<section role="tabpanel" id="p-backend" hidden>
+  <h2>Backend không khóa vào Firebase</h2>
+  <p class="sub">App gọi protocol của kit, không gọi SDK. Chọn một adapter để xem phần nào thay đổi: chỉ đúng một tầng dưới cùng.</p>
+  <div class="adapters" id="adapters" style="margin-bottom:14px"></div>
+  <div class="flowcol">
+    <div class="fbox"><b>Màn hình / ViewModel</b><small>Không đổi</small></div>
+    <div class="fdown">↓</div>
+    <div class="fbox"><b>Repository của app</b><small>Không đổi</small></div>
+    <div class="fdown">↓</div>
+    <div class="fbox"><b>Protocol của kit</b><small>AuthService · DataService · FileStorageService · AnalyticsService · CrashService · RemoteConfigService · PushService</small></div>
+    <div class="fdown">↓ AppContainer chọn adapter</div>
+    <div class="fbox" id="adapterBox" style="border-color:var(--dep)"></div>
+  </div>
+  <h3 style="margin-top:28px">Mỗi dịch vụ: hiện tại và thay thế</h3>
+  <div class="tbl"><table id="svcTable"></table></div>
+</section>
+
+<section role="tabpanel" id="p-flow" hidden>
+  <h2>Luồng khởi động một app</h2>
+  <p class="sub">Mọi app dùng chung luồng này, chỉ khác cấu hình.</p>
+  <div class="steps" id="steps"></div>
+</section>
+
+
+<section role="tabpanel" id="p-docs" hidden>
+  <h2>Bộ tài liệu</h2>
+  <p class="sub">Đọc <span class="file">README.md</span> trước, sau đó đi vào module cần làm. Thư mục: <span class="file">docs/</span> trong repo.</p>
+  <div class="tbl"><table id="docsTable"></table></div>
+</section>
+
+</div></main>
+
+<script>
+const L = [
+  {id:"app",name:"App",note:"App1, App2...",mods:["App1"]},
+  {id:"feat",name:"Màn hình",note:"dựng sẵn",mods:["TitanFeatures"]},
+  {id:"ui",name:"Giao diện",note:"mọi app",mods:["TitanDesignSystem","TitanNavigation"]},
+  {id:"svc",name:"Dịch vụ",note:"bật theo app",mods:["TitanAuth","TitanPurchase","TitanAds","TitanAnalytics","TitanPush","TitanRemoteConfig","TitanLocalization"]},
+  {id:"found",name:"Nền tảng",note:"mọi module",mods:["TitanCore","TitanNetworking","TitanStorage"]},
+  {id:"adp",name:"Adapter",note:"cắm vào dịch vụ",mods:["TitanFirebase","TitanREST","Mock"]}
+];
+const M = {
+  App1:{t:"App 1",s:"App đầu tiên. Có màn hình riêng, theme riêng và AppContainer chọn adapter, bật dịch vụ cần dùng.",do:["Màn hình và logic nghiệp vụ riêng","Brand theme và override từ Figma","AppConfig: bundle id, môi trường, dịch vụ bật/tắt","Composition Root khởi tạo mọi thứ"],not:["Không import code app khác","Không gọi thẳng Firebase SDK"],deps:["TitanFeatures","TitanDesignSystem","TitanNavigation","TitanAuth","TitanPurchase","TitanAds","TitanAnalytics","TitanPush","TitanRemoteConfig","TitanLocalization","TitanCore","TitanNetworking","TitanStorage","TitanFirebase"],pat:["MVVM","Repository","Composition Root"],doc:"App1-Plan.md",code:`@main struct App1App: App {
+  @StateObject var container = AppContainer(env: .current)
+  var body: some Scene {
+    WindowGroup {
+      RootView()
+        .environmentObject(container.router)
+        .titanTheme(App1Theme.make())
+    }
+  }
+}`},
+  TitanFeatures:{t:"Màn hình dựng sẵn",s:"Splash, onboarding, login, paywall, settings, profile, xóa tài khoản, bảo trì, bắt buộc cập nhật, lỗi và trống.",do:["Mỗi màn hình nhận Config + callback","Tự lấy style từ theme","App có thể thay hẳn một màn hình"],not:["Không chứa nghiệp vụ riêng của app"],deps:["TitanDesignSystem","TitanNavigation","TitanAuth","TitanPurchase","TitanRemoteConfig","TitanLocalization","TitanCore"],pat:["Strategy","Facade"],doc:"modules/Features.md",code:`OnboardingScreen(config: .init(pages: [
+  .init(image: "ob1", title: "Theo dõi mỗi ngày"),
+  .init(image: "ob2", title: "Nhắc nhở thông minh")
+]), onFinish: { router.replace(with: .login) })`},
+  TitanDesignSystem:{t:"Design system",s:"Token, theme 3 lớp và bộ component TK* bằng SwiftUI. Đổi theme là đổi giao diện toàn app.",do:["Token primitive và semantic","Theme base / brand / override","TKButton, TKTextField, TKCard, TKNavBar, TKSheet, TKToast...","Dark mode, Dynamic Type","Sinh code từ token Figma"],not:["Không ghi cứng màu hay font trong component"],deps:["TitanCore"],pat:["Environment injection","Strategy"],doc:"modules/DesignSystem.md",code:`TKButton("Tiếp tục", style: .primary) { vm.next() }
+
+// component chỉ đọc token semantic
+@Environment(\\.titanTheme) var theme
+theme.color.action.primary`},
+  TitanNavigation:{t:"Điều hướng",s:"Router quản lý NavigationStack, sheet, tab và deep link bằng enum Route của từng app.",do:["Router push/pop/present","Tab router","Deep link và universal link → Route"],not:["Không biết màn hình cụ thể của app"],deps:["TitanCore"],pat:["Router / Coordinator"],doc:"modules/Navigation.md",code:`enum AppRoute: Hashable { case home, detail(id: String), paywall }
+router.push(.detail(id: "42"))
+router.present(.paywall, style: .sheet)`},
+  TitanAuth:{t:"Đăng nhập",s:"Đăng nhập email, Apple, Google; phiên và token; xóa tài khoản theo yêu cầu của Apple.",do:["AuthService protocol","Trạng thái phiên dạng stream","Refresh token","Xóa tài khoản"],not:["Không phụ thuộc Firebase trực tiếp"],deps:["TitanCore","TitanStorage"],pat:["Adapter","Facade"],doc:"modules/Auth.md",code:`protocol AuthService {
+  var session: AsyncStream<Session?> { get }
+  func signIn(with: AuthMethod) async throws -> User
+  func signOut() async throws
+  func deleteAccount() async throws
+}`},
+  TitanPurchase:{t:"In-app purchase",s:"Mua hàng và subscription bằng StoreKit 2, khôi phục giao dịch, kiểm tra quyền premium.",do:["Danh sách sản phẩm","Mua, khôi phục","isPremium cho cả app"],not:["Không tự vẽ paywall (thuộc TitanFeatures)"],deps:["TitanCore"],pat:["Adapter","Facade"],doc:"modules/Purchase.md",code:`let products = try await purchase.products(["app1.pro.monthly"])
+let result = try await purchase.buy(products[0])
+if await purchase.isPremium { ads.disable() }`},
+  TitanAds:{t:"Quảng cáo",s:"Banner, interstitial, rewarded qua AdMob adapter. Xin ATT và đồng ý GDPR trước khi tải quảng cáo.",do:["AdsService protocol","Giới hạn tần suất","Tắt quảng cáo cho người dùng premium"],not:["Không được bật nếu app không khai báo dùng"],deps:["TitanCore"],pat:["Adapter"],doc:"modules/Ads.md",code:`try await ads.requestConsent()   // ATT + UMP
+TKBannerAd(placement: .homeBottom)
+await ads.showInterstitial(.afterWorkout)`},
+  TitanAnalytics:{t:"Analytics và crash",s:"Một API ghi sự kiện, gửi tới nhiều nhà cung cấp cùng lúc; báo crash qua Crashlytics hoặc Sentry.",do:["Quy ước tên sự kiện","Gửi song song nhiều provider","User property","Báo crash"],not:["Không để màn hình gọi SDK analytics"],deps:["TitanCore"],pat:["Composite","Adapter"],doc:"modules/Analytics.md",code:`analytics.track(.screenView("home"))
+analytics.track(.purchase(product: "pro", value: 4.99))`},
+  TitanPush:{t:"Thông báo đẩy",s:"Xin quyền, lấy token thiết bị, nhận thông báo và mở đúng màn hình qua deep link.",do:["Xin quyền","Đăng ký token","Bấm thông báo → Route"],not:[],deps:["TitanCore","TitanNavigation"],pat:["Adapter"],doc:"modules/Push.md",code:`try await push.requestPermission()
+push.onOpen { payload in router.handle(deepLink: payload.url) }`},
+  TitanRemoteConfig:{t:"Cấu hình từ xa",s:"Feature flag, chế độ bảo trì và bắt buộc cập nhật, đọc lúc khởi động.",do:["Key có kiểu và giá trị mặc định","Bảo trì / bắt buộc cập nhật"],not:[],deps:["TitanCore"],pat:["Adapter","Strategy"],doc:"modules/RemoteConfig.md",code:`if config[.forceUpdateVersion] > Bundle.main.version {
+  router.replace(with: .forceUpdate)
+}`},
+  TitanLocalization:{t:"Đa ngôn ngữ",s:"String Catalog cho kit và app, đổi ngôn ngữ trong app, định dạng ngày, số, tiền.",do:["Chuỗi của kit tách khỏi chuỗi app","Đổi ngôn ngữ trong app"],not:[],deps:["TitanCore"],pat:["Facade"],doc:"modules/Localization.md",code:`Text(L10n.Common.continue)
+price.formatted(.currency(code: locale.currency))`},
+  TitanCore:{t:"Lõi",s:"Logger, TitanError chung, môi trường dev/staging/prod, dependency injection và tiện ích.",do:["TitanError thống nhất","Logger theo mức","AppEnvironment","Khóa Environment cho DI"],not:["Không phụ thuộc module nào khác"],deps:[],pat:["Dependency Injection"],doc:"modules/Core.md",code:`enum TitanError: Error {
+  case network(NetworkError), unauthorized
+  case notFound, validation(String), unknown(Error)
+}`},
+  TitanNetworking:{t:"Networking",s:"API client async/await, mô tả request bằng Endpoint, chuỗi interceptor gắn token, retry, log; theo dõi mất mạng.",do:["Endpoint protocol","Interceptor chain","Decode JSON","NetworkMonitor cho màn hình mất mạng","MockAPIClient"],not:["Không biết nghiệp vụ"],deps:["TitanCore"],pat:["Builder / Endpoint","Chain of Responsibility"],doc:"modules/Networking.md",code:`struct GetProfile: Endpoint {
+  typealias Response = Profile
+  var path: String { "/me" }
+}
+let me = try await api.send(GetProfile())`},
+  TitanStorage:{t:"Lưu trữ",s:"UserDefaults có kiểu, Keychain, cache file và cache ảnh, database local khi cần.",do:["@Stored property wrapper","KeychainStore cho token","Cache ảnh"],not:[],deps:["TitanCore"],pat:["Facade"],doc:"modules/Storage.md",code:`@Stored(.onboardingDone) var onboardingDone = false
+try keychain.set(token, for: .accessToken)`},
+  TitanFirebase:{t:"Adapter Firebase",s:"Cài đặt các protocol dịch vụ bằng Firebase. Nằm ngoài kit để kit không phụ thuộc Firebase SDK.",do:["Firebase Auth, Firestore, Storage","Analytics, Crashlytics, Remote Config, FCM","Chuyển dữ liệu sang model Swift, lỗi sang TitanError"],not:["App không import trực tiếp"],deps:["TitanAuth","TitanAnalytics","TitanPush","TitanRemoteConfig","TitanCore"],pat:["Adapter"],doc:"modules/Backend.md",code:`AppContainer(
+  auth: FirebaseAuthService(),
+  data: FirestoreDataService(),
+  analytics: CompositeAnalytics([FirebaseAnalyticsProvider()])
+)`},
+  TitanREST:{t:"Adapter API riêng",s:"Dùng khi rời Firebase: cài đặt cùng protocol bằng API server riêng qua TitanNetworking.",do:["Cùng protocol với Firebase adapter","Dùng TitanNetworking"],not:[],deps:["TitanAuth","TitanNetworking","TitanCore"],pat:["Adapter"],doc:"modules/Backend.md",code:`AppContainer(
+  auth: RESTAuthService(api: api),
+  data: RESTDataService(api: api)
+)`},
+  Mock:{t:"Adapter Mock",s:"Dữ liệu giả cho test, SwiftUI Preview và Catalog. Không cần backend thật.",do:["Mọi service có bản Mock"],not:[],deps:["TitanAuth","TitanPurchase","TitanAds","TitanAnalytics","TitanCore"],pat:["Adapter"],doc:"modules/Backend.md",code:`AppContainer.preview  // toàn bộ Mock
+#Preview { HomeView().withContainer(.preview) }`}
+};
+const EASY = {
+  App1:["Đây là chính sản phẩm bạn đưa lên App Store. Nó giống ngôi nhà được lắp từ kho vật liệu: phần lớn lấy sẵn từ kit, chỉ tự làm những gì riêng của App 1.","Người dùng mở App 1 thấy logo, màu sắc và các màn hình chính theo design Figma bạn đã mua. Còn màn hình đăng nhập, mua gói Pro, cài đặt hay quảng cáo thì App 1 lấy sẵn từ kit."],
+  TitanFeatures:["Những màn hình app nào cũng có, làm sẵn một lần: màn hình chào, giới thiệu, đăng nhập, mua gói Pro, cài đặt, báo lỗi.","App 1 chỉ cần điền nội dung (ảnh, chữ, gói giá) là có ngay màn hình giới thiệu và màn hình mua gói Pro, đúng màu của App 1."],
+  TitanDesignSystem:["Bộ “gạch” giao diện: nút bấm, ô nhập, thẻ, thanh tiêu đề... cùng bảng màu và font. Đổi bảng màu là cả app đổi theo.","Mọi nút “Tiếp tục” trong App 1 đều là một nút dùng chung. Muốn đổi màu xanh sang tím thì sửa một chỗ, toàn app đổi theo."],
+  TitanNavigation:["Người chỉ đường: quyết định bấm vào đâu thì mở màn hình nào, và mở đúng màn hình khi người dùng bấm vào thông báo hoặc link.","Người dùng bấm thông báo “Bài tập hôm nay đã sẵn sàng” thì App 1 mở thẳng màn hình bài tập đó."],
+  TitanAuth:["Lo việc đăng nhập, đăng xuất, nhớ người dùng là ai, và xóa tài khoản khi người dùng yêu cầu (Apple bắt buộc).","Người dùng bấm “Đăng nhập với Apple”, lần sau mở app không phải đăng nhập lại."],
+  TitanPurchase:["Lo việc bán gói Pro trong app qua Apple: hiện giá, thanh toán, khôi phục khi đổi máy, và cho biết ai là người dùng Pro.","Người dùng mua gói tháng, App 1 mở khóa tính năng Pro và tự tắt quảng cáo."],
+  TitanAds:["Lo việc hiện quảng cáo (AdMob) đúng chỗ, không quá dày, và xin phép người dùng trước theo quy định của Apple và châu Âu.","Sau mỗi bài tập App 1 hiện một quảng cáo toàn màn hình, nhưng không hiện với người dùng Pro."],
+  TitanAnalytics:["Ghi lại người dùng làm gì trong app và báo khi app bị lỗi, để bạn biết màn hình nào được dùng và lỗi nằm đâu.","Bạn xem được bao nhiêu người mở màn hình mua gói Pro và bao nhiêu người mua thật."],
+  TitanPush:["Lo việc xin quyền gửi thông báo và nhận thông báo đẩy về điện thoại.","8 giờ sáng App 1 gửi nhắc “Đến giờ tập rồi”."],
+  TitanRemoteConfig:["Công tắc điều khiển từ xa: bật/tắt tính năng, báo bảo trì, bắt người dùng cập nhật bản mới, không cần nộp lại app lên App Store.","Server đang bảo trì, bạn gạt một công tắc trên Firebase là App 1 hiện màn hình “Đang bảo trì”."],
+  TitanLocalization:["Lo việc app hiển thị nhiều ngôn ngữ và định dạng ngày, tiền theo từng nước.","Người dùng Mỹ thấy “$4.99”, người dùng Việt Nam thấy “119.000 ₫”."],
+  TitanCore:["Phần móng của cả kit: cách báo lỗi chung, ghi log, phân biệt bản thử nghiệm và bản thật. Người dùng không thấy nhưng mọi thứ đứng trên nó.","Bản thử nghiệm của App 1 nối vào server test, bản trên App Store nối vào server thật, không bao giờ lẫn."],
+  TitanNetworking:["Người đưa thư giữa app và server: gửi yêu cầu, nhận dữ liệu về, tự thử lại khi mạng chập chờn và báo khi mất mạng.","Khi mất wifi, App 1 hiện “Không có kết nối, thử lại” thay vì đứng im."],
+  TitanStorage:["Tủ đồ trong điện thoại: lưu cài đặt, lưu mật khẩu an toàn, lưu ảnh đã tải để lần sau mở nhanh.","Ảnh trong App 1 tải một lần, lần sau mở hiện ngay không chờ."],
+  TitanFirebase:["Ổ cắm nối kit với Firebase. Kit chỉ biết “cần đăng nhập, cần lưu dữ liệu”, còn ổ cắm này nói với Firebase cách làm.","App 1 hiện dùng Firebase để đăng nhập và lưu dữ liệu, qua ổ cắm này."],
+  TitanREST:["Ổ cắm dự phòng: khi bạn có server riêng và muốn rời Firebase, chỉ cần thay ổ cắm, app giữ nguyên.","Sau này chuyển App 1 sang server riêng: viết ổ cắm này, không phải sửa màn hình nào."],
+  Mock:["Ổ cắm giả, trả dữ liệu mẫu. Dùng để thử app và xem giao diện mà không cần server thật.","Lập trình viên xem trước màn hình App 1 với dữ liệu mẫu, không cần mạng."]
+};
+const OWN = {own:["Màn hình chính theo design Figma","Logo, màu, font của App 1","Dữ liệu riêng của App 1","Chọn dùng dịch vụ nào"],kit:["Đăng nhập, mua gói Pro","Cài đặt, giới thiệu, báo lỗi","Nút, ô nhập, thẻ...","Quảng cáo, thông báo, analytics","Kết nối server, lưu trữ"]};
+const users = {}; Object.keys(M).forEach(k=>users[k]=[]);
+Object.entries(M).forEach(([k,v])=>v.deps.forEach(d=>users[d]&&users[d].push(k)));
+const P = [
+  {n:"MVVM",w:"Mọi màn hình",why:"Tách giao diện khỏi logic, test được ViewModel mà không cần UI.",m:["App1","TitanFeatures"]},
+  {n:"Repository",w:"Tầng dữ liệu của app",why:"Màn hình không biết dữ liệu đến từ Firebase hay API riêng.",m:["App1"]},
+  {n:"Adapter",w:"Backend, quảng cáo, analytics, purchase",why:"Đổi nhà cung cấp bằng cách viết adapter mới, không sửa app.",m:["TitanFirebase","TitanREST","Mock","TitanAds"]},
+  {n:"Composition Root",w:"AppContainer của mỗi app",why:"Một chỗ duy nhất quyết định dùng cài đặt nào, thay Mock khi test.",m:["App1","TitanCore"]},
+  {n:"Router / Coordinator",w:"TitanNavigation",why:"Điều hướng bằng enum Route, deep link đi cùng một đường.",m:["TitanNavigation"]},
+  {n:"Environment injection",w:"Theme, container",why:"SwiftUI truyền theme và service xuống mọi view mà không cần truyền tay.",m:["TitanDesignSystem"]},
+  {n:"Builder / Endpoint",w:"TitanNetworking",why:"Mỗi request là một struct, dễ đọc và dễ test.",m:["TitanNetworking"]},
+  {n:"Chain of Responsibility",w:"Interceptor networking",why:"Gắn token, retry, log nối tiếp nhau, thêm bớt không sửa client.",m:["TitanNetworking"]},
+  {n:"Composite",w:"TitanAnalytics",why:"Một sự kiện gửi tới nhiều nhà cung cấp cùng lúc.",m:["TitanAnalytics"]},
+  {n:"Strategy",w:"Theme, cấu hình feature",why:"Đổi hành vi bằng cấu hình thay vì sửa code.",m:["TitanDesignSystem","TitanRemoteConfig","TitanFeatures"]},
+  {n:"Facade",w:"Mỗi module dịch vụ",why:"App gọi một API gọn, bên trong lo phần phức tạp.",m:["TitanAuth","TitanPurchase","TitanStorage"]}
+];
+let sel = "App1";
+function renderStack(){
+  const st = document.getElementById("stack"); st.innerHTML="";
+  const deps = new Set(M[sel].deps), us = new Set(users[sel]);
+  L.forEach((l,i)=>{
+    const d=document.createElement("div"); d.className="layer";
+    d.innerHTML=`<div class="layer-name"><b>${l.name}</b>${l.note}</div><div class="chips"></div>`;
+    const c=d.querySelector(".chips");
+    l.mods.forEach(m=>{
+      const b=document.createElement("button"); b.className="chip"; b.textContent=m; b.type="button"; b.dataset.mod=m;
+      if(m===sel) b.classList.add("sel"); else if(deps.has(m)) b.classList.add("dep"); else if(us.has(m)) b.classList.add("use"); else b.classList.add("dim");
+      b.onclick=()=>{sel=m;renderStack();renderInspector()};
+      c.appendChild(b);
+    });
+    st.appendChild(d);
+  });
+  requestAnimationFrame(drawEdges);
+}
+function drawEdges(){
+  const svg=document.getElementById("edges"), wrap=document.getElementById("mapwrap");
+  if(!svg||!wrap.offsetWidth){return}
+  const W=wrap.getBoundingClientRect();
+  svg.setAttribute("viewBox",`0 0 ${W.width} ${W.height}`);
+  const pos={};
+  wrap.querySelectorAll(".chip[data-mod]").forEach(c=>{const r=c.getBoundingClientRect();pos[c.dataset.mod]={x:r.left-W.left+r.width/2,t:r.top-W.top,b:r.bottom-W.top}});
+  const path=(a,b,cls)=>{const A=pos[a],B=pos[b];if(!A||!B)return"";
+    const down=B.t>A.t, y1=down?A.b:A.t, y2=down?B.t:B.b, k=Math.max(24,Math.abs(y2-y1)*.5)*(down?1:-1);
+    return `<path class="${cls}" d="M${A.x},${y1} C${A.x},${y1+k} ${B.x},${y2-k} ${B.x},${y2}"/>`+(cls!=="a"?`<circle class="${cls}" cx="${B.x}" cy="${y2}" r="3.5"/>`:"");};
+  let out="";
+  if(document.getElementById("allEdges").checked){Object.entries(M).forEach(([k,v])=>v.deps.forEach(d=>{if(k!==sel&&d!==sel)out+=path(k,d,"a")}))}
+  M[sel].deps.forEach(d=>out+=path(sel,d,"d"));
+  users[sel].forEach(u=>out+=path(u,sel,"u"));
+  svg.innerHTML=out;
+}
+window.addEventListener("resize",()=>requestAnimationFrame(drawEdges));
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function renderInspector(){
+  const m=M[sel], el=document.getElementById("inspector");
+  const list=a=>a.length?`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"<p style='margin:0;color:var(--muted)'>Không có</p>";
+  const pills=(a,cls)=>a.length?`<div class="pills">${a.map(x=>`<button class="pill" data-go="${x}">${x}</button>`).join("")}</div>`:"<span style='color:var(--muted)'>Không có</span>";
+  const e=EASY[sel];
+  const split = sel==="App1" ? `<div class="split"><div class="own"><h4>App 1 tự làm</h4><ul>${OWN.own.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="kit"><h4>Lấy sẵn từ kit</h4><ul>${OWN.kit.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>` : "";
+  el.innerHTML=`<div class="mod">${sel}</div><h3>${m.t}</h3>
+  <div class="easy"><h4>Nói đơn giản</h4><p>${e[0]}</p></div>
+  <div class="ex"><h4>Ví dụ trong App 1</h4><p>${e[1]}</p></div>
+  ${split}
+  <details class="tech"><summary>Chi tiết kỹ thuật (cho lập trình viên)</summary>
+  <div class="kv">
+   <div><h4>Tóm tắt</h4><p style="margin:0">${esc(m.s)}</p></div>
+   <div><h4>Làm gì</h4>${list(m.do)}</div>
+   ${m.not.length?`<div><h4>Không làm</h4>${list(m.not)}</div>`:""}
+   <div><h4>Phụ thuộc vào</h4>${pills(m.deps)}</div>
+   <div><h4>Được dùng bởi</h4>${pills(users[sel])}</div>
+   <div><h4>Pattern</h4><div class="pills">${m.pat.map(p=>`<span class="pill static">${p}</span>`).join("")}</div></div>
+   <div><h4>Ví dụ</h4><pre class="code">${esc(m.code)}</pre></div>
+   <div><h4>Tài liệu</h4><span class="file">docs/${m.doc}</span></div>
+  </div></details>`;
+  el.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{sel=b.dataset.go;renderStack();renderInspector()});
+}
+function renderPatterns(){
+  document.getElementById("patterns").innerHTML=P.map(p=>`<div class="card"><h3>${p.n}</h3><div class="where">${p.w}</div><p>${p.why}</p><div class="pills" style="margin-top:10px">${p.m.map(x=>`<button class="pill" data-open="${x}">${x}</button>`).join("")}</div></div>`).join("");
+  document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{sel=b.dataset.open;renderStack();renderInspector();show("arch")});
+}
+/* theme lab */
+const brand={blue:"#2f5bea",teal:"#0e9384",violet:"#7a4ff0",coral:"#e0573b",amber:"#c98200",ink:"#283548"};
+const fonts={"Hệ thống":"-apple-system,system-ui,sans-serif","Sora":"Sora,system-ui,sans-serif","Mono":"'JetBrains Mono',ui-monospace,monospace"};
+const radii={"Vuông":4,"Vừa":12,"Tròn":22};
+let T={c:"blue",f:"Hệ thống",r:"Vừa",m:"Sáng"};
+function mix(hex,with_,p){const a=parseInt(hex.slice(1),16),b=parseInt(with_.slice(1),16);const ch=s=>Math.round(((a>>s)&255)*(1-p)+((b>>s)&255)*p);return "#"+[16,8,0].map(s=>ch(s).toString(16).padStart(2,"0")).join("")}
+function applyTheme(){
+  const ph=document.getElementById("phone"), base=brand[T.c], dark=T.m==="Tối";
+  const v={"--ph-primary":base,"--ph-strong":dark?mix(base,"#ffffff",.35):mix(base,"#000000",.2),"--ph-soft":dark?mix(base,"#10151d",.7):mix(base,"#ffffff",.85),"--ph-bg":dark?"#10151d":mix(base,"#ffffff",.96),"--ph-card":dark?"#1b222d":"#ffffff","--ph-fg":dark?"#eef2f7":"#151b24","--ph-font":fonts[T.f],"--ph-r":radii[T.r]+"px"};
+  Object.entries(v).forEach(([k,x])=>ph.style.setProperty(k,x));
+  document.getElementById("tokens").innerHTML=[["color.action.primary",v["--ph-primary"]],["color.text.accent",v["--ph-strong"]],["color.surface.accentSoft",v["--ph-soft"]],["color.background",v["--ph-bg"]],["radius.md",v["--ph-r"]],["font.family",T.f]].map(([a,b])=>`<span>${a}</span><span>${b}</span>`).join("");
+}
+function seg(id,opts,key){const el=document.getElementById(id);el.innerHTML=Object.keys(opts).map(k=>`<button type="button" aria-pressed="${T[key]===k}">${k}</button>`).join("");el.querySelectorAll("button").forEach(b=>b.onclick=()=>{T[key]=b.textContent;seg(id,opts,key);applyTheme()})}
+function swatches(){const el=document.getElementById("swatches");el.innerHTML=Object.entries(brand).map(([k,c])=>`<button type="button" class="sw" style="background:${c}" aria-label="${k}" aria-pressed="${T.c===k}"></button>`).join("");el.querySelectorAll(".sw").forEach(b=>b.onclick=()=>{T.c=b.getAttribute("aria-label");swatches();applyTheme()})}
+/* backend */
+const AD={
+  "Firebase":{s:"Đang dùng cho App 1",d:"FirebaseAuthService · FirestoreDataService · FirebaseStorageService · Crashlytics · Remote Config · FCM",col:1},
+  "API riêng (REST)":{s:"Khi có server riêng",d:"RESTAuthService · RESTDataService · S3StorageService · Sentry · API config · APNs",col:2},
+  "Supabase":{s:"Phương án khác",d:"SupabaseAuthService · SupabaseDataService · SupabaseStorage",col:2},
+  "Mock":{s:"Test, Preview, Catalog",d:"MockAuthService · InMemoryDataService · MockStorage",col:0}
+};
+let ad="Firebase";
+const SV=[["AuthService","Đăng nhập, phiên, token","Firebase Auth","API riêng (JWT), Supabase Auth, Auth0"],["DataService","Đọc, ghi, truy vấn","Firestore","REST/GraphQL, Supabase"],["FileStorageService","Upload, download file","Cloud Storage","S3, Cloudflare R2"],["AnalyticsService","Sự kiện, user property","Firebase Analytics","Mixpanel, Amplitude"],["CrashService","Báo crash","Crashlytics","Sentry"],["RemoteConfigService","Flag, bảo trì, cập nhật","Remote Config","API riêng, Statsig"],["PushService","Token, thông báo","FCM","APNs, OneSignal"]];
+function renderBackend(){
+  document.getElementById("adapters").innerHTML=Object.keys(AD).map(k=>`<button type="button" aria-pressed="${k===ad}">${k}</button>`).join("");
+  document.querySelectorAll("#adapters button").forEach(b=>b.onclick=()=>{ad=b.textContent;renderBackend()});
+  const a=AD[ad]; document.getElementById("adapterBox").innerHTML=`<b>Adapter: ${ad}</b><small>${a.s}</small><small style="font-family:var(--f-mono);margin-top:4px">${a.d}</small>`;
+  document.getElementById("svcTable").innerHTML=`<tr><th>Protocol</th><th>Việc</th><th>Hiện tại</th><th>Thay thế sau</th></tr>`+SV.map(r=>`<tr><td style="font-family:var(--f-mono)">${r[0]}</td><td>${r[1]}</td><td class="${ad==="Firebase"?"hl":""}">${r[2]}</td><td class="${ad!=="Firebase"&&ad!=="Mock"?"hl":""}">${r[3]}</td></tr>`).join("");
+}
+/* flow */
+const ST=[["Tạo AppContainer","Chọn adapter theo môi trường dev / staging / prod.",[]],["Đọc Remote Config","Kiểm tra bảo trì và phiên bản tối thiểu.",["Bảo trì → màn Maintenance","Phiên bản cũ → Force Update"]],["Xin đồng ý quyền riêng tư","UMP/GDPR và ATT, chỉ khi app có quảng cáo.",[]],["Kiểm tra phiên đăng nhập","AuthService trả về phiên hiện tại.",["Lần đầu → Onboarding","Chưa đăng nhập → Login","Đã đăng nhập → Home"]],["Đồng bộ quyền premium","PurchaseService cập nhật isPremium, tắt quảng cáo nếu cần.",[]],["Đăng ký thông báo","Gửi token thiết bị, xử lý deep link nếu app mở từ thông báo.",[]]];
+function renderFlow(){document.getElementById("steps").innerHTML=ST.map((s,i)=>`<div class="step"><div class="rail"><div class="dot">${i+1}</div></div><div class="body"><b>${s[0]}</b><p>${s[1]}</p>${s[2].length?`<div class="branch">${s[2].map(x=>`<span>${x}</span>`).join("")}</div>`:""}</div></div>`).join("")}
+/* plan */
+const LAST_UPDATE="Cập nhật 20/10/2026: xong tài liệu kiến trúc, chờ Figma và quyền repo";
+const PST={done:"Đã xong",doing:"Đang làm",wait:"Đang chờ",todo:"Chưa bắt đầu"};
+const PSTATUS=["done","wait","todo","todo","todo","todo","todo","todo"];
+const PH=[["Chuẩn bị","Tài liệu","Kiến trúc, quy ước, kế hoạch",["Thống nhất kiến trúc và quy ước","Bộ tài liệu MD cho từng module","Trang TitanKit Atlas"],"Jack duyệt bộ tài liệu"],["Giai đoạn 0","Dựng repo","Tuist, cấu trúc thư mục, CI, môi trường",["Khởi tạo Tuist và Package.swift","Tạo các module rỗng","Config Dev/Staging/Prod, giữ khóa ngoài git","GitHub Actions chạy build + test"],"Build xanh trên CI với app mẫu trống"],["Giai đoạn 1","Nền tảng","Core, Networking, Storage",["TitanError, Logger, AppEnvironment","APIClient, Endpoint, interceptor","Keychain, UserDefaults, cache ảnh"],"Unit test cho cả 3 module"],["Giai đoạn 2","Design system","Base theme rồi token Figma của App 1",["Token primitive/semantic, theme 3 lớp","Component TK* cốt lõi","Catalog app","Rút token từ Figma App 1"],"Catalog hiển thị đủ component ở 2 theme"],["Giai đoạn 3","Điều hướng + màn hình","Navigation và TitanFeatures",["Router, deep link","Splash, onboarding, login, paywall, settings","Màn lỗi, trống, mất mạng"],"Chạy được luồng từ splash tới home bằng Mock"],["Giai đoạn 4","Dịch vụ","Firebase adapter",["Auth, Data, Analytics, Crash","Remote Config, Push","Purchase StoreKit 2, Ads nếu cần"],"App 1 chạy với Firebase dev"],["Giai đoạn 5","Màn hình App 1","Nghiệp vụ riêng theo Figma",["Màn hình chính của App 1","Repository riêng","Snapshot test"],"Đủ tính năng theo design"],["Giai đoạn 6","Phát hành","Compliance và TestFlight",["Privacy manifest, ATT, GDPR","Xóa tài khoản","fastlane beta lên TestFlight"],"Bản TestFlight đầu tiên"]];
+const QS=["Tên App 1 và link Figma","Tên công ty hoặc domain cho bundle id","App 1 cần những dịch vụ nào (login, mua hàng, quảng cáo, push...)","Đồng ý SwiftUI + iOS 16 + Tuist","Cấp quyền ghi repo minhvuhero9/titankit"];
+function renderPlan(){
+  document.getElementById("lastUpd").textContent=LAST_UPDATE;
+  const done=PSTATUS.filter(s=>s==="done").length;
+  document.getElementById("progTxt").textContent=`${done}/${PH.length} giai đoạn xong · đang chờ: tên App 1, Figma, quyền ghi repo`;
+  document.getElementById("progBar").style.width=Math.round(done/PH.length*100)+"%";
+  document.getElementById("phases").innerHTML=PH.map((p,i)=>`<details class="phase"${PSTATUS[i]!=="todo"?" open":""}><summary><span class="ph">${p[0]}</span><b>${p[1]}</b><small>${p[2]}</small><span class="st ${PSTATUS[i]}">${PST[PSTATUS[i]]}</span></summary><div class="in"><ul>${p[3].map(x=>`<li>${x}</li>`).join("")}</ul><p style="margin:10px 0 0"><b>Xong khi:</b> ${p[4]}</p></div></details>`).join("");document.getElementById("questions").innerHTML=QS.map(q=>`<li>${q}</li>`).join("")}
+/* docs */
+const DOCS=[["README.md","Tổng quan","Kiến trúc, pattern, theme, cấu trúc repo"],["Conventions.md","Quy ước","Đặt tên, git, code style"],["App1-Plan.md","Kế hoạch","Các giai đoạn làm App 1"],["modules/Core.md","Nền tảng","TitanCore"],["modules/Networking.md","Nền tảng","TitanNetworking"],["modules/Storage.md","Nền tảng","TitanStorage"],["modules/DesignSystem.md","Giao diện","TitanDesignSystem"],["modules/Navigation.md","Giao diện","TitanNavigation"],["modules/Backend.md","Dịch vụ","Kiến trúc adapter, Firebase"],["modules/Auth.md","Dịch vụ","TitanAuth"],["modules/Purchase.md","Dịch vụ","TitanPurchase"],["modules/Ads.md","Dịch vụ","TitanAds"],["modules/Analytics.md","Dịch vụ","TitanAnalytics"],["modules/Push.md","Dịch vụ","TitanPush"],["modules/RemoteConfig.md","Dịch vụ","TitanRemoteConfig"],["modules/Localization.md","Dịch vụ","TitanLocalization"],["modules/Features.md","Màn hình","TitanFeatures"],["modules/Tooling.md","Công cụ","Tạo app mới, môi trường, CI/CD"],["modules/Compliance.md","Quy định","Privacy, App Store"]];
+function renderDocs(){document.getElementById("docsTable").innerHTML=`<tr><th>File</th><th>Nhóm</th><th>Nội dung</th></tr>`+DOCS.map(d=>`<tr><td><span class="file">${d[0]}</span></td><td>${d[1]}</td><td>${d[2]}</td></tr>`).join("")}
+/* scenarios */
+const SC={
+  "Mở app lần đầu":[
+    ["Người dùng chạm vào icon App 1",["App1","TitanCore"],"App 1 khởi động và xác định đang chạy bản thử nghiệm hay bản thật để nối đúng server."],
+    ["Kiểm tra có đang bảo trì không",["TitanRemoteConfig","TitanFirebase"],"App hỏi “công tắc từ xa” trên Firebase. Nếu bạn đang bật bảo trì hoặc bắt cập nhật, người dùng thấy màn hình tương ứng và dừng ở đây."],
+    ["Hiện màn hình chào và giới thiệu",["TitanFeatures","TitanDesignSystem","TitanNavigation"],"Màn hình giới thiệu lấy sẵn từ kit, mặc màu và font của App 1. Người dùng vuốt qua 3 trang rồi bấm “Bắt đầu”."],
+    ["Xin phép quảng cáo và thông báo",["TitanAds","TitanPush"],"App hỏi người dùng có cho phép theo dõi quảng cáo và gửi thông báo không, đúng quy định của Apple."],
+    ["Vào màn hình chính",["App1","TitanNetworking","TitanStorage"],"Màn hình chính do App 1 tự làm theo design Figma. Dữ liệu tải qua mạng, ảnh được lưu lại để lần sau mở nhanh."]
+  ],
+  "Đăng nhập":[
+    ["Người dùng bấm “Đăng nhập với Apple”",["TitanFeatures","TitanDesignSystem"],"Màn hình đăng nhập là màn hình dựng sẵn của kit, App 1 chỉ chọn cách đăng nhập nào được hiện."],
+    ["Kit xử lý đăng nhập",["TitanAuth"],"Phần đăng nhập của kit nhận yêu cầu. Nó không biết và không cần biết phía sau là Firebase hay server riêng."],
+    ["Firebase xác nhận tài khoản",["TitanFirebase"],"Ổ cắm Firebase nói chuyện với Firebase. Sau này đổi server thì chỉ thay ổ cắm này."],
+    ["Lưu phiên đăng nhập an toàn",["TitanStorage"],"Thông tin đăng nhập được cất vào Keychain, chỗ an toàn nhất trên iPhone. Lần sau mở app không phải đăng nhập lại."],
+    ["Ghi nhận và chuyển màn hình",["TitanAnalytics","TitanNavigation","App1"],"Analytics ghi “đăng nhập thành công”, rồi người chỉ đường đưa người dùng vào màn hình chính của App 1."]
+  ],
+  "Mua gói Pro":[
+    ["Người dùng chạm vào tính năng Pro",["App1","TitanNavigation"],"Màn hình riêng của App 1 phát hiện tính năng cần gói Pro và nhờ người chỉ đường mở màn hình bán gói."],
+    ["Hiện màn hình bán gói",["TitanFeatures","TitanDesignSystem","TitanLocalization"],"Màn hình mua gói dựng sẵn trong kit, hiện giá đúng tiền tệ của từng nước."],
+    ["Thanh toán qua Apple",["TitanPurchase"],"Phần mua hàng của kit gọi Apple để thanh toán và kiểm tra giao dịch."],
+    ["Mở khóa Pro, tắt quảng cáo",["TitanPurchase","TitanAds"],"Người dùng thành Pro, quảng cáo tự tắt trên toàn app."],
+    ["Ghi doanh thu",["TitanAnalytics"],"Analytics ghi lại lượt mua để bạn xem gói nào bán chạy."]
+  ],
+  "Mất mạng":[
+    ["Người dùng mở màn hình cần dữ liệu",["App1","TitanNetworking"],"App gửi yêu cầu lên server qua “người đưa thư”."],
+    ["Phát hiện mất mạng",["TitanNetworking","TitanCore"],"Người đưa thư thử lại vài lần, vẫn không được thì báo lỗi “mất mạng” theo kiểu lỗi chung của kit."],
+    ["Hiện màn hình báo lỗi dễ hiểu",["TitanFeatures","TitanDesignSystem"],"Màn hình “Không có kết nối” dựng sẵn hiện ra với nút “Thử lại”, giống nhau ở mọi app."],
+    ["Có mạng lại thì tự tải",["TitanNetworking","App1"],"Khi mạng quay lại, màn hình tự tải dữ liệu, người dùng không phải làm gì."]
+  ]
+};
+let scn="Mở app lần đầu", si=0;
+function renderScenario(){
+  document.getElementById("scnPick").innerHTML=Object.keys(SC).map(k=>`<button type="button" aria-pressed="${k===scn}">${k}</button>`).join("");
+  document.querySelectorAll("#scnPick button").forEach(b=>b.onclick=()=>{scn=b.textContent;si=0;renderScenario()});
+  const steps=SC[scn], s=steps[si], on=new Set(s[1]);
+  document.getElementById("scnCnt").textContent=`Bước ${si+1} / ${steps.length}`;
+  document.getElementById("scnTitle").textContent=s[0];
+  document.getElementById("scnWho").textContent="Khối làm việc: "+s[1].join(", ");
+  document.getElementById("scnText").textContent=s[2];
+  document.getElementById("scnPrev").disabled=si===0;
+  document.getElementById("scnNext").textContent=si===steps.length-1?"Làm lại từ đầu":"Bước tiếp";
+  const map=document.getElementById("scnMap"); map.innerHTML="";
+  L.forEach(l=>{const d=document.createElement("div");d.className="layer";d.innerHTML=`<div class="layer-name"><b>${l.name}</b></div><div class="chips">${l.mods.map(m=>`<span class="chip ${on.has(m)?"sel":"dim"}">${m}</span>`).join("")}</div>`;map.appendChild(d)});
+}
+document.getElementById("scnPrev").onclick=()=>{if(si>0){si--;renderScenario()}};
+document.getElementById("scnNext").onclick=()=>{si=si<SC[scn].length-1?si+1:0;renderScenario()};
+/* tabs */
+const tabs=[...document.querySelectorAll("[role=tab]")];
+document.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{show(b.dataset.jump);window.scrollTo(0,0)});
+function show(id){tabs.forEach(t=>t.setAttribute("aria-selected",t.dataset.tab===id));document.querySelectorAll("[role=tabpanel]").forEach(p=>p.hidden=p.id!=="p-"+id);try{history.replaceState(null,"","#"+id)}catch(e){}if(id==="arch")requestAnimationFrame(drawEdges)}
+document.getElementById("allEdges").onchange=drawEdges;
+document.querySelectorAll("#appSeg button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#appSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b));document.getElementById("sub-plan").hidden=b.dataset.sub!=="plan";document.getElementById("sub-scn").hidden=b.dataset.sub!=="scn"});
+/* guide */
+const GUIDES={
+ create:{t:"Tạo app mới"},
+ screen:{t:"Thêm màn hình",steps:[
+  ["Tạo thư mục màn hình","Mỗi màn hình có một View và một ViewModel, đặt trong thư mục của app.","Apps/App1/Sources/Features/WorkoutDetail/\n├── WorkoutDetailView.swift\n└── WorkoutDetailViewModel.swift"],
+  ["Viết ViewModel","ViewModel giữ trạng thái và gọi Repository, không gọi Firebase trực tiếp.","@MainActor final class WorkoutDetailViewModel: ObservableObject {\n  @Published var state: LoadState<Workout> = .loading\n  private let repo: WorkoutRepository\n  init(repo: WorkoutRepository) { self.repo = repo }\n  func load(id: String) async {\n    state = await .from { try await repo.workout(id: id) }\n  }\n}"],
+  ["Dựng giao diện bằng component của kit","Dùng TK* để màn hình tự đúng màu, font của app.","TKAsyncContent(state: vm.state) { workout in\n  TKCard { Text(workout.name).titanFont(.title) }\n  TKButton(\"Bắt đầu tập\", style: .primary) { vm.start() }\n}"],
+  ["Thêm route và mở màn hình","Khai báo route mới, rồi gọi router ở chỗ cần mở.","enum AppRoute: Hashable { case home, workoutDetail(id: String) }\nrouter.push(.workoutDetail(id: \"42\"))"]]},
+ component:{t:"Thêm component vào kit",steps:[
+  ["Kiểm tra đã có chưa","Mở app Catalog xem component tương tự đã có chưa. Nếu chỉ khác màu hay kích thước thì thêm biến thể, không tạo mới.","open Catalog → mục Components"],
+  ["Tạo component dùng token","Component chỉ được dùng token semantic, không ghi mã màu.","public struct TKBadge: View {\n  @Environment(\\.titanTheme) private var theme\n  let text: String\n  public var body: some View {\n    Text(text).titanFont(.caption)\n      .padding(.horizontal, theme.spacing.sm)\n      .background(theme.color.surface.accentSoft, in: Capsule())\n  }\n}"],
+  ["Thêm vào Catalog và snapshot test","Mỗi component phải có trang trong Catalog và ảnh chụp ở cả 2 theme để không app nào bị vỡ giao diện.","bundle exec fastlane test app:Catalog"],
+  ["Ghi changelog, tăng phiên bản kit","Ghi vào CHANGELOG.md và gắn tag phiên bản mới.","git tag kit/v1.3.0"]]},
+ backend:{t:"Đổi backend",steps:[
+  ["Viết adapter mới","Cài đặt lại đúng các protocol của kit bằng backend mới. Màn hình và Repository giữ nguyên.","final class RESTAuthService: AuthService { ... }\nfinal class RESTDataService: DataService { ... }"],
+  ["Chạy bộ test chung của protocol","Mỗi protocol có bộ test dùng chung, adapter mới phải qua hết.","bundle exec fastlane test app:App1"],
+  ["Đổi một dòng trong AppContainer","Composition Root chọn adapter mới.","// trước: auth: FirebaseAuthService()\nauth: RESTAuthService(api: api)"],
+  ["Chuyển dữ liệu người dùng","Di chuyển dữ liệu từ Firebase sang backend mới, chạy song song một thời gian rồi tắt Firebase.","(kịch bản migrate riêng cho từng app)"]]},
+ release:{t:"Phát hành TestFlight",steps:[
+  ["Chạy test","Lint, unit test và snapshot test phải xanh.","bundle exec fastlane test app:App1"],
+  ["Kiểm tra quy định App Store","Đi qua checklist trong Compliance.md: privacy manifest, ATT, xóa tài khoản, khôi phục giao dịch.","docs/modules/Compliance.md"],
+  ["Đẩy lên TestFlight","fastlane tăng build number, build bản Staging và tải lên.","bundle exec fastlane beta app:App1"],
+  ["Phát hành chính thức","Gắn tag, fastlane build bản Prod và gửi Apple duyệt.","git tag app1/v1.0.0 && bundle exec fastlane release app:App1"]]}
+};
+let gk="create";
+const G={name:"FitNow",company:"titan",color:"teal",figma:false,svc:{Auth:true,Purchase:true,Ads:true,Analytics:true,Push:false,RemoteConfig:true}};
+function renderGuideSeg(){const el=document.getElementById("guideSeg");el.innerHTML=Object.entries(GUIDES).map(([k,g])=>`<button type="button" data-g="${k}" aria-pressed="${k===gk}">${g.t}</button>`).join("");el.querySelectorAll("button").forEach(b=>b.onclick=()=>{gk=b.dataset.g;renderGuideSeg();renderGuide()})}
+function stepsHTML(st){return `<div class="gsteps">${st.map((s,i)=>`<div class="gstep"><div class="dot">${i+1}</div><div style="min-width:0"><h3>${s[0]}</h3><p>${s[1]}</p><pre class="term">${esc(s[2])}</pre></div></div>`).join("")}</div>`}
+const slug=s=>(s||"MyApp").replace(/[^A-Za-z0-9]/g,"")||"MyApp";
+function renderGuide(){
+  const body=document.getElementById("guideBody");
+  if(gk!=="create"){body.innerHTML=stepsHTML(GUIDES[gk].steps);return}
+  body.innerHTML=`<div class="gform"><div class="card">
+    <h3>Thử tạo một app</h3><p class="sub" style="margin-bottom:14px">Điền thông tin, bên phải sẽ hiện lệnh cần chạy và những gì kit sinh ra. Đây là mô phỏng, chưa tạo gì thật.</p>
+    <div class="field"><label for="gName">Tên app</label><input type="text" id="gName" value="${esc(G.name)}"></div>
+    <div class="field"><label for="gCo">Tên công ty (cho bundle id)</label><input type="text" id="gCo" value="${esc(G.company)}"></div>
+    <div class="field"><span>Màu chủ đạo</span><div class="swatches" id="gSw"></div></div>
+    <div class="field"><span>Dịch vụ cần dùng</span><div class="checks" id="gSvc"></div></div>
+    <div class="field"><label style="display:flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" id="gFig" ${G.figma?"checked":""}> App có design Figma riêng</label></div>
+  </div><div id="gOut" style="min-width:0"></div></div>`;
+  document.getElementById("gName").oninput=e=>{G.name=e.target.value;renderGOut()};
+  document.getElementById("gCo").oninput=e=>{G.company=e.target.value;renderGOut()};
+  document.getElementById("gFig").onchange=e=>{G.figma=e.target.checked;renderGOut()};
+  const sw=()=>{const el=document.getElementById("gSw");el.innerHTML=Object.entries(brand).map(([k,c])=>`<button type="button" class="sw" style="background:${c}" aria-label="${k}" aria-pressed="${G.color===k}"></button>`).join("");el.querySelectorAll(".sw").forEach(b=>b.onclick=()=>{G.color=b.getAttribute("aria-label");sw();renderGOut()})};sw();
+  const sv=document.getElementById("gSvc");sv.innerHTML=Object.keys(G.svc).map(k=>`<label><input type="checkbox" data-s="${k}" ${G.svc[k]?"checked":""}> ${k}</label>`).join("");
+  sv.querySelectorAll("input").forEach(i=>i.onchange=()=>{G.svc[i.dataset.s]=i.checked;renderGOut()});
+  renderGOut();
+}
+function renderGOut(){
+  const n=slug(G.name), co=(G.company||"company").toLowerCase().replace(/[^a-z0-9]/g,"")||"company", bid=`com.${co}.${n.toLowerCase()}`;
+  const on=Object.keys(G.svc).filter(k=>G.svc[k]);
+  const c=brand[G.color];
+  const tree=`Apps/<span class="n">${n}</span>/
+├── Sources/
+│   ├── ${n}App.swift          <span style="color:var(--muted)"># điểm khởi động</span>
+│   ├── AppContainer.swift    <span style="color:var(--muted)"># chọn adapter, bật dịch vụ</span>
+│   ├── AppConfig.swift
+│   └── Features/Home/        <span style="color:var(--muted)"># màn hình đầu tiên mẫu</span>
+├── Theme/${n}Theme.swift      <span style="color:var(--muted)"># màu ${G.color}${G.figma?" + token Figma":""}</span>
+├── Resources/
+│   ├── Assets.xcassets
+│   ├── Localizable.xcstrings
+│   └── PrivacyInfo.xcprivacy
+└── Config/{Dev,Staging,Prod}.xcconfig`;
+  const cfg=`struct AppConfig {
+  static let appName = "${esc(G.name||n)}"
+  static let bundleId = "${bid}"
+  static let services: Set<TitanService> = [${on.map(s=>"."+s.charAt(0).toLowerCase()+s.slice(1)).join(", ")}]
+}
+
+enum ${n}Theme {
+  static func make() -> Theme {
+    Theme.base.branded(primary: Color(hex: "${c}"))${G.figma?"\n      .overriding(with: FigmaTokens.${n.toLowerCase()})":""}
+  }
+}`;
+  document.getElementById("gOut").innerHTML=`<div class="gsteps">
+   <div class="gstep"><div class="dot">1</div><div style="min-width:0"><h3>Tạo app từ mẫu</h3><p>Một lệnh tạo đủ thư mục, cấu hình và màn hình mẫu.</p><pre class="term"><span class="p">$</span> tuist scaffold NewApp --name ${n} --bundle-id ${bid}
+<span class="c">✔ Đã tạo Apps/${n}</span></pre></div></div>
+   <div class="gstep"><div class="dot">2</div><div style="min-width:0"><h3>Điền khóa bí mật</h3><p>Copy file mẫu rồi điền khóa Firebase${G.svc.Ads?", AdMob":""}. File này không được đưa lên git.</p><pre class="term"><span class="p">$</span> cp Apps/${n}/Config/Secrets.example.xcconfig Apps/${n}/Config/Secrets.xcconfig</pre></div></div>
+   <div class="gstep"><div class="dot">3</div><div style="min-width:0"><h3>Sinh project và mở Xcode</h3><p>Tuist chỉ kéo vào các module bạn đã chọn: ${on.length?on.map(s=>"Titan"+s).join(", "):"không có dịch vụ nào"}.</p><pre class="term"><span class="p">$</span> tuist install && tuist generate ${n}
+<span class="c">✔ ${n}.xcworkspace đã sẵn sàng</span></pre></div></div>
+   <div class="gstep"><div class="dot">4</div><div style="min-width:0"><h3>Kit sinh ra những file này</h3><pre class="tree">${tree}</pre></div></div>
+   <div class="gstep"><div class="dot">5</div><div style="min-width:0"><h3>Cấu hình được điền sẵn</h3><pre class="term">${cfg}</pre></div></div>
+   <div class="gstep"><div class="dot">6</div><div style="min-width:0"><h3>Chạy app</h3><p>Bấm Run trong Xcode. App mở ra với ${["màn hình chào","giới thiệu",G.svc.Auth?"đăng nhập":null,G.svc.Purchase?"mua gói Pro":null,"cài đặt"].filter(Boolean).join(", ")} lấy sẵn từ kit, đúng màu bạn chọn. Việc còn lại là viết màn hình riêng của ${esc(G.name||n)} (xem "Thêm màn hình").</p></div></div>
+  </div>`;
+}
+tabs.forEach(t=>t.onclick=()=>show(t.dataset.tab));
+renderStack();renderInspector();renderPatterns();swatches();seg("fontSeg",fonts,"f");seg("radiusSeg",radii,"r");seg("modeSeg",{"Sáng":1,"Tối":1},"m");applyTheme();renderBackend();renderFlow();renderPlan();renderDocs();renderScenario();renderGuideSeg();renderGuide();
+const h=(location.hash||"").slice(1);show(tabs.some(t=>t.dataset.tab===h)?h:"start");
+</script>
