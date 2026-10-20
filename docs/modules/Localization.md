@@ -31,25 +31,28 @@ flowchart LR
 
 ## 4. API chính
 
-Service:
+Service (một class cụ thể, test được trực tiếp bằng `UserDefaults(suiteName:)`):
 
 ```swift
 @MainActor
-public protocol LocalizationService: AnyObject, ObservableObject {
-    var currentLanguage: Language { get }
-    var supportedLanguages: [Language] { get }
-    var locale: Locale { get }
-    func setLanguage(_ language: Language)
-    func string(_ key: String, table: StringTable) -> String
+public final class LocalizationService: ObservableObject {
+    @Published public private(set) var currentLanguage: Language
+    public let supportedLanguages: [Language]
+    public var locale: Locale { get }
+    public var formatter: TKFormatter { get }
+
+    // Ngôn ngữ đã lưu → ngôn ngữ máy nếu app hỗ trợ → defaultLanguage
+    public init(supported: [String], defaultLanguage: String,
+                preferredLanguages: [String] = Locale.preferredLanguages,
+                defaults: UserDefaults = .standard)
+    public func setLanguage(_ language: Language)   // lưu lại, vẽ lại giao diện
+    public func string(_ key: String) -> String
 }
 
 public struct Language: Hashable, Sendable, Identifiable {
     public let code: String          // "vi", "en"
-    public var id: String { code }
-    public var displayName: String   // tên bằng chính ngôn ngữ đó
+    public var displayName: String   // tên bằng chính ngôn ngữ đó: "Tiếng Việt", "English"
 }
-
-public enum StringTable: Sendable { case app, kit }
 ```
 
 Thứ tự tra chuỗi: bảng của app trước, không có thì dùng bảng của kit, không có nữa thì trả về chính key. Nhờ vậy app ghi đè được chuỗi của kit chỉ bằng cách thêm cùng key vào catalog của mình.
@@ -60,7 +63,10 @@ Chuỗi trong kit dùng hằng có kiểu để tránh gõ sai:
 public enum KitStrings {
     public static let retry = "kit.common.retry"
     public static let offlineTitle = "kit.error.offline.title"
+    // ...
+    public static func string(_ key: String, locale: Locale) -> String   // app → kit → key
 }
+public extension TitanError { var messageKey: String }   // "kit.error.offline", ...
 ```
 
 Định dạng:
@@ -136,10 +142,11 @@ Quy ước key: `<màn hình>.<thành phần>.<vai trò>`, ví dụ `login.butto
 
 ## 9. Checklist cho App 1
 
-- [ ] Chốt danh sách ngôn ngữ của App 1 (đề xuất: `vi`, `en`).
-- [ ] Tạo `Localizable.xcstrings` và `InfoPlist.xcstrings` trong `Apps/App1/Resources/`.
+- [x] Chốt danh sách ngôn ngữ của App 1: `vi`, `en` (trong `AppConfig.languages`).
+- [x] Tạo `Localizable.xcstrings` trong `Apps/Dolingo/Resources/`.
+- [ ] Tạo `InfoPlist.xcstrings` khi có câu xin quyền đầu tiên.
 - [ ] Dịch tên app và mọi câu xin quyền.
-- [ ] Gắn `LocalizationService` và `\.locale` ở gốc giao diện.
+- [x] Gắn `LocalizationService` và `\.locale` ở gốc giao diện (`LocalizedRoot` trong `DolingoApp.swift`).
 - [ ] Kiểm tra đổi ngôn ngữ trong Settings cập nhật toàn bộ màn hình.
 - [ ] Kiểm tra định dạng ngày và tiền ở cả hai ngôn ngữ.
 - [ ] Không còn chuỗi cứng tiếng Việt hay tiếng Anh trong code.

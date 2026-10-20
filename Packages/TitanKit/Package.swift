@@ -31,7 +31,7 @@ let package = Package(
         .target(name: "TitanStorage", dependencies: foundation),
 
         // UI
-        .target(name: "TitanDesignSystem", dependencies: foundation),
+        .target(name: "TitanDesignSystem", dependencies: foundation + ["TitanLocalization"]),
         .target(name: "TitanNavigation", dependencies: foundation),
 
         // Services
@@ -41,7 +41,7 @@ let package = Package(
         .target(name: "TitanAnalytics", dependencies: foundation),
         .target(name: "TitanPush", dependencies: foundation + ["TitanNavigation"]),
         .target(name: "TitanRemoteConfig", dependencies: foundation),
-        .target(name: "TitanLocalization", dependencies: foundation),
+        .target(name: "TitanLocalization", dependencies: foundation, resources: [.process("Resources")]),
 
         // Ready-made screens
         .target(
@@ -56,6 +56,8 @@ let package = Package(
         .testTarget(name: "TitanNetworkingTests", dependencies: ["TitanCore", "TitanNetworking"]),
         .testTarget(name: "TitanStorageTests", dependencies: ["TitanCore", "TitanStorage"]),
         .testTarget(name: "TitanDesignSystemTests", dependencies: ["TitanDesignSystem"]),
+        .testTarget(name: "TitanNavigationTests", dependencies: ["TitanNavigation"]),
+        .testTarget(name: "TitanLocalizationTests", dependencies: ["TitanCore", "TitanLocalization"]),
 
         .testTarget(
             name: "TitanKitTests",

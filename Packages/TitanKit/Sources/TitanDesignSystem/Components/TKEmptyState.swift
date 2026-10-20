@@ -1,5 +1,6 @@
 import SwiftUI
 import TitanCore
+import TitanLocalization
 
 /// Centered icon, title, message and an optional button. Used for empty lists and errors.
 public struct TKEmptyState: View {
@@ -61,22 +62,27 @@ public struct TKEmptyState: View {
 public struct TKErrorView: View {
     private let error: TitanError
     private let retry: (() -> Void)?
+    @Environment(\.locale) private var locale
 
-    /// - Parameter retry: shown as "Thử lại" when given.
+    /// - Parameter retry: shown as a "Try again" button when given.
     public init(error: TitanError, retry: (() -> Void)? = nil) {
         self.error = error
         self.retry = retry
     }
 
     public var body: some View {
-        // Kit strings move to TitanLocalization in phase 3.
+        let offline = error == .network(.offline)
         TKEmptyState(
-            icon: Image(systemName: error == .network(.offline) ? "wifi.slash" : "exclamationmark.triangle"),
-            title: Text(error == .network(.offline) ? "Mất kết nối" : "Có lỗi xảy ra"),
-            message: Text(error.userMessage),
-            actionTitle: retry == nil ? nil : Text("Thử lại"),
+            icon: Image(systemName: offline ? "wifi.slash" : "exclamationmark.triangle"),
+            title: kitText(offline ? KitStrings.offlineTitle : KitStrings.errorTitle),
+            message: kitText(error.messageKey),
+            actionTitle: retry == nil ? nil : kitText(KitStrings.retry),
             action: retry
         )
+    }
+
+    private func kitText(_ key: String) -> Text {
+        Text(verbatim: KitStrings.string(key, locale: locale))
     }
 }
 
