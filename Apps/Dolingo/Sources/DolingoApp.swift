@@ -1,4 +1,5 @@
 import SwiftUI
+import TitanCore
 
 @main
 struct DolingoApp: App {
@@ -8,6 +9,9 @@ struct DolingoApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(container)
+                .environment(\.container, container)
+                .environment(\.logger, container.logger)
+                .environment(\.imageCache, container.imageCache)
         }
     }
 }

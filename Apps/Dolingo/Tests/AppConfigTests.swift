@@ -1,4 +1,5 @@
 import XCTest
+import TitanCore
 @testable import Dolingo
 
 final class AppConfigTests: XCTestCase {

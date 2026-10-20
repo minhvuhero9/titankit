@@ -90,6 +90,8 @@ public final class NetworkMonitor: ObservableObject {
 ```
 
 Ghi chú:
+- Endpoint không có body trả về thì dùng `typealias Response = EmptyResponse`.
+- Interceptor nào chỉ dành cho request cần đăng nhập thì trả `appliesOnlyToAuthenticatedRequests = true` (như `AuthInterceptor`); client tự bỏ qua nó khi `requiresAuth = false`.
 - `JSONDecoder.titan` dùng `convertFromSnakeCase` và ngày ISO8601.
 - `AuthInterceptor` gặp 401 thì gọi `refreshToken()` một lần rồi gửi lại; vẫn 401 thì ném `.unauthorized`.
 - `RetryInterceptor` chỉ retry lỗi mạng, timeout và 5xx; chờ `baseDelay * 2^n` (exponential backoff).

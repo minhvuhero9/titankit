@@ -37,13 +37,15 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** có lớp nền mà mọi module khác dựa vào.
 
-- [ ] TitanCore: logger, `LoadState`, lỗi chung, `AppEnvironment`, tiện ích.
-- [ ] TitanNetworking: `Endpoint`, client async, interceptor (token, retry, log), theo dõi mất mạng.
-- [ ] TitanStorage: UserDefaults có kiểu, Keychain, cache file, cache ảnh.
-- [ ] Bản Mock cho mọi protocol.
-- [ ] `AppContainer.swift` của App1 tạo các service nền.
+- [x] TitanCore: logger, `LoadState`, lỗi chung, `AppEnvironment`, tiện ích.
+- [x] TitanNetworking: `Endpoint`, client async, interceptor (token, retry, log), theo dõi mất mạng.
+- [x] TitanStorage: UserDefaults có kiểu, Keychain, cache file, cache ảnh.
+- [x] Bản Mock cho mọi protocol.
+- [x] `AppContainer.swift` của App1 tạo các service nền.
 
 **Xong khi:** các module có unit test chạy trên CI; App1 gọi được một API mẫu qua Networking.
+
+**Thực tế:** làm trong PR #2. API mẫu là `AppStatusRepository` (`GET /v1/app-status`), hiện được test bằng `MockAPIClient` vì backend chưa có.
 
 **Đọc:** [Core.md](modules/Core.md), [Networking.md](modules/Networking.md), [Storage.md](modules/Storage.md).
 

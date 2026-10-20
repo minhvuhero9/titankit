@@ -68,7 +68,7 @@ public struct OSLogger: Logging {
 public enum AppEnvironment: String, Sendable {
     case dev, staging, prod
     public static var current: AppEnvironment {
-        let raw = Bundle.main.object(forInfoDictionaryKey: "APP_ENV") as? String
+        let raw = Bundle.main.object(forInfoDictionaryKey: "TitanAppEnvironment") as? String
         return AppEnvironment(rawValue: raw ?? "") ?? .dev
     }
     public var isProduction: Bool { self == .prod }
@@ -141,7 +141,7 @@ do { try await repo.load() }
 catch let error as TitanError { state = .failed(error) }
 ```
 
-`APP_ENV` được đặt trong `Config/{Dev,Staging,Prod}.xcconfig` và khai báo trong Info.plist.
+`APP_ENV` được đặt trong `Config/{Dev,Staging,Prod}.xcconfig`, rồi đưa vào Info.plist dưới khóa `TitanAppEnvironment`. Ngoài ra TitanCore có `LoadState` (idle, loading, loaded, failed) cho trạng thái tải của màn hình.
 
 ## 8. Test
 
@@ -158,9 +158,9 @@ func testRetryableOnlyForNetwork() {
 
 ## 9. Checklist cho App 1
 
-- [ ] Thêm `APP_ENV` vào 3 file xcconfig và Info.plist
-- [ ] Tạo `AppContainer` tuân theo `DependencyContainer`
-- [ ] Inject container qua `.environment(\.container, ...)` ở root
-- [ ] Chọn logger: debug cho dev/staging, warning cho prod
+- [x] Thêm `APP_ENV` vào 3 file xcconfig và khóa `TitanAppEnvironment` trong Info.plist
+- [x] Tạo `AppContainer` tuân theo `DependencyContainer`
+- [x] Inject container qua `.environment(\.container, ...)` ở root
+- [x] Chọn logger: debug cho dev/staging, warning cho prod
 - [ ] Mọi Repository chuyển lỗi về `TitanError` trước khi trả lên ViewModel
 - [ ] Không thêm extension riêng của app vào TitanCore
