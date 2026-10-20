@@ -1,5 +1,6 @@
 import SwiftUI
 import TitanCore
+import TitanDesignSystem
 
 @main
 struct DolingoApp: App {
@@ -12,6 +13,7 @@ struct DolingoApp: App {
                 .environment(\.container, container)
                 .environment(\.logger, container.logger)
                 .environment(\.imageCache, container.imageCache)
+                .titanTheme(DolingoTheme.theme)
         }
     }
 }

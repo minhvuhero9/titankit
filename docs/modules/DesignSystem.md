@@ -34,68 +34,76 @@ flowchart LR
 
 ## 4. API chính
 
+> Trạng thái: giai đoạn 2a xong phần token và theme (code thật bên dưới). Component `TK*` làm ở giai đoạn 2b.
+
 ```swift
 // Primitive: giá trị thô, không mang ý nghĩa
-public struct ColorScale: Sendable { public let shades: [Int: Color] } // 50...900
-
-// Semantic: dùng trong component
-public struct ColorTokens: Sendable {
-    public var actionPrimary: Color      // color.action.primary
-    public var actionOnPrimary: Color
-    public var surfaceBackground: Color
-    public var surfaceCard: Color
-    public var textPrimary: Color
-    public var textSecondary: Color
-    public var feedbackError: Color
-    public var feedbackSuccess: Color
+public struct RGBA: Hashable, Sendable {            // màu thô, tính được độ tương phản
+    public init(hex: UInt32, alpha: Double = 1)
+    public func contrast(with other: RGBA) -> Double  // tỉ lệ WCAG, 1...21
+    public var readableForeground: RGBA               // trắng hoặc đen, cái nào dễ đọc hơn
+}
+public struct AdaptiveColor: Hashable, Sendable {   // một màu cho sáng, một màu cho tối
+    public init(light: RGBA, dark: RGBA)
+    public init(_ both: RGBA)
+    public var color: Color                           // tự đổi theo dark mode
+}
+public struct ColorScale: Hashable, Sendable {      // 10 bậc 50...900
+    public init(_ hexes: [UInt32])                    // dán thẳng từ trang Colors của Figma
+    public subscript(step: Int) -> RGBA
 }
 
-public enum TextRole: CaseIterable, Sendable { case display, title, headline, body, caption }
-public struct Typography: Sendable {
-    public var fontFamily: String?                 // nil = font hệ thống
-    public func font(_ role: TextRole) -> Font { /* dùng Font.custom(relativeTo:) */ .body }
+// Semantic: component chỉ dùng tầng này
+public struct ColorTokens: Hashable, Sendable {
+    // action: primary, onPrimary, secondary, onSecondary, disabled, onDisabled
+    // surface: background, card, input, border
+    // text: primary, secondary, disabled
+    // feedback: success, warning, error, info
+}
+public struct ColorTokensPatch { /* cùng các field, tất cả optional */ }
+
+public enum TextRole { case display, title1, title2, title3, headline, body, callout, caption }
+public struct TextStyle { size, weight, lineHeight /* 1.4 = 140% */, tracking }
+public struct Typography {
+    public var fontFamily: String?                    // nil = font hệ thống
+    public func font(_ role: TextRole) -> Font        // co giãn theo Dynamic Type
 }
 
-public enum Spacing: CGFloat, Sendable { case xs = 4, sm = 8, md = 16, lg = 24, xl = 32 }
+public enum Spacing { xxs 4, xs 8, sm 12, md 16, lg 24, xl 32, xxl 48 }
+public struct Radius { sm, md, lg; static .sharp, .rounded, .soft, full }
 
-public struct Theme: Sendable {
-    public var colors: ColorTokens        // mỗi Color có biến thể light/dark
+public struct Theme: Hashable, Sendable {
+    public var colors: ColorTokens
     public var typography: Typography
-    public var radius: Radius             // sm, md, lg
-    public var logo: Image?
-
+    public var radius: Radius
+    public var logoName: String?
     public static let base: Theme
     public func merged(with patch: ThemePatch) -> Theme   // lớp sau thắng lớp trước
 }
-
-public struct ThemePatch: Sendable {      // mọi field optional
-    public var colors: ColorTokensPatch?
-    public var fontFamily: String?
-    public var radius: Radius?
-    public var logo: Image?
-}
+public struct ThemePatch { colors?, fontFamily?, textStyles?, radius?, logoName? }
 
 public enum PaletteGenerator {
-    /// Sinh ColorTokens light + dark từ một màu brand (thang 50...900 theo HSL)
-    public static func tokens(from brand: Color) -> ColorTokens
+    public static func scale(from brand: RGBA) -> ColorScale     // 1 màu → 10 bậc
+    public static func tokens(from brand: RGBA) -> ColorTokens   // 1 màu → đủ màu sáng + tối
 }
 
-public extension EnvironmentValues { var theme: Theme { get set } }
-public extension View { func titanTheme(_ theme: Theme) -> some View }
+public extension EnvironmentValues { var theme: Theme }
+public extension View {
+    func titanTheme(_ theme: Theme) -> some View      // gắn 1 lần ở gốc
+    func tkTextStyle(_ role: TextRole) -> some View   // font + giãn dòng + giãn chữ
+}
+```
 
-// Component mẫu
+Component dự kiến (giai đoạn 2b), kích thước nút lấy từ Figma: Large 65, Medium 58, Small 50, Extra Small 43; dáng bo góc hoặc viên thuốc (pill).
+
+```swift
 public struct TKButton: View {
-    public enum Style { case primary, secondary, ghost, destructive }
+    public enum Style { case primary, light, outline, bordered, elevated }
     public init(_ title: LocalizedStringKey, style: Style = .primary,
-                isLoading: Bool = false, action: @escaping () -> Void) { }
+                isLoading: Bool = false, action: @escaping () -> Void)
 }
 public struct TKErrorView: View {
-    public init(error: TitanError, retry: (() -> Void)? = nil) { }
-}
-public extension View {
-    func tkToast(_ message: Binding<TKToast.Message?>) -> some View
-    func tkSheet<Content: View>(isPresented: Binding<Bool>,
-                                @ViewBuilder content: () -> Content) -> some View
+    public init(error: TitanError, retry: (() -> Void)? = nil)
 }
 ```
 
@@ -144,32 +152,42 @@ Catalog/                        # app xem trước component và theme
 
 ## 7. App sử dụng thế nào
 
+Ví dụ thật: `Apps/Dolingo/Sources/Theme/DolingoTheme.swift`.
+
 ```swift
-// Apps/App1/Theme/App1Theme.swift
-enum App1Theme {
-    static let brand = ThemePatch(
-        colors: .init(from: PaletteGenerator.tokens(from: Color(hex: 0x3B5BFD))),
-        fontFamily: "Inter",
-        radius: .rounded,
-        logo: Image("Logo")
-    )
-    static let override = ThemePatch.fromGenerated(App1Tokens.self) // nếu có Figma riêng
-    static let theme = Theme.base.merged(with: brand).merged(with: override)
+// Cách 1: app chưa có design, chỉ có một màu thương hiệu
+let theme = Theme.base.merged(with: ThemePatch(
+    colors: ColorTokensPatch(PaletteGenerator.tokens(from: RGBA(hex: 0xFF6B00))),
+    radius: .soft
+))
+
+// Cách 2: app có Figma (như Dolingo): chỉ ghi đè những gì khác base
+enum DolingoTheme {
+    static let primary = ColorScale([0xEEEEFF, /* ... */ 0x5150FF])
+    static let brand: ThemePatch = {
+        var colors = ColorTokensPatch()
+        colors.actionPrimary = AdaptiveColor(primary[900])
+        colors.surfaceBackground = AdaptiveColor(light: .white, dark: RGBA(hex: 0x181A20))
+        // ...
+        return ThemePatch(colors: colors, fontFamily: "Urbanist",
+                          textStyles: [.display: TextStyle(size: 48, weight: .bold)],
+                          radius: .soft)
+    }()
+    static let theme = Theme.base.merged(with: brand)
 }
 
-// AppContainer.swift
-let theme = App1Theme.theme
-
-// App1App.swift
-RootView().titanTheme(container.theme)
+// DolingoApp.swift: gắn một lần ở gốc
+RootView().titanTheme(DolingoTheme.theme)
 
 // Trong màn hình
-TKButton("Tiếp tục", isLoading: vm.isLoading) { Task { await vm.submit() } }
-    .padding(.horizontal, Spacing.md.rawValue)
-Text("Xin chào").font(theme.typography.font(.title))
+@Environment(\.theme) private var theme
+Text("Xin chào")
+    .tkTextStyle(.display)
+    .foregroundStyle(theme.colors.textPrimary.color)
+    .padding(Spacing.md)
 ```
 
-Quy trình Figma: designer xuất JSON vào `Tokens/App1/` → chạy `Tools/tokengen` → file Swift sinh ra trong `Apps/App1/Theme/Generated/` → commit.
+Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng component. Script `Tools/tokengen` (sinh code tự động từ JSON Figma) để sau, vì tài khoản Figma hiện là bản free và chép tay 1 lần là đủ.
 
 ## 8. Test
 
@@ -180,10 +198,11 @@ Quy trình Figma: designer xuất JSON vào `Tokens/App1/` → chạy `Tools/tok
 
 ## 9. Checklist cho App 1
 
-- [ ] Chọn màu brand và sinh bảng màu bằng `PaletteGenerator`
-- [ ] Tạo `App1Theme` với lớp brand (font, bo góc, logo)
-- [ ] Nếu có Figma riêng: xuất JSON vào `Tokens/App1/` và chạy `Tools/tokengen`
-- [ ] Gắn `.titanTheme(...)` ở root view
+- [x] Lấy bảng màu Primary, Secondary, Greyscale, Dark, Alert từ Figma
+- [x] Tạo `DolingoTheme` với lớp brand (màu, font Urbanist, cỡ chữ, bo góc)
+- [x] Gắn `.titanTheme(...)` ở root view
+- [ ] Nhúng file font Urbanist vào app (hiện đang dùng font hệ thống thay thế)
+- [ ] Đối chiếu màu từng màn với ảnh Figma khi làm component
 - [ ] Kiểm tra mọi màn hình ở dark mode và Dynamic Type lớn
 - [ ] Không dùng mã màu hay cỡ chữ trực tiếp trong màn hình của app
 - [ ] Mở Catalog với theme App 1 để duyệt cùng designer

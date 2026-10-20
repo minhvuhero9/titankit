@@ -1,5 +1,6 @@
 import SwiftUI
 import TitanCore
+import TitanDesignSystem
 import TitanNetworking
 
 /// Temporary root screen. Replaced by Splash/Onboarding from TitanFeatures in phase 3.
@@ -14,26 +15,32 @@ struct RootView: View {
 private struct StatusList: View {
     let container: AppContainer
     @ObservedObject var network: NetworkMonitor
+    @Environment(\.theme) private var theme
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: Spacing.sm) {
             Text("Dolingo")
-                .font(.largeTitle.bold())
+                .tkTextStyle(.display)
+                .foregroundStyle(theme.colors.actionPrimary.color)
             Text("TitanKit \(container.kitVersion)")
-                .foregroundStyle(.secondary)
+                .tkTextStyle(.body)
+                .foregroundStyle(theme.colors.textSecondary.color)
             Text("Môi trường: \(container.config.environment.rawValue)")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .tkTextStyle(.callout)
+                .foregroundStyle(theme.colors.textSecondary.color)
             Label(network.isOnline ? "Đang có mạng" : "Mất mạng",
                   systemImage: network.isOnline ? "wifi" : "wifi.slash")
-                .font(.footnote)
-                .foregroundStyle(network.isOnline ? Color.secondary : Color.red)
+                .tkTextStyle(.callout)
+                .foregroundStyle(network.isOnline ? theme.colors.feedbackSuccess.color : theme.colors.feedbackError.color)
         }
-        .padding()
+        .padding(Spacing.md)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(theme.colors.surfaceBackground.color)
     }
 }
 
 #Preview {
     RootView()
         .environmentObject(AppContainer.preview())
+        .titanTheme(DolingoTheme.theme)
 }
