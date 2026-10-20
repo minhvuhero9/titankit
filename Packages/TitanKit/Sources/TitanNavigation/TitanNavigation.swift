@@ -1,4 +1,4 @@
-// Placeholder for phase 0. The module's real API is described in docs/modules.
+// Router, tabs and deep links. Each app declares its own `Route` enum.
 public enum TitanNavigationModule {
     public static let moduleName = "TitanNavigation"
 }

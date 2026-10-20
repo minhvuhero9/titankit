@@ -71,8 +71,11 @@ public final class TabRouter<Tab: Hashable & CaseIterable & Sendable, Route: Rou
 
 public protocol DeepLinkParser: Sendable {
     associatedtype Route: Routable
-    func route(from url: URL) -> DeepLink<Route>?
+    func link(from url: URL) -> DeepLink<Route>?
 }
+// Router.open(link): đóng sheet đang mở rồi push hoặc present theo link.presentation
+// TabRouter.select(tab): bấm lại tab đang chọn thì quay về màn đầu của tab
+// URL.deepLinkSegments(webHosts:): "dolingo://lesson/42" và "https://dolingo.app/lesson/42" đều ra ["lesson", "42"]
 public struct DeepLink<Route: Routable>: Sendable {
     public let route: Route
     public let presentation: Presentation   // .push, .sheet, .fullScreen
@@ -80,7 +83,7 @@ public struct DeepLink<Route: Routable>: Sendable {
 
 @MainActor
 public final class DeepLinkHandler<Parser: DeepLinkParser> {
-    public init(parser: Parser, onRoute: @escaping (DeepLink<Parser.Route>) -> Void) { }
+    public init(parser: Parser, onLink: @escaping @MainActor (DeepLink<Parser.Route>) -> Void) { }
     public func handle(_ url: URL) -> Bool   // false nếu URL không hợp lệ
 }
 ```
@@ -118,9 +121,8 @@ enum AppTab: CaseIterable { case home, history, profile }
 
 struct App1DeepLinkParser: DeepLinkParser {
     // app1://workout/123  hoặc  https://app1.example.com/workout/123
-    func route(from url: URL) -> DeepLink<AppRoute>? {
-        let parts = url.pathComponents.filter { $0 != "/" }
-        let segments = url.scheme == "app1" ? [url.host ?? ""] + parts : parts
+    func link(from url: URL) -> DeepLink<AppRoute>? {
+        let segments = url.deepLinkSegments(webHosts: ["app1.example.com"])
         switch segments.first {
         case "workout" where segments.count > 1:
             return DeepLink(route: .workoutDetail(id: segments[1]), presentation: .push)
@@ -133,7 +135,7 @@ struct App1DeepLinkParser: DeepLinkParser {
 // AppContainer.swift
 let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
 lazy var deepLinks = DeepLinkHandler(parser: App1DeepLinkParser()) { [tabs] link in
-    tabs.open(link.route, in: .home)
+    tabs.open(link, in: .home)
 }
 
 // Root view
@@ -156,17 +158,20 @@ Universal link: thêm Associated Domains `applinks:app1.example.com` trong entit
 
 ```swift
 @MainActor func testWorkoutLink() {
-    let link = App1DeepLinkParser().route(from: URL(string: "app1://workout/42")!)
+    let link = App1DeepLinkParser().link(from: URL(string: "app1://workout/42")!)
     XCTAssertEqual(link?.route, .workoutDetail(id: "42"))
 }
 ```
 
 ## 9. Checklist cho App 1
 
-- [ ] Khai báo `AppRoute` và `AppTab`
-- [ ] Viết `container.makeView(for:)` ánh xạ Route → View
-- [ ] Tạo `TabRouter` trong `AppContainer` và gắn vào root
-- [ ] Đăng ký URL scheme `app1` trong Info.plist
+Ví dụ thật: `Apps/Dolingo/Sources/Navigation/AppRoute.swift`, `AppContainer.makeView(for:)`, `RootView`.
+
+- [x] Khai báo `AppRoute` (hiện có `.catalog`, thêm dần theo màn hình)
+- [ ] Khai báo `AppTab` khi có màn Home thật
+- [x] Viết `container.makeView(for:)` ánh xạ Route → View
+- [x] Tạo `Router` trong `AppContainer` và gắn vào root (`TabRouter` khi có tab)
+- [x] Đăng ký URL scheme `dolingo` (trong `Project.swift`, mục `CFBundleURLTypes`)
 - [ ] Cấu hình Associated Domains và file `apple-app-site-association`
-- [ ] Viết `App1DeepLinkParser` và test cho từng URL
+- [x] Viết `DolingoDeepLinkParser` và test cho từng URL
 - [ ] Deep link tới màn cần đăng nhập: lưu lại, mở sau khi đăng nhập xong

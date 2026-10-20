@@ -1,5 +1,8 @@
 import SwiftUI
 import TitanCore
+import TitanDesignSystem
+import TitanLocalization
+import TitanNavigation
 import TitanNetworking
 import TitanStorage
 
@@ -14,6 +17,9 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let imageCache: any ImageCache
     let preferences: Preferences
     let networkMonitor: NetworkMonitor
+    let localization: LocalizationService
+    let router: Router<AppRoute>
+    let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
 
     init(
         config: AppConfig,
@@ -22,7 +28,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         dataCache: (any DataCache)? = nil,
         imageCache: (any ImageCache)? = nil,
         preferences: Preferences = Preferences(),
-        networkMonitor: NetworkMonitor? = nil
+        networkMonitor: NetworkMonitor? = nil,
+        languageDefaults: UserDefaults = .standard
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -39,6 +46,24 @@ final class AppContainer: ObservableObject, DependencyContainer {
         self.imageCache = imageCache ?? URLSessionImageCache.shared
         self.preferences = preferences
         self.networkMonitor = networkMonitor ?? NetworkMonitor()
+        localization = LocalizationService(
+            supported: AppConfig.languages,
+            defaultLanguage: AppConfig.defaultLanguage,
+            defaults: languageDefaults
+        )
+        let router = Router<AppRoute>()
+        self.router = router
+        deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
+            router.open(link)
+        }
+    }
+
+    /// The one place that turns a route into a screen.
+    @ViewBuilder
+    func makeView(for route: AppRoute) -> some View {
+        switch route {
+        case .catalog: TKCatalogView()
+        }
     }
 
     /// Container for tests and previews: no network, no Keychain, nothing written to disk.
@@ -50,7 +75,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             dataCache: InMemoryDataCache(),
             imageCache: MockImageCache(),
             preferences: Preferences(defaults: UserDefaults(suiteName: "preview") ?? .standard),
-            networkMonitor: NetworkMonitor(startMonitoring: false)
+            networkMonitor: NetworkMonitor(startMonitoring: false),
+            languageDefaults: UserDefaults(suiteName: "preview") ?? .standard
         )
     }
 

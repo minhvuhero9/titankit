@@ -1,4 +1,5 @@
 import SwiftUI
+import TitanLocalization
 
 /// Result of validating a field. The message shows under the field.
 public enum TKFieldStatus: Equatable, Sendable {
@@ -44,6 +45,7 @@ public struct TKTextField: View {
 
     @Environment(\.theme) private var theme
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.locale) private var locale
     @FocusState private var isFocused: Bool
     @State private var isRevealed = false
 
@@ -92,8 +94,7 @@ public struct TKTextField: View {
                             .frame(width: 20, height: 20)
                     }
                     .foregroundStyle(iconColor.color)
-                    // Kit strings move to TitanLocalization in phase 3.
-                    .accessibilityLabel(isRevealed ? "Ẩn mật khẩu" : "Hiện mật khẩu")
+                    .accessibilityLabel(KitStrings.string(isRevealed ? KitStrings.hidePassword : KitStrings.showPassword, locale: locale))
                 }
             }
             .padding(.horizontal, 20)

@@ -1,4 +1,4 @@
-// Placeholder for phase 0. The module's real API is described in docs/modules.
+// In-app language switching, kit strings that apps can override, and locale-aware formatting.
 public enum TitanLocalizationModule {
     public static let moduleName = "TitanLocalization"
 }

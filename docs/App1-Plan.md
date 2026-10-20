@@ -68,8 +68,8 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** App 1 chạy được luồng Splash → Onboarding → Login → Home (Home tạm) với Mock.
 
-- [ ] TitanNavigation: `Route`, Router, tab, sheet, deep link.
-- [ ] TitanLocalization: catalog kit, đổi ngôn ngữ, formatter.
+- [x] TitanNavigation: `Route`, Router, tab, sheet, deep link.
+- [x] TitanLocalization: catalog kit, đổi ngôn ngữ, formatter.
 - [ ] TitanFeatures: Splash, Onboarding, Login, Settings, Profile, Delete account, WebPage, Maintenance, Force update, StateView.
 - [ ] Paywall và Rate app prompt (nếu App 1 cần).
 - [ ] Mỗi màn hình có trang Catalog và snapshot test.

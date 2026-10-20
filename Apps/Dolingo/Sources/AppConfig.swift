@@ -8,6 +8,11 @@ struct AppConfig: Equatable, Sendable {
 
     static let current = AppConfig(infoDictionary: Bundle.main.infoDictionary ?? [:])
 
+    static let languages = ["vi", "en"]
+    static let defaultLanguage = "vi"
+    /// Custom URL scheme for deep links, registered in Project.swift.
+    static let urlScheme = "dolingo"
+
     init(environment: AppEnvironment, apiBaseURL: URL) {
         self.environment = environment
         self.apiBaseURL = apiBaseURL

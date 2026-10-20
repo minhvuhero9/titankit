@@ -6,7 +6,7 @@ let bundlePrefix = "com.titanstudio"
 
 let kitModules = [
     "TitanCore", "TitanNetworking", "TitanStorage",
-    "TitanDesignSystem", "TitanNavigation", "TitanFeatures",
+    "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanFeatures",
 ]
 
 let project = Project(
@@ -34,6 +34,11 @@ let project = Project(
                 "UILaunchScreen": [:],
                 "TitanAppEnvironment": "$(APP_ENV)",
                 "TitanAPIBaseURL": "$(API_BASE_URL)",
+                "CFBundleDevelopmentRegion": "vi",
+                "CFBundleLocalizations": ["vi", "en"],
+                "CFBundleURLTypes": [
+                    ["CFBundleURLName": "\(bundlePrefix).dolingo", "CFBundleURLSchemes": ["dolingo"]],
+                ],
             ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
@@ -47,7 +52,7 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .default,
             sources: ["Tests/**"],
-            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanDesignSystem"].map { .external(name: $0) }
+            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanDesignSystem", "TitanNavigation", "TitanLocalization"].map { .external(name: $0) }
         ),
     ],
     schemes: ["Dev", "Staging", "Prod"].map { env in
