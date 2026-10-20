@@ -1,4 +1,4 @@
-// Placeholder for phase 0. The module's real API is described in docs/modules.
+// Ready-made screens configured with a Config struct and callbacks. They never navigate on their own.
 public enum TitanFeaturesModule {
     public static let moduleName = "TitanFeatures"
 }

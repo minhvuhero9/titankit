@@ -58,6 +58,8 @@ let package = Package(
         .testTarget(name: "TitanDesignSystemTests", dependencies: ["TitanDesignSystem"]),
         .testTarget(name: "TitanNavigationTests", dependencies: ["TitanNavigation"]),
         .testTarget(name: "TitanLocalizationTests", dependencies: ["TitanCore", "TitanLocalization"]),
+        .testTarget(name: "TitanAuthTests", dependencies: ["TitanCore", "TitanAuth"]),
+        .testTarget(name: "TitanFeaturesTests", dependencies: ["TitanCore", "TitanAuth", "TitanLocalization", "TitanFeatures"]),
 
         .testTarget(
             name: "TitanKitTests",

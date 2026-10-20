@@ -79,7 +79,7 @@ final class TKFieldAppearanceTests: XCTestCase {
 
     func testDisabledHidesStatus() {
         let look = TKFieldAppearance.resolve(status: .error("Sai"), isFocused: false, isEnabled: false, colors: colors)
-        XCTAssertEqual(look.background, colors.actionDisabled)
+        XCTAssertEqual(look.background, colors.surfaceDisabled)
         XCTAssertNil(look.border)
         XCTAssertNil(look.messageTint)
     }

@@ -38,6 +38,7 @@ public enum PaletteGenerator {
             surfaceBackground: AdaptiveColor(light: .white, dark: neutral.dark1),
             surfaceCard: AdaptiveColor(light: .white, dark: neutral.dark2),
             surfaceInput: AdaptiveColor(light: neutral.grey50, dark: neutral.dark2),
+            surfaceDisabled: AdaptiveColor(light: neutral.grey200, dark: neutral.dark3),
             border: AdaptiveColor(light: neutral.grey200, dark: neutral.dark3),
             textPrimary: AdaptiveColor(light: neutral.grey900, dark: .white),
             textSecondary: AdaptiveColor(light: neutral.grey700, dark: neutral.grey300),

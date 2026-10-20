@@ -18,6 +18,8 @@ public struct ColorTokens: Hashable, Sendable {
     public var surfaceCard: AdaptiveColor
     /// Text fields, segmented controls and other filled inputs.
     public var surfaceInput: AdaptiveColor
+    /// Background of disabled inputs.
+    public var surfaceDisabled: AdaptiveColor
     public var border: AdaptiveColor
 
     public var textPrimary: AdaptiveColor
@@ -42,6 +44,7 @@ public struct ColorTokens: Hashable, Sendable {
         surfaceBackground: AdaptiveColor,
         surfaceCard: AdaptiveColor,
         surfaceInput: AdaptiveColor,
+        surfaceDisabled: AdaptiveColor,
         border: AdaptiveColor,
         textPrimary: AdaptiveColor,
         textSecondary: AdaptiveColor,
@@ -63,6 +66,7 @@ public struct ColorTokens: Hashable, Sendable {
         self.surfaceBackground = surfaceBackground
         self.surfaceCard = surfaceCard
         self.surfaceInput = surfaceInput
+        self.surfaceDisabled = surfaceDisabled
         self.border = border
         self.textPrimary = textPrimary
         self.textSecondary = textSecondary
@@ -88,6 +92,7 @@ public struct ColorTokensPatch: Hashable, Sendable {
     public var surfaceBackground: AdaptiveColor?
     public var surfaceCard: AdaptiveColor?
     public var surfaceInput: AdaptiveColor?
+    public var surfaceDisabled: AdaptiveColor?
     public var border: AdaptiveColor?
     public var textPrimary: AdaptiveColor?
     public var textSecondary: AdaptiveColor?
@@ -113,6 +118,7 @@ public struct ColorTokensPatch: Hashable, Sendable {
         surfaceBackground = tokens.surfaceBackground
         surfaceCard = tokens.surfaceCard
         surfaceInput = tokens.surfaceInput
+        surfaceDisabled = tokens.surfaceDisabled
         border = tokens.border
         textPrimary = tokens.textPrimary
         textSecondary = tokens.textSecondary
@@ -139,6 +145,7 @@ public extension ColorTokens {
         result.surfaceBackground = patch.surfaceBackground ?? surfaceBackground
         result.surfaceCard = patch.surfaceCard ?? surfaceCard
         result.surfaceInput = patch.surfaceInput ?? surfaceInput
+        result.surfaceDisabled = patch.surfaceDisabled ?? surfaceDisabled
         result.border = patch.border ?? border
         result.textPrimary = patch.textPrimary ?? textPrimary
         result.textSecondary = patch.textSecondary ?? textSecondary

@@ -1,4 +1,5 @@
 import SwiftUI
+import TitanAuth
 import TitanCore
 import TitanDesignSystem
 import TitanLocalization
@@ -18,6 +19,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let preferences: Preferences
     let networkMonitor: NetworkMonitor
     let localization: LocalizationService
+    let auth: any AuthService
+    let flow: AppFlow
     let router: Router<AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
 
@@ -29,7 +32,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         imageCache: (any ImageCache)? = nil,
         preferences: Preferences = Preferences(),
         networkMonitor: NetworkMonitor? = nil,
-        languageDefaults: UserDefaults = .standard
+        languageDefaults: UserDefaults = .standard,
+        auth: (any AuthService)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -51,6 +55,10 @@ final class AppContainer: ObservableObject, DependencyContainer {
             defaultLanguage: AppConfig.defaultLanguage,
             defaults: languageDefaults
         )
+        // Firebase adapter replaces the mock in phase 4.
+        let auth = auth ?? MockAuthService(delay: .milliseconds(600))
+        self.auth = auth
+        flow = AppFlow(auth: auth, preferences: preferences)
         let router = Router<AppRoute>()
         self.router = router
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in

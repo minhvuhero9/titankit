@@ -10,6 +10,28 @@ public enum KitStrings {
     public static let hidePassword = "kit.field.password.hide"
     public static let errorTitle = "kit.error.title"
     public static let offlineTitle = "kit.error.offline.title"
+    public static let back = "kit.common.back"
+    public static let loading = "kit.common.loading"
+
+    public enum Onboarding {
+        public static let getStarted = "kit.onboarding.getStarted"
+        public static let haveAccount = "kit.onboarding.haveAccount"
+    }
+
+    public enum Login {
+        public static let title = "kit.login.title"
+        public static let subtitle = "kit.login.subtitle"
+        public static let email = "kit.login.email"
+        public static let password = "kit.login.password"
+        public static let forgotPassword = "kit.login.forgotPassword"
+        public static let orContinueWith = "kit.login.orContinueWith"
+        public static let submit = "kit.login.submit"
+        public static let noAccount = "kit.login.noAccount"
+        public static let signUp = "kit.login.signUp"
+        public static let invalidCredentials = "kit.login.error.credentials"
+        public static let invalidEmail = "kit.login.error.email"
+        public static let shortPassword = "kit.login.error.password"
+    }
 
     /// Looks the key up for `locale`: app bundle (Localizable) first, then the kit (TitanKit),
     /// then returns the key so a missing string is easy to spot.

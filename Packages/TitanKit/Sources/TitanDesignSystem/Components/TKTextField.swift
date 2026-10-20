@@ -35,9 +35,9 @@ public struct TKTextField: View {
         case multiline
     }
 
-    private let label: LocalizedStringKey?
+    private let label: Text?
     @Binding private var text: String
-    private let prompt: LocalizedStringKey?
+    private let prompt: Text?
     private let icon: Image?
     private let status: TKFieldStatus
     private let kind: Kind
@@ -46,6 +46,7 @@ public struct TKTextField: View {
     @Environment(\.theme) private var theme
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.locale) private var locale
+    @Environment(\.tkFieldStyle) private var fieldStyle
     @FocusState private var isFocused: Bool
     @State private var isRevealed = false
 
@@ -54,6 +55,20 @@ public struct TKTextField: View {
         _ label: LocalizedStringKey? = nil,
         text: Binding<String>,
         prompt: LocalizedStringKey? = nil,
+        icon: Image? = nil,
+        status: TKFieldStatus = .normal,
+        kind: Kind = .text,
+        size: TKButton.Size = .large
+    ) {
+        self.init(label: label.map { Text($0) }, text: text, prompt: prompt.map { Text($0) },
+                  icon: icon, status: status, kind: kind, size: size)
+    }
+
+    /// Takes ready Texts, e.g. kit strings already looked up for the current language.
+    public init(
+        label: Text?,
+        text: Binding<String>,
+        prompt: Text? = nil,
         icon: Image? = nil,
         status: TKFieldStatus = .normal,
         kind: Kind = .text,
@@ -74,7 +89,7 @@ public struct TKTextField: View {
 
         VStack(alignment: .leading, spacing: Spacing.xs) {
             if let label {
-                Text(label)
+                label
                     .tkTextStyle(.label)
                     .foregroundStyle(theme.colors.textPrimary.color)
             }
@@ -97,14 +112,23 @@ public struct TKTextField: View {
                     .accessibilityLabel(KitStrings.string(isRevealed ? KitStrings.hidePassword : KitStrings.showPassword, locale: locale))
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, fieldStyle == .filled ? 20 : 0)
             .padding(.vertical, kind == .multiline ? 20 : 0)
-            .frame(minHeight: kind == .multiline ? size.height * 2 : size.height, alignment: kind == .multiline ? .top : .center)
-            .background(look.background.color, in: shape)
-            .overlay {
-                if let border = look.border { shape.strokeBorder(border.color, lineWidth: 2) }
+            .frame(minHeight: kind == .multiline ? size.height * 2 : fieldHeight, alignment: kind == .multiline ? .top : .center)
+            .background {
+                if fieldStyle == .filled { shape.fill(look.background.color) }
             }
-            .contentShape(shape)
+            .overlay {
+                if fieldStyle == .filled {
+                    if let border = look.border { shape.strokeBorder(border.color, lineWidth: 2) }
+                } else {
+                    Rectangle()
+                        .fill((look.border ?? theme.colors.border).color)
+                        .frame(height: look.border == nil ? 1 : 2)
+                        .frame(maxHeight: .infinity, alignment: .bottom)
+                }
+            }
+            .contentShape(Rectangle())
             .onTapGesture { isFocused = true }
 
             if let message = status.message, let tint = look.messageTint {
@@ -117,22 +141,28 @@ public struct TKTextField: View {
 
     @ViewBuilder
     private var field: some View {
-        let promptText = prompt.map { Text($0).foregroundColor(theme.colors.textDisabled.color) }
+        let promptText = prompt?.foregroundColor(theme.colors.textDisabled.color)
+        let fieldLabel = label ?? Text(verbatim: "")
         switch kind {
         case .text:
-            TextField(label ?? "", text: $text, prompt: promptText)
+            TextField(text: $text, prompt: promptText) { fieldLabel }
         case .secure:
             if isRevealed {
-                TextField(label ?? "", text: $text, prompt: promptText)
+                TextField(text: $text, prompt: promptText) { fieldLabel }
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             } else {
-                SecureField(label ?? "", text: $text, prompt: promptText)
+                SecureField(text: $text, prompt: promptText) { fieldLabel }
             }
         case .multiline:
-            TextField(label ?? "", text: $text, prompt: promptText, axis: .vertical)
+            TextField(text: $text, prompt: promptText, axis: .vertical) { fieldLabel }
                 .lineLimit(3...8)
         }
+    }
+
+    /// Underlined fields have no box, so they sit tighter.
+    private var fieldHeight: CGFloat {
+        fieldStyle == .filled ? size.height : size.height - Spacing.md
     }
 
     private var iconColor: AdaptiveColor {
@@ -149,7 +179,7 @@ struct TKFieldAppearance: Equatable {
     var messageTint: AdaptiveColor?
 
     static func resolve(status: TKFieldStatus, isFocused: Bool, isEnabled: Bool, colors: ColorTokens) -> TKFieldAppearance {
-        guard isEnabled else { return TKFieldAppearance(background: colors.actionDisabled) }
+        guard isEnabled else { return TKFieldAppearance(background: colors.surfaceDisabled) }
         switch status {
         case .error:
             return TKFieldAppearance(background: colors.surfaceBackground, border: colors.feedbackError, messageTint: colors.feedbackError)
@@ -191,5 +221,29 @@ private struct TKFieldMessage: View {
             in: RoundedRectangle(cornerRadius: theme.radius.sm, style: .continuous)
         )
         .transition(.opacity)
+    }
+}
+
+/// How every TKTextField below draws itself. The Figma template uses `.filled` on its component page
+/// and `.underlined` on the sign-in screens.
+public enum TKFieldStyle: Sendable {
+    case filled
+    case underlined
+}
+
+private struct TKFieldStyleKey: EnvironmentKey {
+    static let defaultValue = TKFieldStyle.filled
+}
+
+public extension EnvironmentValues {
+    var tkFieldStyle: TKFieldStyle {
+        get { self[TKFieldStyleKey.self] }
+        set { self[TKFieldStyleKey.self] = newValue }
+    }
+}
+
+public extension View {
+    func tkFieldStyle(_ style: TKFieldStyle) -> some View {
+        environment(\.tkFieldStyle, style)
     }
 }

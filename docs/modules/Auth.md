@@ -35,6 +35,8 @@ sequenceDiagram
 
 ## 3. API chính
 
+> Trạng thái: giai đoạn 3b đã có `AuthUser`, `AuthProvider`, `AuthState`, `SignInMethod`, `Credentials` (kiểm tra email, mật khẩu) và bản rút gọn của `AuthService` (`currentUser()`, `signIn`, `signUp`, `sendPasswordReset`, `signOut`, `deleteAccount`, ném `TitanError` có kiểu), cùng `MockAuthService`. `stateStream`, `idToken`, `reauthenticate` và adapter Firebase làm ở giai đoạn 4.
+
 ```swift
 public struct AuthUser: Sendable, Equatable, Codable {
     public let id: String

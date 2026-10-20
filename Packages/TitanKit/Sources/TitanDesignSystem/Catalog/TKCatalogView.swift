@@ -44,7 +44,8 @@ public struct TKCatalogView: View {
         let swatches: [(String, AdaptiveColor)] = [
             ("actionPrimary", c.actionPrimary), ("actionPrimaryPressed", c.actionPrimaryPressed),
             ("actionSecondary", c.actionSecondary), ("actionNeutral", c.actionNeutral),
-            ("actionDisabled", c.actionDisabled), ("surfaceBackground", c.surfaceBackground),
+            ("actionDisabled", c.actionDisabled), ("surfaceDisabled", c.surfaceDisabled),
+            ("surfaceBackground", c.surfaceBackground),
             ("surfaceCard", c.surfaceCard), ("surfaceInput", c.surfaceInput), ("border", c.border),
             ("textPrimary", c.textPrimary), ("textSecondary", c.textSecondary), ("textDisabled", c.textDisabled),
             ("feedbackSuccess", c.feedbackSuccess), ("feedbackWarning", c.feedbackWarning),
