@@ -1,0 +1,2 @@
+// Values shared by every environment. Secrets live in Secrets.xcconfig (git-ignored).
+APP_DISPLAY_NAME = Dolingo

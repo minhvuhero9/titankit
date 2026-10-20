@@ -1,0 +1,7 @@
+#include "Shared.xcconfig"
+#include? "Secrets.xcconfig"
+
+APP_ENV = dev
+API_BASE_URL = https:/$()/api-dev.example.com
+BUNDLE_ID_SUFFIX = .dev
+APP_DISPLAY_NAME = Dolingo Dev
