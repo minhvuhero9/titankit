@@ -29,10 +29,13 @@ enum DolingoTheme {
         var colors = ColorTokensPatch()
         colors.actionPrimary = AdaptiveColor(primary[900])
         colors.actionOnPrimary = AdaptiveColor(.white)
-        colors.actionSecondary = AdaptiveColor(light: primary[50], dark: Dark.dark4)
+        colors.actionPrimaryPressed = AdaptiveColor(RGBA(hex: 0x4140CC))
+        colors.actionSecondary = AdaptiveColor(light: RGBA(hex: 0xF1F1FF), dark: Dark.dark4)
         colors.actionOnSecondary = AdaptiveColor(light: primary[900], dark: .white)
         colors.actionDisabled = AdaptiveColor(light: RGBA(hex: 0xD8D8D8), dark: RGBA(hex: 0x23252B))
         colors.actionOnDisabled = AdaptiveColor(light: greyscale[600], dark: greyscale[600])
+        colors.actionNeutral = AdaptiveColor(Dark.dark5)
+        colors.actionOnNeutral = AdaptiveColor(.white)
         colors.surfaceBackground = AdaptiveColor(light: .white, dark: Dark.dark1)
         colors.surfaceCard = AdaptiveColor(light: greyscale[50], dark: Dark.dark2)
         colors.surfaceInput = AdaptiveColor(light: greyscale[50], dark: Dark.dark2)
@@ -53,8 +56,12 @@ enum DolingoTheme {
                 .display: TextStyle(size: 48, weight: .bold, lineHeight: 1.4),
                 .headline: TextStyle(size: 18, weight: .bold, lineHeight: 1.4),
                 .body: TextStyle(size: 16, weight: .regular, lineHeight: 1.6, tracking: 0.2),
+                .callout: TextStyle(size: 14, weight: .regular, lineHeight: 1.6, tracking: 0.2),
+                .caption: TextStyle(size: 12, weight: .medium, lineHeight: 1.6, tracking: 0.2),
+                .label: TextStyle(size: 18, weight: .semibold, lineHeight: 1.6, tracking: 0.2),
             ],
-            radius: .soft
+            // Figma: alert notes 6, inputs and rounded buttons 10.
+            radius: Radius(sm: 6, md: 10, lg: 16)
         )
     }()
 

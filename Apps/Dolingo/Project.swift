@@ -47,7 +47,7 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .default,
             sources: ["Tests/**"],
-            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking"].map { .external(name: $0) }
+            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanDesignSystem"].map { .external(name: $0) }
         ),
     ],
     schemes: ["Dev", "Staging", "Prod"].map { env in

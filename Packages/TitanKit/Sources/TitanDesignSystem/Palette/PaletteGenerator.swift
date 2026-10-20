@@ -28,10 +28,13 @@ public enum PaletteGenerator {
         return ColorTokens(
             actionPrimary: AdaptiveColor(light: brand, dark: darkPrimary),
             actionOnPrimary: AdaptiveColor(light: brand.readableForeground, dark: darkPrimary.readableForeground),
+            actionPrimaryPressed: AdaptiveColor(light: primary[800], dark: primary[600]),
             actionSecondary: AdaptiveColor(light: primary[50], dark: neutral.dark3),
             actionOnSecondary: AdaptiveColor(light: primary[700], dark: primary[200]),
             actionDisabled: AdaptiveColor(light: neutral.grey200, dark: neutral.dark3),
             actionOnDisabled: AdaptiveColor(light: neutral.grey500, dark: neutral.grey600),
+            actionNeutral: AdaptiveColor(light: neutral.grey900, dark: neutral.dark3),
+            actionOnNeutral: AdaptiveColor(.white),
             surfaceBackground: AdaptiveColor(light: .white, dark: neutral.dark1),
             surfaceCard: AdaptiveColor(light: .white, dark: neutral.dark2),
             surfaceInput: AdaptiveColor(light: neutral.grey50, dark: neutral.dark2),

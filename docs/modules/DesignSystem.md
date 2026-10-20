@@ -94,32 +94,49 @@ public extension View {
 }
 ```
 
-Component dự kiến (giai đoạn 2b), kích thước nút lấy từ Figma: Large 65, Medium 58, Small 50, Extra Small 43; dáng bo góc hoặc viên thuốc (pill).
+Component (giai đoạn 2b). Kích thước và trạng thái lấy từ trang Button và Input Form của Figma.
 
 ```swift
-public struct TKButton: View {
-    public enum Style { case primary, light, outline, bordered, elevated }
-    public init(_ title: LocalizedStringKey, style: Style = .primary,
-                isLoading: Bool = false, action: @escaping () -> Void)
-}
-public struct TKErrorView: View {
-    public init(error: TitanError, retry: (() -> Void)? = nil)
-}
+// Nút: 7 kiểu, 4 cỡ (65 / 58 / 50 / 43), 2 dáng
+TKButton("Tiếp tục", style: .primary, size: .large, isLoading: vm.isSaving) { ... }
+TKButton("Bỏ qua", style: .light, leadingIcon: Image(systemName: "cart")) { ... }
+TKIconButton(Image(systemName: "plus"), accessibilityLabel: "Thêm") { ... }
+RootView().tkButtonShape(.pill)          // đổi dáng mặc định cho cả app
+
+// Ô nhập: thường, mật khẩu, nhiều dòng; trạng thái lỗi / hợp lệ
+TKTextField("Email", text: $email, prompt: "john@domain.com",
+            icon: Image(systemName: "envelope"), status: .error("Email không hợp lệ"))
+TKTextField("Mật khẩu", text: $password, kind: .secure)
+
+// Khối nội dung, thông báo, trạng thái
+TKCard { ... }
+.tkToast($toast)                          // toast = TKToast("Đã lưu", style: .success)
+TKAsyncContent(vm.state, retry: vm.reload) { items in ... }   // tự hiện loading / lỗi / rỗng
+TKCatalogView()                           // xem mọi token và component với theme hiện tại
 ```
+
+| Kiểu nút | Trông thế nào |
+| --- | --- |
+| `primary` | Nền màu thương hiệu, chữ trắng |
+| `light` | Nền tím nhạt, chữ màu thương hiệu |
+| `neutral` | Nền xám đậm, chữ trắng |
+| `outline` | Chỉ có viền màu thương hiệu |
+| `bordered` | Nền thẻ, viền xám (kiểu "Continue with Apple") |
+| `elevated` | Như primary, thêm bóng |
+| `threeD` | Như primary, có cạnh dưới đậm, bấm thì lún xuống |
 
 Danh sách component:
 
 | Component | Dùng cho |
 | --- | --- |
-| `TKButton` | Nút chính, phụ, ghost, hủy; có trạng thái loading |
-| `TKTextField` | Ô nhập có label, lỗi, icon, secure |
+| `TKButton`, `TKIconButton` | 7 kiểu, 4 cỡ, bo góc hoặc viên thuốc; có trạng thái loading và disabled |
+| `TKTextField` | Ô nhập có label, icon, mật khẩu, nhiều dòng, trạng thái lỗi / hợp lệ |
 | `TKCard` | Khối nội dung có nền, bo góc, bóng |
-| `TKNavBar` | Thanh tiêu đề tùy biến |
-| `TKSheet` | Bottom sheet theo theme |
+| `TKNavBar`, `TKSheet` | Để sau, làm khi màn hình cần |
 | `TKToast` | Thông báo ngắn tự ẩn |
 | `TKEmptyState` | Màn hình trống: icon, tiêu đề, nút hành động |
 | `TKErrorView` | Hiển thị `TitanError`, có nút thử lại (dùng cho offline) |
-| `TKLoading` | Spinner và skeleton |
+| `TKLoadingView`, `.tkSkeleton` | Spinner và khung xám nhấp nháy khi đang tải |
 | `TKAsyncContent` | Bọc nội dung theo trạng thái loading / loaded / empty / error, tự hiện TKLoading, TKEmptyState, TKErrorView |
 
 ## 5. Design pattern áp dụng và lý do
@@ -202,7 +219,8 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - [x] Tạo `DolingoTheme` với lớp brand (màu, font Urbanist, cỡ chữ, bo góc)
 - [x] Gắn `.titanTheme(...)` ở root view
 - [ ] Nhúng file font Urbanist vào app (hiện đang dùng font hệ thống thay thế)
-- [ ] Đối chiếu màu từng màn với ảnh Figma khi làm component
+- [x] Nút và ô nhập theo trang Button, Input Form của Figma
+- [ ] Ô chọn (dropdown), số điện thoại, ô mã PIN: làm cùng màn hình đăng nhập ở giai đoạn 3
 - [ ] Kiểm tra mọi màn hình ở dark mode và Dynamic Type lớn
 - [ ] Không dùng mã màu hay cỡ chữ trực tiếp trong màn hình của app
 - [ ] Mở Catalog với theme App 1 để duyệt cùng designer

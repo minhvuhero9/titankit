@@ -55,9 +55,9 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 - [x] Định nghĩa token semantic (màu, chữ, khoảng cách, bo góc). Bóng làm cùng component.
 - [x] Base theme sáng và tối.
-- [ ] Component `TK*` cơ bản: Button, TextField, Card, List row, Toast, Loading, Sheet.
-- [ ] App Catalog hiển thị mọi component với mọi theme.
-- [ ] Snapshot test cho từng component.
+- [x] Component `TK*` cơ bản: Button, TextField, Card, Toast, Loading, EmptyState, ErrorView, AsyncContent. List row và Sheet làm khi màn hình cần.
+- [x] Trang Catalog (`TKCatalogView`) hiển thị mọi component với theme của app; Dolingo mở từ màn hình đầu.
+- [ ] Snapshot test cho từng component (hiện có unit test cho màu và trạng thái; snapshot cần thêm thư viện, để sau).
 - [x] Lấy token Figma của App 1, tạo `DolingoTheme` (chép tay; `gen-tokens` để sau).
 
 **Xong khi:** Catalog chạy được với base theme và `App1Theme`; snapshot test xanh.

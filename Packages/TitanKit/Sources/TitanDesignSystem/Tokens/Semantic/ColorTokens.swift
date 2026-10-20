@@ -3,11 +3,16 @@
 public struct ColorTokens: Hashable, Sendable {
     public var actionPrimary: AdaptiveColor
     public var actionOnPrimary: AdaptiveColor
+    /// Primary while pressed, and the bottom edge of 3D buttons.
+    public var actionPrimaryPressed: AdaptiveColor
     /// Soft background for secondary buttons and chips.
     public var actionSecondary: AdaptiveColor
     public var actionOnSecondary: AdaptiveColor
     public var actionDisabled: AdaptiveColor
     public var actionOnDisabled: AdaptiveColor
+    /// Strong neutral button, dark in both modes.
+    public var actionNeutral: AdaptiveColor
+    public var actionOnNeutral: AdaptiveColor
 
     public var surfaceBackground: AdaptiveColor
     public var surfaceCard: AdaptiveColor
@@ -27,10 +32,13 @@ public struct ColorTokens: Hashable, Sendable {
     public init(
         actionPrimary: AdaptiveColor,
         actionOnPrimary: AdaptiveColor,
+        actionPrimaryPressed: AdaptiveColor,
         actionSecondary: AdaptiveColor,
         actionOnSecondary: AdaptiveColor,
         actionDisabled: AdaptiveColor,
         actionOnDisabled: AdaptiveColor,
+        actionNeutral: AdaptiveColor,
+        actionOnNeutral: AdaptiveColor,
         surfaceBackground: AdaptiveColor,
         surfaceCard: AdaptiveColor,
         surfaceInput: AdaptiveColor,
@@ -45,10 +53,13 @@ public struct ColorTokens: Hashable, Sendable {
     ) {
         self.actionPrimary = actionPrimary
         self.actionOnPrimary = actionOnPrimary
+        self.actionPrimaryPressed = actionPrimaryPressed
         self.actionSecondary = actionSecondary
         self.actionOnSecondary = actionOnSecondary
         self.actionDisabled = actionDisabled
         self.actionOnDisabled = actionOnDisabled
+        self.actionNeutral = actionNeutral
+        self.actionOnNeutral = actionOnNeutral
         self.surfaceBackground = surfaceBackground
         self.surfaceCard = surfaceCard
         self.surfaceInput = surfaceInput
@@ -67,10 +78,13 @@ public struct ColorTokens: Hashable, Sendable {
 public struct ColorTokensPatch: Hashable, Sendable {
     public var actionPrimary: AdaptiveColor?
     public var actionOnPrimary: AdaptiveColor?
+    public var actionPrimaryPressed: AdaptiveColor?
     public var actionSecondary: AdaptiveColor?
     public var actionOnSecondary: AdaptiveColor?
     public var actionDisabled: AdaptiveColor?
     public var actionOnDisabled: AdaptiveColor?
+    public var actionNeutral: AdaptiveColor?
+    public var actionOnNeutral: AdaptiveColor?
     public var surfaceBackground: AdaptiveColor?
     public var surfaceCard: AdaptiveColor?
     public var surfaceInput: AdaptiveColor?
@@ -89,10 +103,13 @@ public struct ColorTokensPatch: Hashable, Sendable {
     public init(_ tokens: ColorTokens) {
         actionPrimary = tokens.actionPrimary
         actionOnPrimary = tokens.actionOnPrimary
+        actionPrimaryPressed = tokens.actionPrimaryPressed
         actionSecondary = tokens.actionSecondary
         actionOnSecondary = tokens.actionOnSecondary
         actionDisabled = tokens.actionDisabled
         actionOnDisabled = tokens.actionOnDisabled
+        actionNeutral = tokens.actionNeutral
+        actionOnNeutral = tokens.actionOnNeutral
         surfaceBackground = tokens.surfaceBackground
         surfaceCard = tokens.surfaceCard
         surfaceInput = tokens.surfaceInput
@@ -112,10 +129,13 @@ public extension ColorTokens {
         var result = self
         result.actionPrimary = patch.actionPrimary ?? actionPrimary
         result.actionOnPrimary = patch.actionOnPrimary ?? actionOnPrimary
+        result.actionPrimaryPressed = patch.actionPrimaryPressed ?? actionPrimaryPressed
         result.actionSecondary = patch.actionSecondary ?? actionSecondary
         result.actionOnSecondary = patch.actionOnSecondary ?? actionOnSecondary
         result.actionDisabled = patch.actionDisabled ?? actionDisabled
         result.actionOnDisabled = patch.actionOnDisabled ?? actionOnDisabled
+        result.actionNeutral = patch.actionNeutral ?? actionNeutral
+        result.actionOnNeutral = patch.actionOnNeutral ?? actionOnNeutral
         result.surfaceBackground = patch.surfaceBackground ?? surfaceBackground
         result.surfaceCard = patch.surfaceCard ?? surfaceCard
         result.surfaceInput = patch.surfaceInput ?? surfaceInput
