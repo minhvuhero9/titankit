@@ -1,5 +1,6 @@
 import SwiftUI
 import TitanCore
+import TitanIcons
 
 /// Every token and component on one scrolling screen, drawn with the current theme.
 /// Push it from a debug menu to check an app's theme in light and dark mode.
@@ -10,6 +11,7 @@ public struct TKCatalogView: View {
     @State private var password = "secret123"
     @State private var note = ""
     @State private var toast: TKToast?
+    @State private var iconStyle = TKIconStyle.light
 
     public init() {}
 
@@ -18,6 +20,7 @@ public struct TKCatalogView: View {
             VStack(alignment: .leading, spacing: Spacing.xl) {
                 section("Màu") { colors }
                 section("Chữ") { typography }
+                section("Icon") { icons }
                 section("Nút") { buttons }
                 section("Ô nhập") { fields }
                 section("Thẻ và thông báo") { feedback }
@@ -36,6 +39,27 @@ public struct TKCatalogView: View {
                 .tkTextStyle(.title2)
                 .foregroundStyle(theme.colors.textPrimary.color)
             content()
+        }
+    }
+
+    private var icons: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            Picker("Kiểu", selection: $iconStyle) {
+                ForEach(TKIconStyle.allCases, id: \.self) { Text(verbatim: $0.rawValue).tag($0) }
+            }
+            .pickerStyle(.segmented)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: Spacing.sm)], spacing: Spacing.md) {
+                ForEach(TKIcon.allCases, id: \.self) { icon in
+                    VStack(spacing: Spacing.xxs) {
+                        Image(tk: icon, style: iconStyle)
+                            .foregroundStyle(theme.colors.textPrimary.color)
+                        Text(verbatim: icon.rawValue)
+                            .tkTextStyle(.caption)
+                            .foregroundStyle(theme.colors.textSecondary.color)
+                            .lineLimit(1).minimumScaleFactor(0.7)
+                    }
+                }
+            }
         }
     }
 
@@ -93,15 +117,15 @@ public struct TKCatalogView: View {
             }
             TKButton("Disabled") {}.disabled(true)
             TKButton("Loading", isLoading: true) {}
-            TKButton("Icon", leadingIcon: Image(systemName: "cart.fill"), trailingIcon: Image(systemName: "arrow.right")) {}
+            TKButton("Icon", leadingIcon: Image(tk: .buy, style: .bold), trailingIcon: Image(tk: .arrowRight)) {}
             ForEach(TKButton.Size.allCases, id: \.self) { size in
                 TKButton(LocalizedStringKey("\(size.rawValue) \(Int(size.height))"), size: size) {}
             }
             HStack(spacing: Spacing.sm) {
-                TKIconButton(Image(systemName: "plus"), accessibilityLabel: "Thêm") {}
-                TKIconButton(Image(systemName: "plus"), accessibilityLabel: "Thêm", style: .light) {}
-                TKIconButton(Image(systemName: "plus"), accessibilityLabel: "Thêm", style: .neutral) {}
-                TKIconButton(Image(systemName: "plus"), accessibilityLabel: "Thêm", style: .outline) {}
+                TKIconButton(Image(tk: .plus), accessibilityLabel: "Thêm") {}
+                TKIconButton(Image(tk: .plus), accessibilityLabel: "Thêm", style: .light) {}
+                TKIconButton(Image(tk: .plus), accessibilityLabel: "Thêm", style: .neutral) {}
+                TKIconButton(Image(tk: .plus), accessibilityLabel: "Thêm", style: .outline) {}
             }
         }
         .tkButtonShape(shape)
@@ -109,13 +133,13 @@ public struct TKCatalogView: View {
 
     private var fields: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
-            TKTextField("Email", text: $email, prompt: "Email", icon: Image(systemName: "envelope"))
-            TKTextField("Mật khẩu", text: $password, icon: Image(systemName: "lock"), kind: .secure)
-            TKTextField("Lỗi", text: .constant("john@doe"), icon: Image(systemName: "envelope"),
+            TKTextField("Email", text: $email, prompt: "Email", icon: Image(tk: .message))
+            TKTextField("Mật khẩu", text: $password, icon: Image(tk: .lock), kind: .secure)
+            TKTextField("Lỗi", text: .constant("john@doe"), icon: Image(tk: .message),
                         status: .error("Email không hợp lệ"))
-            TKTextField("Hợp lệ", text: .constant("john@doe.com"), icon: Image(systemName: "envelope"),
+            TKTextField("Hợp lệ", text: .constant("john@doe.com"), icon: Image(tk: .message),
                         status: .success("Email dùng được"))
-            TKTextField("Không sửa được", text: .constant("@JohnDoe"), icon: Image(systemName: "person"))
+            TKTextField("Không sửa được", text: .constant("@JohnDoe"), icon: Image(tk: .profile))
                 .disabled(true)
             TKTextField("Ghi chú", text: $note, prompt: "Viết vài dòng", kind: .multiline)
         }

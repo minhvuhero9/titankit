@@ -13,6 +13,7 @@ let package = Package(
         .library(name: "TitanCore", targets: ["TitanCore"]),
         .library(name: "TitanNetworking", targets: ["TitanNetworking"]),
         .library(name: "TitanStorage", targets: ["TitanStorage"]),
+        .library(name: "TitanIcons", targets: ["TitanIcons"]),
         .library(name: "TitanDesignSystem", targets: ["TitanDesignSystem"]),
         .library(name: "TitanNavigation", targets: ["TitanNavigation"]),
         .library(name: "TitanAuth", targets: ["TitanAuth"]),
@@ -31,7 +32,8 @@ let package = Package(
         .target(name: "TitanStorage", dependencies: foundation),
 
         // UI
-        .target(name: "TitanDesignSystem", dependencies: foundation + ["TitanLocalization"]),
+        .target(name: "TitanIcons", resources: [.process("Resources")]),
+        .target(name: "TitanDesignSystem", dependencies: foundation + ["TitanLocalization", "TitanIcons"]),
         .target(name: "TitanNavigation", dependencies: foundation),
 
         // Services
@@ -47,7 +49,7 @@ let package = Package(
         .target(
             name: "TitanFeatures",
             dependencies: foundation + [
-                "TitanDesignSystem", "TitanNavigation", "TitanAuth",
+                "TitanDesignSystem", "TitanIcons", "TitanNavigation", "TitanAuth",
                 "TitanPurchase", "TitanRemoteConfig", "TitanLocalization",
             ]
         ),
@@ -55,6 +57,7 @@ let package = Package(
         .testTarget(name: "TitanCoreTests", dependencies: ["TitanCore"]),
         .testTarget(name: "TitanNetworkingTests", dependencies: ["TitanCore", "TitanNetworking"]),
         .testTarget(name: "TitanStorageTests", dependencies: ["TitanCore", "TitanStorage"]),
+        .testTarget(name: "TitanIconsTests", dependencies: ["TitanIcons"]),
         .testTarget(name: "TitanDesignSystemTests", dependencies: ["TitanDesignSystem"]),
         .testTarget(name: "TitanNavigationTests", dependencies: ["TitanNavigation"]),
         .testTarget(name: "TitanLocalizationTests", dependencies: ["TitanCore", "TitanLocalization"]),
@@ -64,7 +67,7 @@ let package = Package(
         .testTarget(
             name: "TitanKitTests",
             dependencies: [
-                "TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem",
+                "TitanCore", "TitanNetworking", "TitanStorage", "TitanIcons", "TitanDesignSystem",
                 "TitanNavigation", "TitanAuth", "TitanPurchase", "TitanAds",
                 "TitanAnalytics", "TitanPush", "TitanRemoteConfig", "TitanLocalization",
                 "TitanFeatures",

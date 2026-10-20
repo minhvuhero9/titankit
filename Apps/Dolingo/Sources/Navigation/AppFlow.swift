@@ -49,6 +49,13 @@ final class AppFlow: ObservableObject {
         stage = .home
     }
 
+    /// Apple, Google and Facebook sign-in arrive with the Firebase adapter (phase 4).
+    /// Until then their buttons sign in as a guest so the flow can be tried end to end.
+    func signInWithSocial(_ provider: AuthProvider) async {
+        guard (try? await auth.signIn(.anonymous)) != nil else { return }
+        didSignIn()
+    }
+
     func signOut() async {
         try? await auth.signOut()
         stage = .login

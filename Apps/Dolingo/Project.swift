@@ -6,7 +6,7 @@ let bundlePrefix = "com.titanstudio"
 
 let kitModules = [
     "TitanCore", "TitanNetworking", "TitanStorage",
-    "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanFeatures",
+    "TitanIcons", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanFeatures",
 ]
 
 let project = Project(

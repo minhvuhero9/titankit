@@ -43,4 +43,13 @@ final class AppFlowTests: XCTestCase {
         await flow.signOut()
         XCTAssertEqual(flow.stage, .login)
     }
+
+    func testSocialButtonsSignInAsGuestForNow() async {
+        let auth = MockAuthService()
+        let flow = AppFlow(auth: auth, preferences: makePreferences())
+        await flow.signInWithSocial(.google)
+        XCTAssertEqual(flow.stage, .home)
+        let user = await auth.currentUser()
+        XCTAssertEqual(user?.isAnonymous, true)
+    }
 }

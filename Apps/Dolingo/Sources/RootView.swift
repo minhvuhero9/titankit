@@ -1,4 +1,5 @@
 import SwiftUI
+import TitanAuth
 import TitanCore
 import TitanDesignSystem
 import TitanFeatures
@@ -24,7 +25,7 @@ private struct FlowView: View {
             switch flow.stage {
             case .splash:
                 SplashScreen(
-                    config: SplashConfig(logo: Image(systemName: "waveform"), appName: "Dolingo"),
+                    config: SplashConfig(logo: Image("Logo"), appName: "Dolingo"),
                     prepare: { await flow.prepareLaunch() },
                     onFinish: { flow.finishSplash() }
                 )
@@ -32,7 +33,7 @@ private struct FlowView: View {
                 OnboardingScreen(
                     config: OnboardingConfig(pages: [
                         OnboardingPage(
-                            image: Image(systemName: "bubble.left.and.text.bubble.right.fill"),
+                            image: Image("WelcomeIllustration"),
                             title: "onboarding.welcome.title",
                             message: "onboarding.welcome.message"
                         ),
@@ -41,7 +42,16 @@ private struct FlowView: View {
                     onSignIn: { flow.finishOnboarding() }
                 )
             case .login:
-                LoginScreen(auth: container.auth, onSuccess: { _ in flow.didSignIn() })
+                LoginScreen(
+                    config: LoginConfig(socialOptions: [
+                        SocialLoginOption(.google, icon: Image("SocialGoogle"), accessibilityLabel: "Google"),
+                        SocialLoginOption(.apple, icon: Image("SocialApple"), accessibilityLabel: "Apple"),
+                        SocialLoginOption(.facebook, icon: Image("SocialFacebook"), accessibilityLabel: "Facebook"),
+                    ]),
+                    auth: container.auth,
+                    onSuccess: { _ in flow.didSignIn() },
+                    onSocial: { provider in Task { await flow.signInWithSocial(provider) } }
+                )
             case .home:
                 RouterView(router: container.router) {
                     StatusList(container: container, network: container.networkMonitor)
