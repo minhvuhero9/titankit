@@ -175,6 +175,7 @@ details.phase ul{margin:6px 0 0;padding-left:18px}
 .checks label{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
 .term{background:var(--code-bg);color:var(--code-fg);font:13px/1.6 var(--f-mono);border-radius:8px;padding:14px;overflow-x:auto;white-space:pre;margin:0}
 .term .c{color:#7f8ea6}
+.tree .c{color:var(--muted);font-weight:400}
 .term .p{color:#7dd3a8}
 .gsteps{display:grid;gap:12px}
 .gstep{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px}
@@ -183,6 +184,21 @@ details.phase ul{margin:6px 0 0;padding-left:18px}
 .gstep p{margin:0 0 8px;color:var(--muted);font-size:14px}
 .tree{font:13px/1.6 var(--f-mono);background:var(--sunk);border-radius:8px;padding:12px;white-space:pre;overflow-x:auto;margin:0}
 .tree .n{color:var(--accent);font-weight:600}
+/* learn */
+.lsec{margin-top:32px}
+.lsec:first-of-type{margin-top:0}
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:stretch}
+@media (max-width:860px){.pipe{grid-template-columns:1fr}}
+.pipe .fbox{position:relative}
+.pipe .fbox .n{font:600 12px var(--f-mono);color:var(--accent);display:block;margin-bottom:2px}
+.pipe .fbox p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+.gloss .card .where{margin-bottom:4px}
+.gloss .card .like{margin-top:8px;font-size:13.5px;color:var(--fg);border-left:3px solid var(--use);padding-left:10px}
+details.faq{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:8px}
+details.faq summary{cursor:pointer;padding:12px 16px;font-weight:600}
+details.faq > div{padding:0 16px 14px;color:var(--muted);font-size:14px}
+details.faq > div p{margin:0 0 8px}
+td code,p code,li code{font:13px var(--f-mono);background:var(--sunk);padding:1px 5px;border-radius:4px}
 /* start */
 .big3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 @media (max-width:760px){.big3{grid-template-columns:1fr}}
@@ -246,6 +262,7 @@ details.tech .kv{margin-top:12px}
   <button role="tab" data-tab="arch">Bản đồ module</button>
   <button role="tab" data-tab="app1">App 1</button>
   <button role="tab" data-tab="guide">Hướng dẫn sử dụng</button>
+  <button role="tab" data-tab="learn">Kiến thức</button>
   <button role="tab" data-tab="theme">Theme 3 lớp</button>
   <button role="tab" data-tab="backend">Backend</button>
   <button role="tab" data-tab="patterns">Design pattern</button>
@@ -276,6 +293,7 @@ details.tech .kv{margin-top:12px}
       <li><b>Bản đồ module:</b> bấm vào từng khối để đọc giải thích bằng lời thường, đường nối cho thấy khối nào cần khối nào.</li>
       <li><b>App 1:</b> kế hoạch làm App 1 và từng tình huống người dùng (mở app, đăng nhập, mua gói Pro), cập nhật theo tiến độ thật.</li>
       <li><b>Hướng dẫn sử dụng:</b> thử tạo một app mới và xem kit sinh ra những gì.</li>
+      <li><b>Kiến thức:</b> giải thích các khái niệm như terminal, Tuist, Xcode, scheme khi tạo và chạy project.</li>
       <li><b>Theme 3 lớp:</b> đổi màu, font để thấy một app không cần design vẫn có giao diện riêng.</li>
       <li><b>Backend:</b> xem vì sao sau này đổi khỏi Firebase không phải làm lại app.</li>
     </ol>
@@ -290,7 +308,7 @@ details.tech .kv{margin-top:12px}
   <div id="sub-plan">
     <div class="progress card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>Tiến độ</b><span id="progTxt" style="color:var(--muted)"></span></div><div class="pbar"><span id="progBar"></span></div></div>
     <div class="phases" id="phases"></div>
-    <div class="card qs"><h3>Cần Jack trả lời trước khi bắt đầu</h3><ul id="questions"></ul></div>
+    <div class="card qs"><h3>Cần Jack trả lời</h3><ul id="questions"></ul></div>
   </div>
   <div id="sub-scn" hidden>
   <p class="sub">Chọn một việc người dùng làm trong App 1, rồi bấm "Bước tiếp". Khối đang làm việc sẽ sáng lên trên bản đồ bên phải. Hiện các bước dựa trên màn hình dựng sẵn của kit; khi có Figma App 1, mình thay bằng màn hình thật.</p>
@@ -313,6 +331,201 @@ details.tech .kv{margin-top:12px}
   <p class="sub">Các việc thường làm với TitanKit, từng bước một. Phần "Tạo app mới" cho bạn thử điền thông tin và xem kit sẽ sinh ra những gì.</p>
   <div class="seg" id="guideSeg" style="margin-bottom:18px;flex-wrap:wrap"></div>
   <div id="guideBody"></div>
+</section>
+
+<section role="tabpanel" id="p-learn" hidden>
+  <h2>Kiến thức nền</h2>
+  <p class="sub">Giải thích bằng lời thường những thứ xuất hiện khi tạo và chạy project: terminal, mise, Tuist, Xcode, scheme... Không cần biết lập trình vẫn đọc được.</p>
+
+  <div class="lsec">
+    <h3>Từ code đến app chạy trên máy: 5 chặng</h3>
+    <p class="sub">Mỗi chặng dùng một công cụ. Bạn đã đi hết 5 chặng này khi chạy được Dolingo.</p>
+    <div class="pipe">
+      <div class="fbox"><span class="n">1 · GitHub</span><b>Kho code</b><p><code>git clone</code>, <code>git pull</code> tải code mới nhất về máy.</p></div>
+      <div class="fbox"><span class="n">2 · mise</span><b>Cài đúng công cụ</b><p>Đọc file <code>.mise.toml</code> và cài đúng bản Tuist mà dự án cần.</p></div>
+      <div class="fbox"><span class="n">3 · Tuist</span><b>Dựng project</b><p>Đọc bản vẽ <code>Project.swift</code> và sinh ra file project cho Xcode.</p></div>
+      <div class="fbox"><span class="n">4 · Xcode</span><b>Biên dịch</b><p>Biến code Swift thành app (gọi là build).</p></div>
+      <div class="fbox"><span class="n">5 · Simulator</span><b>Chạy thử</b><p>iPhone ảo trên Mac để mở app mà không cần điện thoại thật.</p></div>
+    </div>
+  </div>
+
+  <div class="lsec">
+    <h3>Vì sao không mở thẳng Xcode mà phải qua Tuist?</h3>
+    <div class="card"><p style="color:var(--fg)">Xcode lưu project trong file <code>.xcodeproj</code>. File này rất dài, khó đọc, và hay bị xung đột khi nhiều người cùng sửa. Vì vậy repo chỉ giữ <b>bản vẽ</b> ngắn gọn viết bằng Swift (<code>Project.swift</code>, <code>Workspace.swift</code>). Mỗi lần cần, Tuist đọc bản vẽ và <b>xây lại</b> file project cho Xcode.</p>
+    <p style="margin-top:10px">Giống như giữ bản vẽ kiến trúc thay vì chụp ảnh ngôi nhà. Muốn thêm phòng thì sửa bản vẽ, rồi xây lại. Với kit này, bản vẽ còn giúp tạo app mới chỉ bằng vài dòng, vì mọi app dùng chung một khuôn.</p></div>
+  </div>
+
+  <div class="lsec">
+    <h3>Từng lệnh bạn vừa chạy nghĩa là gì</h3>
+    <p class="sub">Hãy tưởng tượng máy Mac của bạn là một công trường. Muốn xây được ngôi nhà (app), lần đầu phải sắm dụng cụ. Sau đó mỗi ngày chỉ việc lấy bản vẽ mới và xây.</p>
+    <div class="lab" style="align-items:start">
+      <div class="card">
+        <div class="where">Phần A · chỉ làm một lần trên mỗi máy</div>
+        <h3>Sắm dụng cụ cho công trường</h3>
+        <div class="gsteps" style="margin-top:12px">
+          <div class="gstep"><span class="dot">1</span><div><h3><code>brew install mise</code></h3><p>Thuê một <b>người quản kho</b> tên là mise. Homebrew (brew) là chỗ thuê người.</p></div></div>
+          <div class="gstep"><span class="dot">2</span><div><h3><code>echo ... &gt;&gt; ~/.zshrc</code> và <code>source ~/.zshrc</code></h3><p>Dặn terminal: "lần nào mở lên cũng gọi người quản kho có mặt". Nếu không có bước này, terminal sẽ báo <i>command not found: mise</i>.</p></div></div>
+          <div class="gstep"><span class="dot">3</span><div><h3><code>mise install</code></h3><p>Người quản kho đọc tờ danh sách <code>.mise.toml</code> trong dự án, thấy ghi "cần Tuist bản 4", và đi mua đúng bản đó. Nhờ vậy máy nào cũng dùng cùng một bản Tuist.</p></div></div>
+          <div class="gstep"><span class="dot">4</span><div><h3><code>cp ...Secrets.example.xcconfig ...Secrets.xcconfig</code></h3><p><code>cp</code> nghĩa là copy. Lệnh này tạo một <b>két sắt rỗng</b> bằng cách chép từ két mẫu. Sau này API key sẽ cất trong két này. Két không bao giờ được đưa lên GitHub, nên mỗi máy phải tự tạo.</p></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="where">Phần B · làm mỗi khi muốn chạy bản mới</div>
+        <h3>Lấy bản vẽ mới rồi xây</h3>
+        <div class="gsteps" style="margin-top:12px">
+          <div class="gstep"><span class="dot">1</span><div><h3><code>git pull</code></h3><p>Lấy <b>bản vẽ mới nhất</b> từ GitHub về máy. Nếu Claude vừa làm xong phần nào, lệnh này kéo phần đó về.</p></div></div>
+          <div class="gstep"><span class="dot">2</span><div><h3><code>tuist install</code></h3><p>Gom đủ <b>vật liệu</b> mà bản vẽ cần. Vật liệu ở đây là các module của TitanKit như TitanCore, TitanDesignSystem.</p></div></div>
+          <div class="gstep"><span class="dot">3</span><div><h3><code>tuist generate</code></h3><p>Thợ xây Tuist đọc bản vẽ và <b>dựng khung nhà</b>: tạo ra file <code>TitanKit.xcworkspace</code>, rồi tự mở Xcode.</p></div></div>
+          <div class="gstep"><span class="dot">4</span><div><h3>Bấm ▶ trong Xcode</h3><p>Xcode <b>hoàn thiện ngôi nhà</b> (build) và cho bạn vào ở thử trên iPhone ảo.</p></div></div>
+        </div>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:12px">Tóm lại: phần A bạn đã làm xong và không phải làm lại. Từ giờ mỗi lần muốn xem bản mới, bạn chỉ chạy phần B: <code>git pull</code> → <code>tuist install</code> → <code>tuist generate</code> → bấm ▶. Chạy thừa lệnh nào cũng không sao.</p>
+  </div>
+
+  <div class="lsec" id="manual">
+    <h3>Tự tay dựng repo như hiện tại, không cần AI</h3>
+    <p class="sub">Đây là các bước để làm lại repo TitanKit từ một thư mục trống. Code dưới đây là bản rút gọn cho dễ hiểu. Bản đầy đủ có trong repo, thêm Dev/Staging/Prod, test và CI.</p>
+    <pre class="tree">titankit/                      <span class="c">← thư mục gốc, cũng là repo git</span>
+├── <span class="n">.mise.toml</span>                 <span class="c">← bước 2: ghi bản Tuist cần dùng</span>
+├── <span class="n">Packages/TitanKit/</span>         <span class="c">← bước 3: bộ kit</span>
+│   ├── Package.swift
+│   └── Sources/TitanCore/...
+├── <span class="n">Tuist/Package.swift</span>        <span class="c">← bước 4: báo Tuist có kit</span>
+├── <span class="n">Workspace.swift</span>            <span class="c">← bước 4: gom các app</span>
+└── <span class="n">Apps/Dolingo/</span>              <span class="c">← bước 5: app đầu tiên</span>
+    ├── Project.swift
+    └── Sources/DolingoApp.swift</pre>
+    <div class="gsteps" style="margin-top:16px">
+      <div class="gstep"><span class="dot">1</span><div><h3>Tạo thư mục và bật git</h3><p>Mở Terminal, gõ:</p>
+<pre class="term">mkdir titankit
+cd titankit
+git init</pre><p style="margin-top:8px"><code>mkdir</code> là tạo thư mục, <code>cd</code> là đi vào thư mục, <code>git init</code> là bắt đầu theo dõi lịch sử thay đổi.</p></div></div>
+
+      <div class="gstep"><span class="dot">2</span><div><h3>Ghi bản Tuist cần dùng</h3><p>File <code>.mise.toml</code> chỉ có 2 dòng: <code>[tools]</code> và <code>tuist = "4"</code>. Cách nhanh nhất là để Terminal tạo giúp. Đứng trong thư mục <code>titankit</code> và gõ:</p>
+<pre class="term">printf '[tools]\ntuist = "4"\n' &gt; .mise.toml
+cat .mise.toml
+mise install</pre><p style="margin-top:8px">Dòng 1 ghi 2 dòng chữ vào file (<code>\n</code> là xuống dòng, <code>&gt;</code> là ghi vào file). Dòng 2 in file ra để kiểm tra. Dòng 3 cài Tuist. Lưu ý: file có dấu chấm ở đầu tên là file ẩn, Finder không hiện; muốn thấy thì bấm ⌘⇧. trong Finder.</p></div></div>
+
+      <div class="gstep"><span class="dot">3</span><div><h3>Tạo bộ kit (Swift Package)</h3><p>Đứng ở thư mục <code>titankit</code> và chạy một mạch. Lệnh <code>cd</code> nghĩa là đi vào thư mục, <code>cd ../..</code> là lùi ra 2 cấp, còn <code>pwd</code> cho biết bạn đang đứng ở đâu.</p>
+<pre class="term">mkdir -p Packages/TitanKit/Sources/TitanCore Packages/TitanKit/Sources/TitanDesignSystem   <span class="c"># tạo kit và 2 ngăn module</span>
+cd Packages/TitanKit                <span class="c"># đi vào thư mục kit</span>
+echo 'public enum TitanCoreModule {}' &gt; Sources/TitanCore/TitanCore.swift
+echo 'public enum TitanDesignSystemModule {}' &gt; Sources/TitanDesignSystem/TitanDesignSystem.swift
+touch Package.swift                 <span class="c"># tạo tờ khai trống</span>
+open -a Xcode Package.swift         <span class="c"># mở tờ khai bằng Xcode</span>
+cd ../..                            <span class="c"># quay về thư mục gốc</span></pre><p style="margin-top:8px">Không cần lệnh <code>swift package init</code>: lệnh đó chỉ tạo khung mẫu mà đằng nào mình cũng xóa và thay. Mỗi ngăn module phải có ít nhất một file <code>.swift</code>, nên mới cần 2 dòng <code>echo</code>. Khi <code>Package.swift</code> mở trong Xcode, dán đoạn dưới vào rồi lưu:</p>
+<pre class="term">// swift-tools-version: 6.0
+import PackageDescription
+
+let package = Package(
+    name: "TitanKit",
+    platforms: [.iOS(.v16)],
+    products: [
+        .library(name: "TitanCore", targets: ["TitanCore"]),
+        .library(name: "TitanDesignSystem", targets: ["TitanDesignSystem"]),
+    ],
+    targets: [
+        .target(name: "TitanCore"),
+        .target(name: "TitanDesignSystem", dependencies: ["TitanCore"]),
+    ]
+)</pre><p style="margin-top:8px">Repo thật khai báo đủ 13 module theo cùng cách này.</p></div></div>
+
+      <div class="gstep"><span class="dot">4</span><div><h3>Báo cho Tuist biết có kit và có các app</h3><p>Tạo file <code>Tuist/Package.swift</code>:</p>
+<pre class="term">// swift-tools-version: 6.0
+import PackageDescription
+
+let package = Package(
+    name: "TitanKitDependencies",
+    dependencies: [
+        .package(path: "../Packages/TitanKit"),
+    ]
+)</pre><p style="margin-top:8px">Tạo file <code>Workspace.swift</code> ở thư mục gốc. Dòng <code>Apps/*</code> nghĩa là mọi app nằm trong thư mục Apps đều được gom vào:</p>
+<pre class="term">import ProjectDescription
+
+let workspace = Workspace(name: "TitanKit", projects: ["Apps/*"])</pre></div></div>
+
+      <div class="gstep"><span class="dot">5</span><div><h3>Tạo app Dolingo</h3><p>Tạo file <code>Apps/Dolingo/Project.swift</code>. Đây là bản vẽ của app: tên, Bundle ID, và kit nào được dùng.</p>
+<pre class="term">import ProjectDescription
+
+let project = Project(
+    name: "Dolingo",
+    targets: [
+        .target(
+            name: "Dolingo",
+            destinations: [.iPhone],
+            product: .app,
+            bundleId: "com.titanstudio.dolingo",
+            deploymentTargets: .iOS("16.0"),
+            infoPlist: .extendingDefault(with: ["UILaunchScreen": [:]]),
+            sources: ["Sources/**"],
+            dependencies: [
+                .external(name: "TitanCore"),
+                .external(name: "TitanDesignSystem"),
+            ]
+        ),
+    ]
+)</pre><p style="margin-top:8px">Rồi tạo file code đầu tiên <code>Apps/Dolingo/Sources/DolingoApp.swift</code>:</p>
+<pre class="term">import SwiftUI
+
+@main
+struct DolingoApp: App {
+    var body: some Scene {
+        WindowGroup { Text("Xin chào Dolingo") }
+    }
+}</pre></div></div>
+
+      <div class="gstep"><span class="dot">6</span><div><h3>Dựng và chạy thử</h3>
+<pre class="term">tuist install
+tuist generate</pre><p style="margin-top:8px">Xcode mở ra. Chọn scheme Dolingo, chọn iPhone ảo, rồi bấm ▶.</p></div></div>
+
+      <div class="gstep"><span class="dot">7</span><div><h3>Đưa lên GitHub</h3><p>Trước hết tạo file <code>.gitignore</code> để không đưa file rác và file bí mật lên. Ví dụ: <code>*.xcodeproj</code>, <code>*.xcworkspace</code>, <code>Derived/</code>, <code>Secrets.xcconfig</code>. Sau đó tạo repo trống trên github.com và chạy:</p>
+<pre class="term">git add .
+git commit -m "Khởi tạo TitanKit"
+git branch -M main
+git remote add origin https://github.com/&lt;tài-khoản&gt;/titankit.git
+git push -u origin main</pre></div></div>
+
+      <div class="gstep"><span class="dot">8</span><div><h3>Phần repo thật làm thêm</h3><p>Sau khi bản tối thiểu chạy được, repo hiện tại bổ sung thêm những thứ sau. Mỗi thứ là một file đọc được trong repo.</p>
+<ul style="margin:0;padding-left:18px;color:var(--muted);font-size:14px">
+<li>Ba môi trường Dev/Staging/Prod: thư mục <code>Apps/Dolingo/Config/*.xcconfig</code> và phần <code>configurations</code> trong Project.swift.</li>
+<li>Ba scheme Dolingo-Dev, Dolingo-Staging, Dolingo-Prod: phần <code>schemes</code> trong Project.swift.</li>
+<li>Test: <code>Packages/TitanKit/Tests</code> và <code>Apps/Dolingo/Tests</code>.</li>
+<li>CI tự kiểm tra: <code>.github/workflows/ci.yml</code> và các script trong <code>Tools/</code>.</li>
+</ul></div></div>
+    </div>
+  </div>
+
+  <div class="lsec gloss">
+    <h3>Từ điển nhỏ</h3>
+    <div class="grid">
+      <div class="card"><div class="where">Terminal</div><h3>Cửa sổ gõ lệnh</h3><p>Ứng dụng có sẵn trên Mac để ra lệnh cho máy bằng chữ thay vì bấm chuột.</p></div>
+      <div class="card"><div class="where">Homebrew · brew</div><h3>Kho cài phần mềm</h3><p>Gõ <code>brew install tên</code> là máy tự tải và cài phần mềm đó.</p></div>
+      <div class="card"><div class="where">mise</div><h3>Quản lý phiên bản công cụ</h3><p>Bảo đảm mọi máy (máy bạn, máy CI) dùng cùng một phiên bản Tuist.</p><div class="like">Giống quy định cả đội dùng chung một loại thước đo.</div></div>
+      <div class="card"><div class="where">Tuist</div><h3>Thợ dựng project</h3><p>Đọc <code>Project.swift</code> và sinh ra project Xcode.</p><div class="like">Bản vẽ vào, ngôi nhà ra.</div></div>
+      <div class="card"><div class="where">Xcode</div><h3>Xưởng làm app iOS</h3><p>Phần mềm của Apple để viết code, build và chạy app. Bắt buộc phải có để làm app iOS.</p></div>
+      <div class="card"><div class="where">.xcworkspace</div><h3>File mở trong Xcode</h3><p>Tuist sinh ra <code>TitanKit.xcworkspace</code>, gom tất cả app và kit vào một cửa sổ. Không đưa lên GitHub vì luôn có thể sinh lại.</p></div>
+      <div class="card"><div class="where">Scheme</div><h3>Nút chọn "chạy cái gì, ở đâu"</h3><p><b>Dolingo-Dev</b> nghĩa là chạy app Dolingo với môi trường Dev. Đổi scheme là đổi môi trường.</p></div>
+      <div class="card"><div class="where">Dev · Staging · Prod</div><h3>3 môi trường</h3><p>Dev để làm hằng ngày, Staging để thử trước khi phát hành, Prod là bản người dùng thật tải về. Ba bản có thể cài cùng lúc trên một máy.</p></div>
+      <div class="card"><div class="where">.xcconfig</div><h3>File cấu hình môi trường</h3><p>Ghi các giá trị khác nhau giữa môi trường như địa chỉ server, tên hiển thị.</p></div>
+      <div class="card"><div class="where">Secrets.xcconfig</div><h3>Két chứa khóa bí mật</h3><p>Nơi để API key. Không bao giờ đưa lên GitHub, mỗi máy tự tạo từ file mẫu.</p></div>
+      <div class="card"><div class="where">Bundle ID</div><h3>Số căn cước của app</h3><p>Ví dụ <code>com.titanstudio.dolingo</code>. Bản Dev có thêm đuôi <code>.dev</code> nên không đè lên bản thật.</p></div>
+      <div class="card"><div class="where">Swift Package</div><h3>Gói thư viện</h3><p>TitanKit là một Swift Package chứa 13 module. App chỉ kéo vào những module nó cần.</p></div>
+      <div class="card"><div class="where">Build</div><h3>Biên dịch</h3><p>Biến code chữ thành app chạy được. Bấm ▶ trong Xcode là build rồi chạy.</p></div>
+      <div class="card"><div class="where">Simulator</div><h3>iPhone ảo</h3><p>Chạy app trên Mac như một chiếc iPhone, không cần điện thoại thật.</p></div>
+      <div class="card"><div class="where">CI</div><h3>Máy kiểm tra tự động</h3><p>Mỗi lần có code mới, GitHub tự build và chạy test trên máy Mac của nó. Đỏ là có lỗi, xanh là ổn.</p></div>
+      <div class="card"><div class="where">PR · Pull Request</div><h3>Đề xuất thay đổi</h3><p>Gói thay đổi để bạn xem trước khi gộp vào nhánh chính (main).</p></div>
+    </div>
+  </div>
+
+  <div class="lsec">
+    <h3>Lỗi thường gặp</h3>
+    <details class="faq"><summary>zsh: command not found: ...</summary><div><p>Máy chưa cài công cụ đó, hoặc cài rồi nhưng terminal chưa nhận. Cài theo hướng dẫn, rồi đóng terminal mở lại (hoặc chạy <code>source ~/.zshrc</code>).</p></div></details>
+    <details class="faq"><summary>Xcode báo "No such module 'TitanCore'"</summary><div><p>Thư viện chưa được tải hoặc project cũ. Đóng Xcode, chạy <code>tuist install</code> rồi <code>tuist generate</code>.</p></div></details>
+    <details class="faq"><summary>Không thấy scheme Dolingo-Dev</summary><div><p>Bạn đang mở nhầm file. Hãy mở <code>TitanKit.xcworkspace</code> (Tuist tự mở sau <code>tuist generate</code>), không mở thư mục Packages.</p></div></details>
+    <details class="faq"><summary>Không có máy ảo iPhone để chọn</summary><div><p>Trong Xcode vào Settings → Components (hoặc Platforms), tải iOS Simulator.</p></div></details>
+    <details class="faq"><summary>Sau khi git pull thì app không build được</summary><div><p>Chạy lại bộ 3 lệnh <code>tuist install</code> → <code>tuist generate</code>, rồi trong Xcode chọn Product → Clean Build Folder (⇧⌘K) và chạy lại. Vẫn lỗi thì dán lỗi vào thread cho Claude.</p></div></details>
+  </div>
 </section>
 
 <section role="tabpanel" id="p-arch" hidden>
@@ -615,15 +828,15 @@ function renderBackend(){
 const ST=[["Tạo AppContainer","Chọn adapter theo môi trường dev / staging / prod.",[]],["Đọc Remote Config","Kiểm tra bảo trì và phiên bản tối thiểu.",["Bảo trì → màn Maintenance","Phiên bản cũ → Force Update"]],["Xin đồng ý quyền riêng tư","UMP/GDPR và ATT, chỉ khi app có quảng cáo.",[]],["Kiểm tra phiên đăng nhập","AuthService trả về phiên hiện tại.",["Lần đầu → Onboarding","Chưa đăng nhập → Login","Đã đăng nhập → Home"]],["Đồng bộ quyền premium","PurchaseService cập nhật isPremium, tắt quảng cáo nếu cần.",[]],["Đăng ký thông báo","Gửi token thiết bị, xử lý deep link nếu app mở từ thông báo.",[]]];
 function renderFlow(){document.getElementById("steps").innerHTML=ST.map((s,i)=>`<div class="step"><div class="rail"><div class="dot">${i+1}</div></div><div class="body"><b>${s[0]}</b><p>${s[1]}</p>${s[2].length?`<div class="branch">${s[2].map(x=>`<span>${x}</span>`).join("")}</div>`:""}</div></div>`).join("")}
 /* plan */
-const LAST_UPDATE="Cập nhật 20/10/2026: xong tài liệu kiến trúc, chờ Figma và quyền repo";
+const LAST_UPDATE="Cập nhật 20/10/2026: App 1 tạm tên Dolingo (com.titanstudio.dolingo). Giai đoạn 0 đã merge (PR #1). Đã đọc xong file Figma Dolingo. Đang làm Giai đoạn 1 (Core, Networking, Storage) ở PR #2, chờ CI";
 const PST={done:"Đã xong",doing:"Đang làm",wait:"Đang chờ",todo:"Chưa bắt đầu"};
-const PSTATUS=["done","wait","todo","todo","todo","todo","todo","todo"];
+const PSTATUS=["done","done","doing","todo","todo","todo","todo","todo"];
 const PH=[["Chuẩn bị","Tài liệu","Kiến trúc, quy ước, kế hoạch",["Thống nhất kiến trúc và quy ước","Bộ tài liệu MD cho từng module","Trang TitanKit Atlas"],"Jack duyệt bộ tài liệu"],["Giai đoạn 0","Dựng repo","Tuist, cấu trúc thư mục, CI, môi trường",["Khởi tạo Tuist và Package.swift","Tạo các module rỗng","Config Dev/Staging/Prod, giữ khóa ngoài git","GitHub Actions chạy build + test"],"Build xanh trên CI với app mẫu trống"],["Giai đoạn 1","Nền tảng","Core, Networking, Storage",["TitanError, Logger, AppEnvironment","APIClient, Endpoint, interceptor","Keychain, UserDefaults, cache ảnh"],"Unit test cho cả 3 module"],["Giai đoạn 2","Design system","Base theme rồi token Figma của App 1",["Token primitive/semantic, theme 3 lớp","Component TK* cốt lõi","Catalog app","Rút token từ Figma App 1"],"Catalog hiển thị đủ component ở 2 theme"],["Giai đoạn 3","Điều hướng + màn hình","Navigation và TitanFeatures",["Router, deep link","Splash, onboarding, login, paywall, settings","Màn lỗi, trống, mất mạng"],"Chạy được luồng từ splash tới home bằng Mock"],["Giai đoạn 4","Dịch vụ","Firebase adapter",["Auth, Data, Analytics, Crash","Remote Config, Push","Purchase StoreKit 2, Ads nếu cần"],"App 1 chạy với Firebase dev"],["Giai đoạn 5","Màn hình App 1","Nghiệp vụ riêng theo Figma",["Màn hình chính của App 1","Repository riêng","Snapshot test"],"Đủ tính năng theo design"],["Giai đoạn 6","Phát hành","Compliance và TestFlight",["Privacy manifest, ATT, GDPR","Xóa tài khoản","fastlane beta lên TestFlight"],"Bản TestFlight đầu tiên"]];
-const QS=["Tên App 1 và link Figma","Tên công ty hoặc domain cho bundle id","App 1 cần những dịch vụ nào (login, mua hàng, quảng cáo, push...)","Đồng ý SwiftUI + iOS 16 + Tuist","Cấp quyền ghi repo minhvuhero9/titankit"];
+const QS=["Dolingo cần những dịch vụ nào (login, mua hàng, quảng cáo, push...)","Tên chính thức thay cho Dolingo trước khi phát hành"];
 function renderPlan(){
   document.getElementById("lastUpd").textContent=LAST_UPDATE;
   const done=PSTATUS.filter(s=>s==="done").length;
-  document.getElementById("progTxt").textContent=`${done}/${PH.length} giai đoạn xong · đang chờ: tên App 1, Figma, quyền ghi repo`;
+  document.getElementById("progTxt").textContent=`${done}/${PH.length} giai đoạn xong · đang làm Giai đoạn 1`;
   document.getElementById("progBar").style.width=Math.round(done/PH.length*100)+"%";
   document.getElementById("phases").innerHTML=PH.map((p,i)=>`<details class="phase"${PSTATUS[i]!=="todo"?" open":""}><summary><span class="ph">${p[0]}</span><b>${p[1]}</b><small>${p[2]}</small><span class="st ${PSTATUS[i]}">${PST[PSTATUS[i]]}</span></summary><div class="in"><ul>${p[3].map(x=>`<li>${x}</li>`).join("")}</ul><p style="margin:10px 0 0"><b>Xong khi:</b> ${p[4]}</p></div></details>`).join("");document.getElementById("questions").innerHTML=QS.map(q=>`<li>${q}</li>`).join("")}
 /* docs */
