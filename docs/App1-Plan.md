@@ -53,12 +53,12 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** có base theme và component, sau đó áp token Figma của App 1.
 
-- [ ] Định nghĩa token semantic (màu, chữ, khoảng cách, bo góc, bóng).
-- [ ] Base theme sáng và tối.
+- [x] Định nghĩa token semantic (màu, chữ, khoảng cách, bo góc). Bóng làm cùng component.
+- [x] Base theme sáng và tối.
 - [ ] Component `TK*` cơ bản: Button, TextField, Card, List row, Toast, Loading, Sheet.
 - [ ] App Catalog hiển thị mọi component với mọi theme.
 - [ ] Snapshot test cho từng component.
-- [ ] Xuất token Figma của App 1 vào `Tokens/`, chạy `gen-tokens`, tạo `App1Theme`.
+- [x] Lấy token Figma của App 1, tạo `DolingoTheme` (chép tay; `gen-tokens` để sau).
 
 **Xong khi:** Catalog chạy được với base theme và `App1Theme`; snapshot test xanh.
 
