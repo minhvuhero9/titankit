@@ -1,0 +1,13 @@
+import TitanCore
+
+/// Everything the app and the kit's screens need from a login backend.
+/// Every call throws only TitanError: `.unauthorized` for wrong credentials,
+/// `.network(.offline)`, `.cancelled` when the user backs out of Apple or Google sign-in.
+public protocol AuthService: Sendable {
+    func currentUser() async -> AuthUser?
+    func signIn(_ method: SignInMethod) async throws(TitanError) -> AuthUser
+    func signUp(email: String, password: String, displayName: String?) async throws(TitanError) -> AuthUser
+    func sendPasswordReset(email: String) async throws(TitanError)
+    func signOut() async throws(TitanError)
+    func deleteAccount() async throws(TitanError)
+}

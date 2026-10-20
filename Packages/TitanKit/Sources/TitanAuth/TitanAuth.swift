@@ -1,4 +1,4 @@
-// Placeholder for phase 0. The module's real API is described in docs/modules.
+// Sign-in, sign-out and account deletion behind AuthService. Backends plug in as adapters (phase 4).
 public enum TitanAuthModule {
     public static let moduleName = "TitanAuth"
 }

@@ -61,7 +61,7 @@ public struct TKButton: View {
         case pill
     }
 
-    private let title: LocalizedStringKey
+    private let title: Text
     private let style: Style
     private let size: Size
     private let shape: Shape?
@@ -79,6 +79,22 @@ public struct TKButton: View {
     ///   - isLoading: shows a spinner and ignores taps.
     public init(
         _ title: LocalizedStringKey,
+        style: Style = .primary,
+        size: Size = .large,
+        shape: Shape? = nil,
+        fullWidth: Bool = true,
+        leadingIcon: Image? = nil,
+        trailingIcon: Image? = nil,
+        isLoading: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.init(Text(title), style: style, size: size, shape: shape, fullWidth: fullWidth,
+                  leadingIcon: leadingIcon, trailingIcon: trailingIcon, isLoading: isLoading, action: action)
+    }
+
+    /// Takes a ready Text, e.g. a kit string already looked up for the current language.
+    public init(
+        _ title: Text,
         style: Style = .primary,
         size: Size = .large,
         shape: Shape? = nil,
@@ -111,7 +127,7 @@ public struct TKButton: View {
             horizontalPadding: size.horizontalPadding
         ))
         .disabled(isLoading)
-        .accessibilityLabel(Text(title))
+        .accessibilityLabel(title)
     }
 
     @ViewBuilder
@@ -121,7 +137,7 @@ public struct TKButton: View {
         } else {
             HStack(spacing: Spacing.xs) {
                 leadingIcon?.resizable().scaledToFit().frame(width: size.iconSize, height: size.iconSize)
-                Text(title)
+                title
                     .font(theme.typography.font(size: size.fontSize, weight: .bold, relativeTo: .headline))
                     .tracking(0.2)
                     .lineLimit(1)

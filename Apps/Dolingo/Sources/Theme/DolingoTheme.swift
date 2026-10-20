@@ -32,8 +32,11 @@ enum DolingoTheme {
         colors.actionPrimaryPressed = AdaptiveColor(RGBA(hex: 0x4140CC))
         colors.actionSecondary = AdaptiveColor(light: RGBA(hex: 0xF1F1FF), dark: Dark.dark4)
         colors.actionOnSecondary = AdaptiveColor(light: primary[900], dark: .white)
-        colors.actionDisabled = AdaptiveColor(light: RGBA(hex: 0xD8D8D8), dark: RGBA(hex: 0x23252B))
-        colors.actionOnDisabled = AdaptiveColor(light: greyscale[600], dark: greyscale[600])
+        // Figma "Button Disabled": a darker brand with white text (sign-in screen, empty form).
+        colors.actionDisabled = AdaptiveColor(RGBA(hex: 0x4140CC))
+        colors.actionOnDisabled = AdaptiveColor(RGBA(hex: 0xFFFFFF, alpha: 0.7))
+        // Figma "Disabled" swatches, used for disabled inputs.
+        colors.surfaceDisabled = AdaptiveColor(light: RGBA(hex: 0xD8D8D8), dark: RGBA(hex: 0x23252B))
         colors.actionNeutral = AdaptiveColor(Dark.dark5)
         colors.actionOnNeutral = AdaptiveColor(.white)
         colors.surfaceBackground = AdaptiveColor(light: .white, dark: Dark.dark1)

@@ -1,23 +1,60 @@
 import SwiftUI
 import TitanCore
 import TitanDesignSystem
+import TitanFeatures
 import TitanLocalization
 import TitanNavigation
 import TitanNetworking
 
-/// Temporary root screen. Replaced by Splash/Onboarding from TitanFeatures in phase 3b.
+/// Switches between splash, onboarding, sign-in and the signed-in app.
 struct RootView: View {
     @EnvironmentObject private var container: AppContainer
 
     var body: some View {
-        RouterView(router: container.router) {
-            StatusList(container: container, network: container.networkMonitor)
-        } destination: { route in
-            container.makeView(for: route)
-        }
+        FlowView(container: container, flow: container.flow)
     }
 }
 
+private struct FlowView: View {
+    let container: AppContainer
+    @ObservedObject var flow: AppFlow
+
+    var body: some View {
+        ZStack {
+            switch flow.stage {
+            case .splash:
+                SplashScreen(
+                    config: SplashConfig(logo: Image(systemName: "waveform"), appName: "Dolingo"),
+                    prepare: { await flow.prepareLaunch() },
+                    onFinish: { flow.finishSplash() }
+                )
+            case .onboarding:
+                OnboardingScreen(
+                    config: OnboardingConfig(pages: [
+                        OnboardingPage(
+                            image: Image(systemName: "bubble.left.and.text.bubble.right.fill"),
+                            title: "onboarding.welcome.title",
+                            message: "onboarding.welcome.message"
+                        ),
+                    ]),
+                    onGetStarted: { flow.finishOnboarding() },
+                    onSignIn: { flow.finishOnboarding() }
+                )
+            case .login:
+                LoginScreen(auth: container.auth, onSuccess: { _ in flow.didSignIn() })
+            case .home:
+                RouterView(router: container.router) {
+                    StatusList(container: container, network: container.networkMonitor)
+                } destination: { route in
+                    container.makeView(for: route)
+                }
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: flow.stage)
+    }
+}
+
+/// Temporary home screen until the real Home is built.
 private struct StatusList: View {
     let container: AppContainer
     @ObservedObject var network: NetworkMonitor
@@ -54,6 +91,9 @@ private struct StatusList: View {
 
             TKButton("root.catalog", style: .light, size: .medium) {
                 router.push(.catalog)
+            }
+            TKButton("root.signOut", style: .outline, size: .medium) {
+                Task { await container.flow.signOut() }
             }
         }
         .padding(Spacing.md)

@@ -2,6 +2,40 @@
   "sourceLanguage": "vi",
   "version": "1.0",
   "strings": {
+    "onboarding.welcome.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Learn languages whenever and wherever you want. It's all in your hands!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Học ngoại ngữ mọi lúc, mọi nơi. Tất cả nằm trong tay bạn!"
+          }
+        }
+      }
+    },
+    "onboarding.welcome.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Dolingo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chào mừng đến với Dolingo"
+          }
+        }
+      }
+    },
     "root.catalog": {
       "extractionState": "manual",
       "localizations": {
@@ -83,6 +117,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đang có mạng"
+          }
+        }
+      }
+    },
+    "root.signOut": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign out"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đăng xuất"
           }
         }
       }

@@ -132,9 +132,33 @@ Quy tắc: nếu cần sửa màn hình kit cho một app, hãy thêm tùy chọ
 - Mỗi màn hình có trang trong Catalog để xem nhanh các trạng thái.
 - Test riêng `RateAppPrompt`: chỉ hỏi khi đủ điều kiện và không hỏi lại quá giới hạn.
 
+## 8b. Đã làm (giai đoạn 3b, đợt 1)
+
+Bố cục theo các màn "1 splash", "2 welcome", "21 sign in" trong Figma Dolingo.
+
+```swift
+SplashScreen(config: SplashConfig(logo: Image("Logo"), appName: "Dolingo"),
+             prepare: { await flow.prepareLaunch() },      // chạy song song với thời gian tối thiểu
+             onFinish: { flow.finishSplash() })
+
+OnboardingScreen(config: OnboardingConfig(pages: [OnboardingPage(image:, title:, message:)]),
+                 onGetStarted: { ... }, onSignIn: { ... })
+
+LoginScreen(config: LoginConfig(socialOptions: [SocialLoginOption(.apple, icon: Image(systemName: "apple.logo"), accessibilityLabel: "Apple")]),
+            auth: container.auth,
+            onSuccess: { user in ... }, onSocial: { provider in ... },
+            onForgotPassword: { ... }, onSignUp: { ... })
+```
+
+- Ô nhập ở màn đăng nhập dùng kiểu gạch chân (`.tkFieldStyle(.underlined)`), giống Figma.
+- Logo Google, Facebook không đi kèm kit (bản quyền thương hiệu): app tự đưa ảnh vào `SocialLoginOption`.
+- Đăng nhập Apple, Google thật làm ở giai đoạn 4 cùng adapter Firebase. Hiện Dolingo dùng `MockAuthService` (tài khoản thử `demo@titan.app` / `123456`).
+- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Settings, Profile, xóa tài khoản, WebPage, Maintenance, Force update, Paywall.
+
 ## 9. Checklist cho App 1
 
 - [ ] Chọn màn hình App 1 dùng: Splash, Onboarding, Login, Paywall, Settings, Profile, Delete account...
+- [x] Splash, Onboarding (1 trang, chờ nội dung các trang còn lại), Login nối vào `AppFlow` của Dolingo
 - [ ] Viết `Config` cho từng màn hình trong `Apps/App1/Sources/Config/`.
 - [ ] Nối callback vào Router của App 1 (xem [Navigation.md](Navigation.md)).
 - [ ] Gắn link Terms và Privacy thật.
