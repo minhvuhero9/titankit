@@ -2,6 +2,8 @@
 
 [← Về tổng quan](../README.md)
 
+> Trạng thái (giai đoạn 1): đã có `@Preference`, `Preferences`, `KeychainStore`, `FileCache`, `ImageCache` và `TKAsyncImage`. Cache ảnh mặc định là `URLSessionImageCache` (không cần thư viện ngoài). Adapter Nuke và SwiftData làm sau, khi App 1 thật sự cần.
+
 ## 1. Tóm tắt
 
 TitanStorage lưu dữ liệu trên máy: cài đặt nhỏ qua UserDefaults có kiểu, dữ liệu nhạy cảm qua Keychain, file cache, cache ảnh, và tùy chọn SwiftData cho dữ liệu có cấu trúc.
@@ -127,7 +129,7 @@ extension PreferenceKey where Value == Bool {
 // AppContainer.swift
 let secureStore: any SecureStore = KeychainStore(service: "com.titan.app1")
 let dataCache: any DataCache = FileCache()
-let imageCache: any ImageCache = NukeImageCache(memoryLimitMB: 100)
+let imageCache: any ImageCache = URLSessionImageCache(memoryLimitMB: 100)   // sau này: NukeImageCache
 
 // Root
 RootView().environment(\.imageCache, container.imageCache)
@@ -161,7 +163,8 @@ XCTAssertEqual(try store.data(for: "token"), Data("abc".utf8))
 
 - [ ] Liệt kê các khóa `PreferenceKey` của App 1 trong một file
 - [ ] Lưu token đăng nhập vào `KeychainStore`, không vào UserDefaults
-- [ ] Tạo `NukeImageCache` và inject qua Environment
+- [x] Tạo cache ảnh (`URLSessionImageCache`) và inject qua Environment
+- [ ] Đổi sang `NukeImageCache` nếu cần hiệu năng cao hơn
 - [ ] Dùng `TKAsyncImage` cho mọi ảnh từ URL
 - [ ] Xóa Keychain và cache khi đăng xuất hoặc xóa tài khoản
 - [ ] Quyết định có dùng SwiftData không (cần iOS 17, đánh dấu `@available`)
