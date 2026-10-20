@@ -68,5 +68,6 @@ public extension Typography {
         .body: TextStyle(size: 16, weight: .regular, lineHeight: 1.5),
         .callout: TextStyle(size: 14, weight: .regular, lineHeight: 1.4),
         .caption: TextStyle(size: 12, weight: .regular, lineHeight: 1.4),
+        .label: TextStyle(size: 15, weight: .semibold, lineHeight: 1.4),
     ])
 }

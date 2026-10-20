@@ -8,7 +8,9 @@ struct RootView: View {
     @EnvironmentObject private var container: AppContainer
 
     var body: some View {
-        StatusList(container: container, network: container.networkMonitor)
+        NavigationStack {
+            StatusList(container: container, network: container.networkMonitor)
+        }
     }
 }
 
@@ -32,6 +34,14 @@ private struct StatusList: View {
                   systemImage: network.isOnline ? "wifi" : "wifi.slash")
                 .tkTextStyle(.callout)
                 .foregroundStyle(network.isOnline ? theme.colors.feedbackSuccess.color : theme.colors.feedbackError.color)
+            NavigationLink {
+                TKCatalogView()
+            } label: {
+                Text("Xem bộ component")
+                    .tkTextStyle(.headline)
+                    .foregroundStyle(theme.colors.actionPrimary.color)
+            }
+            .padding(.top, Spacing.lg)
         }
         .padding(Spacing.md)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

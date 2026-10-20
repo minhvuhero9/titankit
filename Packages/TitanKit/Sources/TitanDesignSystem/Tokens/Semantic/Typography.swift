@@ -4,6 +4,8 @@ import UIKit
 /// Text roles used by components and screens. Each maps to a size, weight and line height.
 public enum TextRole: String, CaseIterable, Sendable {
     case display, title1, title2, title3, headline, body, callout, caption
+    /// Field labels and other small headings that sit above a control.
+    case label
 
     var uiTextStyle: UIFont.TextStyle {
         switch self {
@@ -15,6 +17,7 @@ public enum TextRole: String, CaseIterable, Sendable {
         case .body: .body
         case .callout: .callout
         case .caption: .caption1
+        case .label: .subheadline
         }
     }
 
@@ -29,6 +32,7 @@ public enum TextRole: String, CaseIterable, Sendable {
         case .body: .body
         case .callout: .callout
         case .caption: .caption
+        case .label: .subheadline
         }
     }
 }
@@ -80,12 +84,18 @@ public struct Typography: Hashable, Sendable {
     /// Scales with Dynamic Type. Falls back to the system font if the family is not installed.
     public func font(_ role: TextRole) -> Font {
         let style = style(role)
+        return font(size: style.size, weight: style.weight, relativeTo: role)
+    }
+
+    /// A one-off size in the theme's font family, for components whose text size depends on
+    /// their own size (button heights). Still scales with Dynamic Type.
+    public func font(size: CGFloat, weight: TextStyle.Weight, relativeTo role: TextRole = .body) -> Font {
         let base: Font = if let fontFamily {
-            .custom(fontFamily, size: style.size, relativeTo: role.dynamicTypeStyle)
+            .custom(fontFamily, size: size, relativeTo: role.dynamicTypeStyle)
         } else {
-            .system(size: UIFontMetrics(forTextStyle: role.uiTextStyle).scaledValue(for: style.size))
+            .system(size: UIFontMetrics(forTextStyle: role.uiTextStyle).scaledValue(for: size))
         }
-        return base.weight(style.weight.font)
+        return base.weight(weight.font)
     }
 
     /// Extra spacing between lines so the text matches the design's line height.
