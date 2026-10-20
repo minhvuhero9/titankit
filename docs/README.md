@@ -44,6 +44,7 @@ flowchart TB
     end
     subgraph UI["Giao diện"]
         DS[TitanDesignSystem]
+        IC[TitanIcons]
         NAV[TitanNavigation]
     end
     subgraph SVC["Dịch vụ (protocol)"]
@@ -65,7 +66,7 @@ flowchart TB
 | Tầng | Module | Ai dùng |
 | --- | --- | --- |
 | Nền tảng | TitanCore, TitanNetworking, TitanStorage | Mọi module |
-| Giao diện | TitanDesignSystem, TitanNavigation | Features, App |
+| Giao diện | TitanDesignSystem, TitanIcons, TitanNavigation | Features, App |
 | Dịch vụ | TitanAuth, TitanPurchase, TitanAds, TitanAnalytics, TitanPush, TitanRemoteConfig, TitanLocalization | Features, App (chỉ module được bật) |
 | Màn hình | TitanFeatures | App |
 | Adapter | TitanFirebase, TitanREST, Mock | Chỉ Composition Root của app |
@@ -172,6 +173,7 @@ sequenceDiagram
 | Nền tảng | TitanNetworking | [Networking.md](modules/Networking.md) |
 | Nền tảng | TitanStorage | [Storage.md](modules/Storage.md) |
 | Giao diện | TitanDesignSystem | [DesignSystem.md](modules/DesignSystem.md) |
+| Giao diện | TitanIcons | [Icons.md](modules/Icons.md) |
 | Giao diện | TitanNavigation | [Navigation.md](modules/Navigation.md) |
 | Dịch vụ | Backend & adapter | [Backend.md](modules/Backend.md) |
 | Dịch vụ | TitanAuth | [Auth.md](modules/Auth.md) |

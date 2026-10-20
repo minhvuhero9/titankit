@@ -1,6 +1,7 @@
 import SwiftUI
 import TitanAuth
 import TitanDesignSystem
+import TitanIcons
 import TitanLocalization
 
 /// A "continue with" button: the app supplies the logo, since brand marks can't ship in the kit.
@@ -108,7 +109,7 @@ public struct LoginScreen: View {
                 label: kit(KitStrings.Login.email),
                 text: $viewModel.email,
                 prompt: kit(KitStrings.Login.email),
-                icon: Image(systemName: "envelope"),
+                icon: Image(tk: .message),
                 status: fieldStatus(viewModel.emailErrorKey)
             )
             .textContentType(.username)
@@ -120,7 +121,7 @@ public struct LoginScreen: View {
                 label: kit(KitStrings.Login.password),
                 text: $viewModel.password,
                 prompt: kit(KitStrings.Login.password),
-                icon: Image(systemName: "lock"),
+                icon: Image(tk: .lock),
                 status: fieldStatus(viewModel.passwordErrorKey),
                 kind: .secure
             )

@@ -1,4 +1,5 @@
 import SwiftUI
+import TitanIcons
 import TitanLocalization
 
 /// Result of validating a field. The message shows under the field.
@@ -24,8 +25,8 @@ public enum TKFieldStatus: Equatable, Sendable {
 /// of the base Figma template: default, focused, filled, error, success, disabled.
 ///
 ///     TKTextField("Email", text: $email, prompt: "john@domain.com",
-///                 icon: Image(systemName: "envelope"), status: vm.emailStatus)
-///     TKTextField("Mật khẩu", text: $password, icon: Image(systemName: "lock"), kind: .secure)
+///                 icon: Image(tk: .message), status: vm.emailStatus)
+///     TKTextField("Mật khẩu", text: $password, icon: Image(tk: .lock), kind: .secure)
 public struct TKTextField: View {
     public enum Kind: Sendable {
         case text
@@ -105,7 +106,8 @@ public struct TKTextField: View {
                     .focused($isFocused)
                 if kind == .secure {
                     Button { isRevealed.toggle() } label: {
-                        Image(systemName: isRevealed ? "eye" : "eye.slash")
+                        Image(tk: isRevealed ? .show : .hide)
+                            .resizable().scaledToFit()
                             .frame(width: 20, height: 20)
                     }
                     .foregroundStyle(iconColor.color)

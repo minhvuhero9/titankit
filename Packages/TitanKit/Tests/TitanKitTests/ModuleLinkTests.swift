@@ -5,6 +5,7 @@ import TitanAuth
 import TitanCore
 import TitanDesignSystem
 import TitanFeatures
+import TitanIcons
 import TitanLocalization
 import TitanNavigation
 import TitanNetworking
@@ -21,9 +22,9 @@ final class ModuleLinkTests: XCTestCase {
             TitanDesignSystemModule.moduleName, TitanNavigationModule.moduleName, TitanAuthModule.moduleName,
             TitanPurchaseModule.moduleName, TitanAdsModule.moduleName, TitanAnalyticsModule.moduleName,
             TitanPushModule.moduleName, TitanRemoteConfigModule.moduleName, TitanLocalizationModule.moduleName,
-            TitanFeaturesModule.moduleName,
+            TitanFeaturesModule.moduleName, TitanIconsModule.moduleName,
         ]
-        XCTAssertEqual(Set(names).count, 13)
+        XCTAssertEqual(Set(names).count, 14)
     }
 
     func testKitVersionIsSemver() {

@@ -152,6 +152,8 @@ LoginScreen(config: LoginConfig(socialOptions: [SocialLoginOption(.apple, icon: 
 
 - Ô nhập ở màn đăng nhập dùng kiểu gạch chân (`.tkFieldStyle(.underlined)`), giống Figma.
 - Logo Google, Facebook không đi kèm kit (bản quyền thương hiệu): app tự đưa ảnh vào `SocialLoginOption`.
+- Ảnh của Dolingo nằm trong `Apps/Dolingo/Resources/Assets.xcassets`: logo (vẽ lại dạng vector theo màn splash), icon app, ảnh Welcome và logo Google, Apple, Facebook. File Figma hiện là bản mẫu, các màn hình chỉ là ảnh phẳng 430×932, nên ảnh Welcome đang được cắt từ đó và hơi mờ. Có file gốc thì thay ảnh này.
+- Trước giai đoạn 4, ba nút mạng xã hội của Dolingo đăng nhập dạng khách (`AppFlow.signInWithSocial`) để thử được trọn luồng.
 - Đăng nhập Apple, Google thật làm ở giai đoạn 4 cùng adapter Firebase. Hiện Dolingo dùng `MockAuthService` (tài khoản thử `demo@titan.app` / `123456`).
 - Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Settings, Profile, xóa tài khoản, WebPage, Maintenance, Force update, Paywall.
 

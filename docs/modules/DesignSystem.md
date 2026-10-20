@@ -99,13 +99,13 @@ Component (giai đoạn 2b). Kích thước và trạng thái lấy từ trang B
 ```swift
 // Nút: 7 kiểu, 4 cỡ (65 / 58 / 50 / 43), 2 dáng
 TKButton("Tiếp tục", style: .primary, size: .large, isLoading: vm.isSaving) { ... }
-TKButton("Bỏ qua", style: .light, leadingIcon: Image(systemName: "cart")) { ... }
-TKIconButton(Image(systemName: "plus"), accessibilityLabel: "Thêm") { ... }
+TKButton("Bỏ qua", style: .light, leadingIcon: Image(tk: .buy)) { ... }
+TKIconButton(Image(tk: .plus), accessibilityLabel: "Thêm") { ... }
 RootView().tkButtonShape(.pill)          // đổi dáng mặc định cho cả app
 
 // Ô nhập: thường, mật khẩu, nhiều dòng; trạng thái lỗi / hợp lệ
 TKTextField("Email", text: $email, prompt: "john@domain.com",
-            icon: Image(systemName: "envelope"), status: .error("Email không hợp lệ"))
+            icon: Image(tk: .message), status: .error("Email không hợp lệ"))
 TKTextField("Mật khẩu", text: $password, kind: .secure)
 
 // Khối nội dung, thông báo, trạng thái
