@@ -23,6 +23,7 @@ public struct TKCatalogView: View {
     @State private var segment = 0
     @State private var underlineTab = 0
     @State private var query = ""
+    @State private var showModal = false
 
     public init() {}
 
@@ -52,12 +53,23 @@ public struct TKCatalogView: View {
                     section("Thẻ và thông báo") { feedback }
                     section("Trạng thái") { states }
                 }
+                Group {
+                    section("Cảnh báo và hộp thoại") { alerts }
+                    section("Hiển thị") { display }
+                }
             }
             .padding(Spacing.md)
         }
         .background(theme.colors.surfaceBackground.color)
         .navigationTitle("Catalog")
         .tkToast($toast)
+        .tkModal(isPresented: $showModal, dismissOnBackgroundTap: true) {
+            TKModal("Chúc mừng!", message: "Bạn đã hoàn thành bài học hôm nay.",
+                     primary: TKModalAction("Tiếp tục") { showModal = false },
+                     secondary: TKModalAction("Xem lại") { showModal = false }) {
+                TKSuccessIllustration(.confetti)
+            }
+        }
     }
 
     private func section(_ title: String, @ViewBuilder content: () -> some View) -> AnyView {
@@ -290,6 +302,37 @@ public struct TKCatalogView: View {
             Text("Skeleton đang tải")
                 .tkTextStyle(.body)
                 .tkSkeleton(true)
+        }
+    }
+
+    private var alerts: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            ForEach(TKAlert.Status.allCases, id: \.self) { status in
+                TKAlert(title: Text("Cảnh báo kiểu \(status.rawValue)"), status: status)
+            }
+            TKButton("Mở hộp thoại", style: .light, size: .small) { showModal = true }
+            HStack(spacing: Spacing.lg) {
+                TKSuccessIllustration(.checkmark)
+                TKSuccessIllustration(.confetti)
+            }
+            TKNotificationRow("Bài học mới", message: "Unit 3 đã mở khoá", time: "2 giờ trước",
+                              leading: .icon(.tickSquare), isUnread: true) {}
+            TKNotificationRow("Ưu đãi Premium", message: "Giảm 50% trong hôm nay", time: "Hôm qua",
+                              leading: .image(Image(systemName: "gift")))
+        }
+    }
+
+    private var display: some View {
+        VStack(alignment: .leading, spacing: Spacing.lg) {
+            HStack(spacing: Spacing.md) {
+                TKAvatar(name: "Nguyễn Văn An", badge: .online)
+                TKAvatar(name: "Jack", badge: .offline)
+                TKAvatar(badge: .edit)
+                TKAvatar(name: "Minh Vũ", size: 64, badge: .live)
+            }
+            .padding(.bottom, Spacing.xs)
+            TKDivider()
+            TKDivider("hoặc tiếp tục với")
         }
     }
 
