@@ -33,7 +33,11 @@ let package = Package(
 
         // UI
         .target(name: "TitanIcons", resources: [.process("Resources")]),
-        .target(name: "TitanDesignSystem", dependencies: foundation + ["TitanLocalization", "TitanIcons"]),
+        .target(
+            name: "TitanDesignSystem",
+            dependencies: foundation + ["TitanLocalization", "TitanIcons"],
+            resources: [.process("Resources")]
+        ),
         .target(name: "TitanNavigation", dependencies: foundation),
 
         // Services

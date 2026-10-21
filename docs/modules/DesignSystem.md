@@ -66,7 +66,11 @@ public enum TextRole { case display, title1, title2, title3, headline, body, cal
 public struct TextStyle { size, weight, lineHeight /* 1.4 = 140% */, tracking }
 public struct Typography {
     public var fontFamily: String?                    // nil = font hệ thống
+    public var localizedFontFamilies: [String: String] // ["vi": TKFonts.plusJakartaSans]
     public func font(_ role: TextRole) -> Font        // co giãn theo Dynamic Type
+}
+public enum TKFonts {                                 // font nhúng sẵn trong kit (OFL)
+    static let urbanist, plusJakartaSans              // 400, 500, 600, 700
 }
 
 public enum Spacing { xxs 4, xs 8, sm 12, md 16, lg 24, xl 32, xxl 48 }
@@ -76,11 +80,18 @@ public struct Theme: Hashable, Sendable {
     public var colors: ColorTokens
     public var typography: Typography
     public var radius: Radius
+    public var gradientPrimary: TKGradient          // mặc định: màu thương hiệu nhạt dần
     public var logoName: String?
     public static let base: Theme
     public func merged(with patch: ThemePatch) -> Theme   // lớp sau thắng lớp trước
 }
-public struct ThemePatch { colors?, fontFamily?, textStyles?, radius?, logoName? }
+public struct ThemePatch { colors?, fontFamily?, localizedFontFamilies?, textStyles?, radius?, gradientPrimary?, logoName? }
+
+public struct TKGradient { stops, start, end; init(from: RGBA, to: RGBA); var linearGradient }
+public enum TKPalette {
+    enum Gradients { blue, purple, green, orange, red, teal, brown, yellow }   // Figma "Gradients"
+    enum Tints { blue, purple, green, orange, red, teal, brown, yellow, grey } // Figma "Background"
+}
 
 public enum PaletteGenerator {
     public static func scale(from brand: RGBA) -> ColorScale     // 1 màu → 10 bậc
@@ -93,6 +104,8 @@ public extension View {
     func tkTextStyle(_ role: TextRole) -> some View   // font + giãn dòng + giãn chữ
 }
 ```
+
+Font: kit nhúng sẵn Urbanist và Plus Jakarta Sans (giấy phép OFL, file trong `Resources/Fonts`). `.titanTheme(...)` tự đăng ký font, app không phải khai báo gì trong Info.plist. Urbanist thiếu chữ đ, ơ, ư và dấu chồng của tiếng Việt, nên khi máy để tiếng Việt, theme đổi sang font trong `localizedFontFamilies`. Vì theme đọc ngôn ngữ từ môi trường, gắn `.titanTheme(...)` bên trong `LocalizedRoot`.
 
 Component (giai đoạn 2b). Kích thước và trạng thái lấy từ trang Button và Input Form của Figma.
 
@@ -186,18 +199,21 @@ enum DolingoTheme {
         colors.actionPrimary = AdaptiveColor(primary[900])
         colors.surfaceBackground = AdaptiveColor(light: .white, dark: RGBA(hex: 0x181A20))
         // ...
-        return ThemePatch(colors: colors, fontFamily: "Urbanist",
+        return ThemePatch(colors: colors, fontFamily: TKFonts.urbanist,
+                          localizedFontFamilies: ["vi": TKFonts.plusJakartaSans],
                           textStyles: [.display: TextStyle(size: 48, weight: .bold)],
-                          radius: .soft)
+                          radius: .soft,
+                          gradientPrimary: TKGradient(from: primary[900], to: primary[700]))
     }()
     static let theme = Theme.base.merged(with: brand)
 }
 
-// DolingoApp.swift: gắn một lần ở gốc
-RootView().titanTheme(DolingoTheme.theme)
+// DolingoApp.swift: gắn một lần ở gốc, bên trong LocalizedRoot
+LocalizedRoot(...) { RootView().titanTheme(DolingoTheme.theme) }
 
 // Trong màn hình
 @Environment(\.theme) private var theme
+RoundedRectangle(cornerRadius: theme.radius.md).fill(theme.gradientPrimary.linearGradient)
 Text("Xin chào")
     .tkTextStyle(.display)
     .foregroundStyle(theme.colors.textPrimary.color)
@@ -209,6 +225,8 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 ## 8. Test
 
 - Unit test `Theme.merged(with:)`: lớp sau thắng, field nil giữ nguyên.
+- Unit test font: mọi độ đậm của hai font đăng ký được; tiếng Việt đổi font, ngôn ngữ khác giữ Urbanist.
+- Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).
 - `Theme.preview` dùng cho SwiftUI Preview; Catalog hiển thị mọi component với theme của từng app.
@@ -218,7 +236,8 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - [x] Lấy bảng màu Primary, Secondary, Greyscale, Dark, Alert từ Figma
 - [x] Tạo `DolingoTheme` với lớp brand (màu, font Urbanist, cỡ chữ, bo góc)
 - [x] Gắn `.titanTheme(...)` ở root view
-- [ ] Nhúng file font Urbanist vào app (hiện đang dùng font hệ thống thay thế)
+- [x] Nhúng font Urbanist, tiếng Việt dùng Plus Jakarta Sans
+- [x] Gradient, màu nền nhạt theo trang Colors của Figma
 - [x] Nút và ô nhập theo trang Button, Input Form của Figma
 - [ ] Ô chọn (dropdown), số điện thoại, ô mã PIN: làm cùng màn hình đăng nhập ở giai đoạn 3
 - [ ] Kiểm tra mọi màn hình ở dark mode và Dynamic Type lớn

@@ -41,3 +41,38 @@ public extension TKIcon {
     }
 }
 #endif
+
+/// The template's second icon set ("Additional Icons"): media controls, text formatting,
+/// food, gender, loading and more. One style each; filled and bold looks are separate cases
+/// such as `.alarmFill` or `.checkBold`. Template images, like `TKIcon`.
+public extension TKSymbol {
+    var assetName: String { "symbol.\(rawValue)" }
+    var image: Image { Image(assetName, bundle: .module) }
+}
+
+/// Full-colour illustrations at icon size ("Colorful Icons"): fire, coin, target, timers.
+/// They keep their own colours, so `foregroundStyle` has no effect.
+public extension TKColorIcon {
+    var assetName: String { "color.\(rawValue)" }
+    var image: Image { Image(assetName, bundle: .module) }
+}
+
+public extension Image {
+    init(tk symbol: TKSymbol) {
+        self.init(symbol.assetName, bundle: .module)
+    }
+
+    init(tk icon: TKColorIcon) {
+        self.init(icon.assetName, bundle: .module)
+    }
+}
+
+#if canImport(UIKit)
+public extension TKSymbol {
+    var uiImage: UIImage? { UIImage(named: assetName, in: .module, with: nil) }
+}
+
+public extension TKColorIcon {
+    var uiImage: UIImage? { UIImage(named: assetName, in: .module, with: nil) }
+}
+#endif
