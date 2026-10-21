@@ -134,6 +134,18 @@ TKRadioGroup(selection: $level, options: [TKOption(.beginner, title: "Mới bắ
 TKChip("Ngữ pháp", isSelected: filter == .grammar) { filter = .grammar }
 TKTag("Mới", tone: .info)                                        // style: .solid / .soft / .outline / .plain
 TKDropdown("Trình độ", selection: $level, options: levels)       // Set<Value> thì chọn nhiều
+
+// Điều hướng (theo trang Navbar, Menu Bar, Horizontal Tab, Search của Figma)
+LessonList().tkNavigationBar("Bài học", onBack: { router.pop() }) {
+    TKNavBarButton(Image(tk: .notification), accessibilityLabel: "Thông báo") { ... }
+}
+QuizScreen().tkNavigationBar(progress: vm.progress, onBack: { router.pop() })
+content.safeAreaInset(edge: .bottom, spacing: 0) {
+    TKTabBar(selected: tabs.selected, items: items) { tabs.select($0) }   // nối thẳng với TabRouter
+}
+TKUnderlineTabs(selection: $section, options: sections)          // tab gạch chân
+TKSegmentedTabs(selection: $period, options: periods)            // tab dạng khối
+TKSearchField(text: $query) { vm.search() }
 ```
 
 | Kiểu nút | Trông thế nào |
@@ -159,7 +171,13 @@ Danh sách component:
 | `TKTag` | Nhãn nhỏ không bấm được; 5 sắc thái (neutral, info, success, warning, error), 4 kiểu, 3 cỡ |
 | `TKDropdown` | Ô chọn mở danh sách ngay bên dưới; chọn một (radio) hoặc nhiều (checkbox) |
 | `TKOption` | Một lựa chọn (giá trị, chữ, icon) dùng chung cho radio, chip, dropdown |
-| `TKNavBar`, `TKSheet` | Để sau, làm khi màn hình cần |
+| `TKNavBar`, `.tkNavigationBar` | Thanh trên: nút quay lại, tiêu đề lớn hoặc thanh tiến độ, tối đa 3 nút icon; ẩn thanh hệ thống |
+| `TKProgressBar` | Thanh tiến độ bo tròn 12 pt |
+| `TKTabBar`, `TKTabItem` | Thanh tab dưới; icon light khi thường, bold khi chọn; bấm lại tab đang chọn vẫn gọi `onSelect` để quay về màn đầu |
+| `TKUnderlineTabs` | Tab ngang có gạch chân trượt theo tab chọn |
+| `TKSegmentedTabs` | Tab dạng khối, tab chọn tô màu thương hiệu |
+| `TKSearchField` | Ô tìm kiếm có nút xoá, đổi màu khi đang gõ |
+| `TKSheet` | Để sau, làm khi màn hình cần |
 | `TKToast` | Thông báo ngắn tự ẩn |
 | `TKEmptyState` | Màn hình trống: icon, tiêu đề, nút hành động |
 | `TKErrorView` | Hiển thị `TitanError`, có nút thử lại (dùng cho offline) |
@@ -241,6 +259,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - Unit test `Theme.merged(with:)`: lớp sau thắng, field nil giữ nguyên.
 - Unit test font: mọi độ đậm của hai font đăng ký được; tiếng Việt đổi font, ngôn ngữ khác giữ Urbanist.
 - Unit test component chọn: màu switch, chip, tag theo từng kiểu; chọn nhiều bật / tắt đúng.
+- Unit test điều hướng: thanh tiến độ giới hạn trong 0...1; chữ "Tìm kiếm", "Xoá" có đủ hai ngôn ngữ.
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).
