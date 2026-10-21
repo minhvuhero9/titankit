@@ -23,15 +23,29 @@ Image(tk: .heart, style: .bold)     // kiểu bold, ví dụ tab đang chọn
 TKIcon.setting.uiImage(.light)      // cho API UIKit
 ```
 
+Ngoài bộ Iconly, kit còn hai bộ nữa:
+
+```swift
+public enum TKSymbol: String, CaseIterable { ... }    // 165 icon "Additional Icons", một màu, đổi màu được
+public enum TKColorIcon: String, CaseIterable { ... } // 28 icon "Colorful Icons", giữ màu gốc
+
+Image(tk: TKSymbol.translate)
+Image(tk: TKColorIcon.fire)
+```
+
+Logo thương hiệu (Google, YouTube, App Store...) trong bộ Colorful không đưa vào kit; app nào cần thì để trong asset của app đó.
+
 Muốn đổi màu: `.foregroundStyle(theme.colors.actionPrimary.color)`. Cỡ mặc định là 24pt; muốn cỡ khác thì thêm `.resizable().frame(width:height:)`.
 
-Xem toàn bộ icon trong trang Catalog, mục "Icon", có nút chuyển Light / Bold.
+Xem toàn bộ icon trong trang Catalog: mục "Icon" (có nút chuyển Light / Bold), "Icon phụ" và "Icon nhiều màu".
 
 ## 4. Cách thêm icon
 
 1. Trong Figma, icon nằm ở trang "Design System", khung "Iconography", tên dạng `Iconly/Regular/Light/<Tên>`.
 2. Xuất SVG, tạo `light.<tenIcon>.imageset` và `bold.<tenIcon>.imageset` trong `Sources/TitanIcons/Resources/Icons.xcassets` (bật "Preserve Vector Data", "Render As: Template").
 3. Thêm `case tenIcon` vào `TKIcon+Cases.swift`. Test `testEveryIconExistsInBothStyles` báo ngay nếu thiếu một kiểu.
+
+Icon phụ nằm trong asset tên `symbol.<tên>` (Render As: Template), icon nhiều màu là `color.<tên>` (Render As: Original).
 
 Iconly đặt tên khác nhau giữa hai kiểu ở vài icon. Kit gom về một tên: `bag2`, `filter2`, `image2`, `voice2`, `dangerTriangle`, `dangerCircle`.
 
@@ -43,3 +57,4 @@ Iconly đi kèm template đã mua, dùng được trong các app của studio. K
 
 - Mỗi icon có đủ hai kiểu trong asset catalog.
 - Icon là ảnh template.
+- Mọi `TKSymbol` có ảnh template, mọi `TKColorIcon` giữ màu gốc.

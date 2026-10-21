@@ -67,14 +67,28 @@ public struct TextStyle: Hashable, Sendable {
 }
 
 public struct Typography: Hashable, Sendable {
-    /// Custom font family name, as registered in the app. nil uses the system font.
+    /// Custom font family name, such as `TKFonts.urbanist`. nil uses the system font.
+    /// Each weight is looked up by PostScript name ("Urbanist-SemiBold").
     public var fontFamily: String?
+    /// A different family for some languages, keyed by language code (e.g. "vi"),
+    /// for fonts that lack that language's letters.
+    public var localizedFontFamilies: [String: String]
     public var styles: [TextRole: TextStyle]
 
-    public init(fontFamily: String? = nil, styles: [TextRole: TextStyle]) {
+    public init(fontFamily: String? = nil, localizedFontFamilies: [String: String] = [:], styles: [TextRole: TextStyle]) {
         precondition(Set(styles.keys) == Set(TextRole.allCases), "Typography needs a style for every TextRole")
         self.fontFamily = fontFamily
+        self.localizedFontFamilies = localizedFontFamilies
         self.styles = styles
+    }
+
+    /// This typography with the family swapped for the locale's language, if one is set.
+    public func localized(for locale: Locale) -> Typography {
+        guard let code = locale.language.languageCode?.identifier,
+              let family = localizedFontFamilies[code] else { return self }
+        var result = self
+        result.fontFamily = family
+        return result
     }
 
     public func style(_ role: TextRole) -> TextStyle {
@@ -90,12 +104,12 @@ public struct Typography: Hashable, Sendable {
     /// A one-off size in the theme's font family, for components whose text size depends on
     /// their own size (button heights). Still scales with Dynamic Type.
     public func font(size: CGFloat, weight: TextStyle.Weight, relativeTo role: TextRole = .body) -> Font {
-        let base: Font = if let fontFamily {
-            .custom(fontFamily, size: size, relativeTo: role.dynamicTypeStyle)
-        } else {
-            .system(size: UIFontMetrics(forTextStyle: role.uiTextStyle).scaledValue(for: size))
+        if let fontFamily {
+            let name = TKFonts.postScriptName(family: fontFamily, weight: weight)
+            return .custom(name, size: size, relativeTo: role.dynamicTypeStyle)
         }
-        return base.weight(weight.font)
+        return .system(size: UIFontMetrics(forTextStyle: role.uiTextStyle).scaledValue(for: size))
+            .weight(weight.font)
     }
 
     /// Extra spacing between lines so the text matches the design's line height.

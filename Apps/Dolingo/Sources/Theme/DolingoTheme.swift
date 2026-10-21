@@ -53,8 +53,10 @@ enum DolingoTheme {
 
         return ThemePatch(
             colors: colors,
-            // Urbanist is not bundled yet, so text falls back to the system font for now.
-            fontFamily: "Urbanist",
+            // Figma's Urbanist has no đ, ơ, ư or stacked accents, so Vietnamese uses
+            // Plus Jakarta Sans, the closest bundled font with full Vietnamese support.
+            fontFamily: TKFonts.urbanist,
+            localizedFontFamilies: ["vi": TKFonts.plusJakartaSans],
             textStyles: [
                 .display: TextStyle(size: 48, weight: .bold, lineHeight: 1.4),
                 .headline: TextStyle(size: 18, weight: .bold, lineHeight: 1.4),
@@ -64,7 +66,9 @@ enum DolingoTheme {
                 .label: TextStyle(size: 18, weight: .semibold, lineHeight: 1.6, tracking: 0.2),
             ],
             // Figma: alert notes 6, inputs and rounded buttons 10.
-            radius: Radius(sm: 6, md: 10, lg: 16)
+            radius: Radius(sm: 6, md: 10, lg: 16),
+            // Figma "Gradient Primary".
+            gradientPrimary: TKGradient(from: primary[900], to: primary[700])
         )
     }()
 

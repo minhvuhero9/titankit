@@ -33,6 +33,17 @@ public struct RGBA: Hashable, Sendable {
         RGBA(red: red, green: green, blue: blue, alpha: alpha)
     }
 
+    /// Blends towards `other`: 0 keeps this colour, 1 returns `other`.
+    public func mixed(with other: RGBA, by amount: Double) -> RGBA {
+        let t = min(max(amount, 0), 1)
+        return RGBA(
+            red: red + (other.red - red) * t,
+            green: green + (other.green - green) * t,
+            blue: blue + (other.blue - blue) * t,
+            alpha: alpha + (other.alpha - alpha) * t
+        )
+    }
+
     public var uiColor: UIColor {
         UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }

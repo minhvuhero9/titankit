@@ -10,13 +10,14 @@ struct DolingoApp: App {
     var body: some Scene {
         WindowGroup {
             LocalizedRoot(localization: container.localization) {
+                // Inside LocalizedRoot so the theme picks the font for the chosen language.
                 RootView()
+                    .titanTheme(DolingoTheme.theme)
             }
             .environmentObject(container)
             .environment(\.container, container)
             .environment(\.logger, container.logger)
             .environment(\.imageCache, container.imageCache)
-            .titanTheme(DolingoTheme.theme)
             .onOpenURL { _ = container.deepLinks.handle($0) }
         }
     }

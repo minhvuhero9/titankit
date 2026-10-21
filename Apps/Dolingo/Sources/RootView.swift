@@ -116,7 +116,7 @@ private struct StatusList: View {
     let container = AppContainer.preview()
     return LocalizedRoot(localization: container.localization) {
         RootView()
+            .titanTheme(DolingoTheme.theme)
     }
     .environmentObject(container)
-    .titanTheme(DolingoTheme.theme)
 }

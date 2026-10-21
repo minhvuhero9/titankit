@@ -12,15 +12,33 @@ public extension EnvironmentValues {
 }
 
 public extension View {
-    /// Apply once at the root: every TK component below reads this theme.
+    /// Apply once at the root, below where the app sets `\.locale`: every TK component below
+    /// reads this theme, with the font family picked for the current language.
     func titanTheme(_ theme: Theme) -> some View {
-        environment(\.theme, theme)
-            .tint(theme.colors.actionPrimary.color)
+        modifier(ThemeRoot(theme: theme))
     }
 
     /// Font, line spacing and letter spacing for a text role, taken from the current theme.
     func tkTextStyle(_ role: TextRole) -> some View {
         modifier(TextStyleModifier(role: role))
+    }
+}
+
+private struct ThemeRoot: ViewModifier {
+    let theme: Theme
+    @Environment(\.locale) private var locale
+
+    init(theme: Theme) {
+        TKFonts.registerBundledFonts()
+        self.theme = theme
+    }
+
+    func body(content: Content) -> some View {
+        var localized = theme
+        localized.typography = theme.typography.localized(for: locale)
+        return content
+            .environment(\.theme, localized)
+            .tint(theme.colors.actionPrimary.color)
     }
 }
 

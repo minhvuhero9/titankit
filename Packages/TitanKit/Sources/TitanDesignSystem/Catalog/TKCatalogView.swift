@@ -20,7 +20,10 @@ public struct TKCatalogView: View {
             VStack(alignment: .leading, spacing: Spacing.xl) {
                 section("Màu") { colors }
                 section("Chữ") { typography }
+                section("Gradient") { gradients }
                 section("Icon") { icons }
+                section("Icon phụ") { iconGrid(TKSymbol.allCases, name: \.rawValue) { Image(tk: $0) } }
+                section("Icon nhiều màu") { iconGrid(TKColorIcon.allCases, name: \.rawValue) { Image(tk: $0) } }
                 section("Nút") { buttons }
                 section("Ô nhập") { fields }
                 section("Thẻ và thông báo") { feedback }
@@ -48,16 +51,51 @@ public struct TKCatalogView: View {
                 ForEach(TKIconStyle.allCases, id: \.self) { Text(verbatim: $0.rawValue).tag($0) }
             }
             .pickerStyle(.segmented)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: Spacing.sm)], spacing: Spacing.md) {
-                ForEach(TKIcon.allCases, id: \.self) { icon in
-                    VStack(spacing: Spacing.xxs) {
-                        Image(tk: icon, style: iconStyle)
-                            .foregroundStyle(theme.colors.textPrimary.color)
-                        Text(verbatim: icon.rawValue)
-                            .tkTextStyle(.caption)
-                            .foregroundStyle(theme.colors.textSecondary.color)
-                            .lineLimit(1).minimumScaleFactor(0.7)
-                    }
+            iconGrid(TKIcon.allCases, name: \.rawValue) { Image(tk: $0, style: iconStyle) }
+        }
+    }
+
+    private func iconGrid<Icon: Hashable>(
+        _ items: [Icon],
+        name: KeyPath<Icon, String>,
+        image: @escaping (Icon) -> Image
+    ) -> some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: Spacing.sm)], spacing: Spacing.md) {
+            ForEach(items, id: \.self) { icon in
+                VStack(spacing: Spacing.xxs) {
+                    image(icon)
+                        .foregroundStyle(theme.colors.textPrimary.color)
+                    Text(verbatim: icon[keyPath: name])
+                        .tkTextStyle(.caption)
+                        .foregroundStyle(theme.colors.textSecondary.color)
+                        .lineLimit(1).minimumScaleFactor(0.7)
+                }
+            }
+        }
+    }
+
+    private var gradients: some View {
+        let g = TKPalette.Gradients.self
+        let t = TKPalette.Tints.self
+        let rows: [(String, TKGradient, RGBA)] = [
+            ("primary", theme.gradientPrimary, t.grey),
+            ("blue", g.blue, t.blue), ("purple", g.purple, t.purple), ("green", g.green, t.green),
+            ("orange", g.orange, t.orange), ("red", g.red, t.red), ("teal", g.teal, t.teal),
+            ("brown", g.brown, t.brown), ("yellow", g.yellow, t.yellow),
+        ]
+        return LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: Spacing.sm)], spacing: Spacing.sm) {
+            ForEach(rows, id: \.0) { row in
+                let (name, gradient, tint) = row
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                    RoundedRectangle(cornerRadius: theme.radius.sm)
+                        .fill(gradient.linearGradient)
+                        .frame(height: 44)
+                    RoundedRectangle(cornerRadius: theme.radius.sm)
+                        .fill(tint.color)
+                        .frame(height: 20)
+                    Text(verbatim: name)
+                        .tkTextStyle(.caption)
+                        .foregroundStyle(theme.colors.textSecondary.color)
                 }
             }
         }
