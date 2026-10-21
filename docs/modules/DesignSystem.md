@@ -126,6 +126,14 @@ TKCard { ... }
 .tkToast($toast)                          // toast = TKToast("Đã lưu", style: .success)
 TKAsyncContent(vm.state, retry: vm.reload) { items in ... }   // tự hiện loading / lỗi / rỗng
 TKCatalogView()                           // xem mọi token và component với theme hiện tại
+
+// Chọn (theo trang Checkbox, Radio, Toggle, Chips, Tag, Dropdown của Figma)
+Toggle("Nhớ đăng nhập", isOn: $remember).toggleStyle(.tkCheckbox)
+Toggle("Âm thanh", isOn: $sound).toggleStyle(.tkSwitch)          // hoặc .tkSwitch(.line)
+TKRadioGroup(selection: $level, options: [TKOption(.beginner, title: "Mới bắt đầu"), ...])
+TKChip("Ngữ pháp", isSelected: filter == .grammar) { filter = .grammar }
+TKTag("Mới", tone: .info)                                        // style: .solid / .soft / .outline / .plain
+TKDropdown("Trình độ", selection: $level, options: levels)       // Set<Value> thì chọn nhiều
 ```
 
 | Kiểu nút | Trông thế nào |
@@ -145,6 +153,12 @@ Danh sách component:
 | `TKButton`, `TKIconButton` | 7 kiểu, 4 cỡ, bo góc hoặc viên thuốc; có trạng thái loading và disabled |
 | `TKTextField` | Ô nhập có label, icon, mật khẩu, nhiều dòng, trạng thái lỗi / hợp lệ |
 | `TKCard` | Khối nội dung có nền, bo góc, bóng |
+| Checkbox, Switch | `Toggle` với `.toggleStyle(.tkCheckbox)`, `.tkSwitch`, `.tkSwitch(.line)` |
+| `TKRadio`, `TKRadioGroup` | Chọn một trong nhiều mục |
+| `TKChip` | Bộ lọc, lựa chọn dạng viên thuốc; 3 kiểu (filled, outline, neutral), 3 cỡ (34 / 42 / 49) |
+| `TKTag` | Nhãn nhỏ không bấm được; 5 sắc thái (neutral, info, success, warning, error), 4 kiểu, 3 cỡ |
+| `TKDropdown` | Ô chọn mở danh sách ngay bên dưới; chọn một (radio) hoặc nhiều (checkbox) |
+| `TKOption` | Một lựa chọn (giá trị, chữ, icon) dùng chung cho radio, chip, dropdown |
 | `TKNavBar`, `TKSheet` | Để sau, làm khi màn hình cần |
 | `TKToast` | Thông báo ngắn tự ẩn |
 | `TKEmptyState` | Màn hình trống: icon, tiêu đề, nút hành động |
@@ -226,6 +240,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 
 - Unit test `Theme.merged(with:)`: lớp sau thắng, field nil giữ nguyên.
 - Unit test font: mọi độ đậm của hai font đăng ký được; tiếng Việt đổi font, ngôn ngữ khác giữ Urbanist.
+- Unit test component chọn: màu switch, chip, tag theo từng kiểu; chọn nhiều bật / tắt đúng.
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).
@@ -239,7 +254,8 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - [x] Nhúng font Urbanist, tiếng Việt dùng Plus Jakarta Sans
 - [x] Gradient, màu nền nhạt theo trang Colors của Figma
 - [x] Nút và ô nhập theo trang Button, Input Form của Figma
-- [ ] Ô chọn (dropdown), số điện thoại, ô mã PIN: làm cùng màn hình đăng nhập ở giai đoạn 3
+- [x] Checkbox, Radio, Switch, Chips, Tag, Dropdown theo Figma
+- [ ] Số điện thoại, ô mã PIN: làm cùng màn hình đăng nhập ở giai đoạn 3
 - [ ] Kiểm tra mọi màn hình ở dark mode và Dynamic Type lớn
 - [ ] Không dùng mã màu hay cỡ chữ trực tiếp trong màn hình của app
 - [ ] Mở Catalog với theme App 1 để duyệt cùng designer

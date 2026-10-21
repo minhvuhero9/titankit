@@ -12,6 +12,13 @@ public struct TKCatalogView: View {
     @State private var note = ""
     @State private var toast: TKToast?
     @State private var iconStyle = TKIconStyle.light
+    @State private var remember = true
+    @State private var sound = true
+    @State private var vibrate = false
+    @State private var level = 0
+    @State private var chip = 0
+    @State private var single: Int?
+    @State private var multiple: Set<Int> = [1]
 
     public init() {}
 
@@ -26,6 +33,8 @@ public struct TKCatalogView: View {
                 section("Icon nhiều màu") { iconGrid(TKColorIcon.allCases, name: \.rawValue) { Image(tk: $0) } }
                 section("Nút") { buttons }
                 section("Ô nhập") { fields }
+                section("Chọn") { selection }
+                section("Tag") { tags }
                 section("Thẻ và thông báo") { feedback }
                 section("Trạng thái") { states }
             }
@@ -138,6 +147,44 @@ public struct TKCatalogView: View {
                 Text("\(role.rawValue) \(Int(style.size))")
                     .tkTextStyle(role)
                     .foregroundStyle(theme.colors.textPrimary.color)
+            }
+        }
+    }
+
+    private var selection: some View {
+        let options = [
+            TKOption(0, title: Text(verbatim: "Mới bắt đầu")),
+            TKOption(1, title: Text(verbatim: "Trung cấp")),
+            TKOption(2, title: Text(verbatim: "Nâng cao")),
+        ]
+        return VStack(alignment: .leading, spacing: Spacing.md) {
+            Toggle(isOn: $remember) { Text(verbatim: "Checkbox") }.toggleStyle(.tkCheckbox)
+            Toggle(isOn: $sound) { Text(verbatim: "Switch") }.toggleStyle(.tkSwitch)
+            Toggle(isOn: $vibrate) { Text(verbatim: "Switch line") }.toggleStyle(.tkSwitch(.line))
+            TKRadioGroup(selection: $level, options: options)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: Spacing.xs) {
+                    ForEach(options) { option in
+                        TKChip(title: option.title, style: chip == option.value ? .filled : .neutral, size: .small) {
+                            chip = option.value
+                        }
+                    }
+                    TKChip(title: Text(verbatim: "Outline"), icon: Image(tk: .star), style: .outline, size: .small) {}
+                }
+            }
+            TKDropdown(selection: $multiple, options: options)
+            TKDropdown(selection: $single, options: options, prompt: "Chọn trình độ")
+        }
+    }
+
+    private var tags: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            ForEach(TKTag.Style.allCases, id: \.self) { style in
+                HStack(spacing: Spacing.xs) {
+                    ForEach(TKTag.Tone.allCases, id: \.self) { tone in
+                        TKTag(title: Text(verbatim: tone.rawValue), tone: tone, style: style, size: .small)
+                    }
+                }
             }
         }
     }
