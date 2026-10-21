@@ -13,7 +13,7 @@ TitanDesignSystem cung cấp token, theme 3 lớp và bộ component `TK*` để
 - Hợp nhất theme 3 lớp: base của kit, brand của app, override từ Figma.
 - Sinh bảng màu đầy đủ từ một màu thương hiệu.
 - Typography theo vai trò, spacing, bo góc, hỗ trợ dark mode và Dynamic Type.
-- Component dùng chung: `TKButton`, `TKTextField`, `TKCard`, `TKNavBar`, `TKSheet`, `TKToast`, `TKEmptyState`, `TKErrorView`, `TKLoading`, `TKAsyncContent`.
+- Component dùng chung: `TKButton`, `TKTextField`, `TKCard`, `TKNavBar`, `TKSheet`, `TKToast`, `TKAlert`, `TKModal`, `TKAvatar`, `TKEmptyState`, `TKErrorView`, `TKLoading`, `TKAsyncContent`.
 - Script trong `Tools/` sinh code Swift từ JSON token Figma; app `Catalog` để xem trước.
 
 **Không làm:**
@@ -146,6 +146,21 @@ content.safeAreaInset(edge: .bottom, spacing: 0) {
 TKUnderlineTabs(selection: $section, options: sections)          // tab gạch chân
 TKSegmentedTabs(selection: $period, options: periods)            // tab dạng khối
 TKSearchField(text: $query) { vm.search() }
+
+// Cảnh báo, hộp thoại, thông báo (theo trang Alert, Modal, Notification của Figma)
+TKAlert("Mật khẩu chưa đúng", status: .error)                   // .info / .success / .warning / .error
+root.tkModal(isPresented: $showDone) {                           // gắn vào gốc màn hình để che cả thanh trên
+    TKModal("Chúc mừng!", message: "Bạn đã xong bài học.",
+            primary: TKModalAction("Tiếp tục") { showDone = false }) {
+        TKSuccessIllustration(.confetti)
+    }
+}
+TKNotificationRow("Bài học mới", message: "Unit 3 đã mở", time: "2 giờ trước",
+                  leading: .icon(.tickSquare), isUnread: true) { open(item) }
+
+// Hiển thị (theo trang Avatar, Divider của Figma)
+TKAvatar(image: user.photo, name: user.name, badge: .online)   // không có ảnh thì hiện chữ cái đầu
+TKDivider("hoặc tiếp tục với")
 ```
 
 | Kiểu nút | Trông thế nào |
@@ -177,6 +192,12 @@ Danh sách component:
 | `TKUnderlineTabs` | Tab ngang có gạch chân trượt theo tab chọn |
 | `TKSegmentedTabs` | Tab dạng khối, tab chọn tô màu thương hiệu |
 | `TKSearchField` | Ô tìm kiếm có nút xoá, đổi màu khi đang gõ |
+| `TKAlert` | Dòng cảnh báo trên nền nhạt của màu trạng thái; 4 trạng thái, icon riêng cho từng loại |
+| `TKModal`, `.tkModal` | Hộp thoại giữa màn hình: hình minh hoạ, tiêu đề, mô tả, tối đa 2 nút hoặc spinner; nền tối phía sau |
+| `TKSuccessIllustration` | Vòng tròn màu thương hiệu có dấu tick, kiểu đơn hoặc có chấm confetti |
+| `TKNotificationRow` | Một dòng thông báo: ảnh hoặc icon, tiêu đề, mô tả, thời gian, chấm chưa đọc, mũi tên |
+| `TKAvatar` | Ảnh đại diện tròn; không có ảnh thì hiện chữ cái đầu; huy hiệu online, offline, sửa, LIVE |
+| `TKDivider` | Đường kẻ 1 pt màu viền, có thể có chữ ở giữa |
 | `TKSheet` | Để sau, làm khi màn hình cần |
 | `TKToast` | Thông báo ngắn tự ẩn |
 | `TKEmptyState` | Màn hình trống: icon, tiêu đề, nút hành động |
@@ -260,6 +281,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - Unit test font: mọi độ đậm của hai font đăng ký được; tiếng Việt đổi font, ngôn ngữ khác giữ Urbanist.
 - Unit test component chọn: màu switch, chip, tag theo từng kiểu; chọn nhiều bật / tắt đúng.
 - Unit test điều hướng: thanh tiến độ giới hạn trong 0...1; chữ "Tìm kiếm", "Xoá" có đủ hai ngôn ngữ.
+- Unit test cảnh báo và avatar: màu từng trạng thái trên nền 8%; chữ cái đầu của tên tiếng Việt.
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).
