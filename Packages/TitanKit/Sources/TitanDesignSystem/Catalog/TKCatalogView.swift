@@ -28,20 +28,30 @@ public struct TKCatalogView: View {
 
     public var body: some View {
         ScrollView {
+            // A ViewBuilder block may hold at most 10 views on iOS 16 (more needs the iOS 17
+            // runtime and crashes older systems), so the sections are grouped.
             VStack(alignment: .leading, spacing: Spacing.xl) {
-                section("Màu") { colors }
-                section("Chữ") { typography }
-                section("Gradient") { gradients }
-                section("Icon") { icons }
-                section("Icon phụ") { iconGrid(TKSymbol.allCases, name: \.rawValue) { Image(tk: $0) } }
-                section("Icon nhiều màu") { iconGrid(TKColorIcon.allCases, name: \.rawValue) { Image(tk: $0) } }
-                section("Nút") { buttons }
-                section("Ô nhập") { fields }
-                section("Chọn") { selection }
-                section("Tag") { tags }
-                section("Điều hướng") { navigation }
-                section("Thẻ và thông báo") { feedback }
-                section("Trạng thái") { states }
+                Group {
+                    section("Màu") { colors }
+                    section("Chữ") { typography }
+                    section("Gradient") { gradients }
+                }
+                Group {
+                    section("Icon") { icons }
+                    section("Icon phụ") { iconGrid(TKSymbol.allCases, name: \.rawValue) { Image(tk: $0) } }
+                    section("Icon nhiều màu") { iconGrid(TKColorIcon.allCases, name: \.rawValue) { Image(tk: $0) } }
+                }
+                Group {
+                    section("Nút") { buttons }
+                    section("Ô nhập") { fields }
+                    section("Chọn") { selection }
+                    section("Tag") { tags }
+                    section("Điều hướng") { navigation }
+                }
+                Group {
+                    section("Thẻ và thông báo") { feedback }
+                    section("Trạng thái") { states }
+                }
             }
             .padding(Spacing.md)
         }
