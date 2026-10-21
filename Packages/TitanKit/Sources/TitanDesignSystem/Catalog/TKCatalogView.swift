@@ -28,9 +28,9 @@ public struct TKCatalogView: View {
 
     public var body: some View {
         ScrollView {
-            // A ViewBuilder block may hold at most 10 views on iOS 16 (more needs the iOS 17
-            // runtime and crashes older systems), so the sections are grouped.
-            VStack(alignment: .leading, spacing: Spacing.xl) {
+            // Sections are type-erased and built lazily: one generic view type holding every
+            // component on the page is deep enough to overflow the stack in Debug builds.
+            LazyVStack(alignment: .leading, spacing: Spacing.xl) {
                 Group {
                     section("Màu") { colors }
                     section("Chữ") { typography }
@@ -60,13 +60,15 @@ public struct TKCatalogView: View {
         .tkToast($toast)
     }
 
-    private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.md) {
-            Text(title)
-                .tkTextStyle(.title2)
-                .foregroundStyle(theme.colors.textPrimary.color)
-            content()
-        }
+    private func section(_ title: String, @ViewBuilder content: () -> some View) -> AnyView {
+        AnyView(
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                Text(title)
+                    .tkTextStyle(.title2)
+                    .foregroundStyle(theme.colors.textPrimary.color)
+                content()
+            }
+        )
     }
 
     private var icons: some View {
