@@ -139,7 +139,7 @@ public struct TKProgressBar: View {
         .accessibilityValue(Text(verbatim: "\(Int((TKProgressBar.clamped(value) * 100).rounded())) %"))
     }
 
-    static func clamped(_ value: Double) -> Double {
+    nonisolated static func clamped(_ value: Double) -> Double {
         guard value.isFinite else { return 0 }
         return min(max(value, 0), 1)
     }
