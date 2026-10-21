@@ -14,6 +14,8 @@ public enum KitStrings {
     public static let loading = "kit.common.loading"
     public static let search = "kit.common.search"
     public static let clear = "kit.common.clear"
+    public static let previous = "kit.common.previous"
+    public static let next = "kit.common.next"
 
     public enum Onboarding {
         public static let getStarted = "kit.onboarding.getStarted"
