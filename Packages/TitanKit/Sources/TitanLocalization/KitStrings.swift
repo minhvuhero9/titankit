@@ -12,6 +12,8 @@ public enum KitStrings {
     public static let offlineTitle = "kit.error.offline.title"
     public static let back = "kit.common.back"
     public static let loading = "kit.common.loading"
+    public static let search = "kit.common.search"
+    public static let clear = "kit.common.clear"
 
     public enum Onboarding {
         public static let getStarted = "kit.onboarding.getStarted"

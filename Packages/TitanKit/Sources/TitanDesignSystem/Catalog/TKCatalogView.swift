@@ -19,6 +19,10 @@ public struct TKCatalogView: View {
     @State private var chip = 0
     @State private var single: Int?
     @State private var multiple: Set<Int> = [1]
+    @State private var tab = 0
+    @State private var segment = 0
+    @State private var underlineTab = 0
+    @State private var query = ""
 
     public init() {}
 
@@ -35,6 +39,7 @@ public struct TKCatalogView: View {
                 section("Ô nhập") { fields }
                 section("Chọn") { selection }
                 section("Tag") { tags }
+                section("Điều hướng") { navigation }
                 section("Thẻ và thông báo") { feedback }
                 section("Trạng thái") { states }
             }
@@ -174,6 +179,30 @@ public struct TKCatalogView: View {
             }
             TKDropdown(selection: $multiple, options: options)
             TKDropdown(selection: $single, options: options, prompt: "Chọn trình độ")
+        }
+    }
+
+    private var navigation: some View {
+        let options = [
+            TKOption(0, title: Text(verbatim: "Bài học")),
+            TKOption(1, title: Text(verbatim: "Từ vựng")),
+            TKOption(2, title: Text(verbatim: "Ôn tập")),
+        ]
+        let tabs = [
+            TKTabItem(0, title: Text(verbatim: "Home"), icon: .home),
+            TKTabItem(1, title: Text(verbatim: "Chats"), icon: .chat),
+            TKTabItem(2, title: Text(verbatim: "Speak"), icon: .voice),
+            TKTabItem(3, title: Text(verbatim: "Account"), icon: .profile),
+        ]
+        return VStack(alignment: .leading, spacing: Spacing.md) {
+            TKNavBar(title: Text(verbatim: "Navbar"), onBack: {}) {
+                TKNavBarButton(Image(tk: .notification), accessibilityLabel: "Notification") {}
+            }
+            TKNavBar(progress: 0.6, onBack: {})
+            TKSearchField(text: $query)
+            TKUnderlineTabs(selection: $underlineTab, options: options)
+            TKSegmentedTabs(selection: $segment, options: options)
+            TKTabBar(selection: $tab, items: tabs)
         }
     }
 
