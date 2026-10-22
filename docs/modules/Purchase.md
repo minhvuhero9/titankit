@@ -141,6 +141,16 @@ Khóa một tính năng trong màn hình riêng của app:
 - Unit test với `StoreKitTest` (`SKTestSession`): mua, hết hạn, gia hạn, hoàn tiền, restore.
 - Test `PaywallViewModel`: `.cancelled` không hiện lỗi, `.pending` hiện thông báo chờ phụ huynh duyệt.
 
+## 7b. Đã làm (giai đoạn 4, đợt 1)
+
+- `PurchaseService` dùng typed throws (`throws(TitanError)`): mất mạng là `.network(.offline)`, sản phẩm không có là `.notFound`, người dùng huỷ trong hộp mua của Apple trả về `.cancelled` chứ không ném lỗi.
+- `entitlementStream` tạo stream mới mỗi lần đọc, phát ngay giá trị hiện tại rồi mỗi lần đổi. `EntitlementBroadcaster` dùng chung cho StoreKit và Mock.
+- `StoreProduct` có `freeTrialDays` thay cho chuỗi `introOffer`, để Paywall tự viết "Dùng thử 7 ngày" theo ngôn ngữ đang chọn. `Period` có thêm `.day`; gói 3 tháng hiện vẫn hiện là `.month`.
+- `StoreKitPurchaseService`: chỉ tin giao dịch đã xác minh, bỏ giao dịch đã hoàn tiền, gói trọn đời (không hết hạn) thắng mọi ngày hết hạn. Quyền được lưu bằng `UserDefaultsEntitlementCache` để lần mở sau hiện premium ngay.
+- `MockPurchaseService`: có hai gói mẫu (tháng có 7 ngày dùng thử, năm), `nextResult`, `failCalls(with:)`, `setEntitlements`.
+- Dolingo: `AppConfig.purchase` có hai ID gói giả `com.titanstudio.dolingo.premium.monthly` và `.yearly`, `AppContainer.purchase` dùng StoreKit, gọi `start()` lúc mở app. Preview và test dùng Mock.
+- Chưa làm: file `Dolingo.storekit` để mua thử trên Simulator, `PaywallScreen` (đợt sau), RevenueCat.
+
 ## 8. Checklist cho App 1
 
 - [ ] Tạo sản phẩm và nhóm thuê bao trên App Store Connect

@@ -71,7 +71,8 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] TitanNavigation: `Route`, Router, tab, sheet, deep link.
 - [x] TitanLocalization: catalog kit, đổi ngôn ngữ, formatter.
 - [x] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage, Maintenance, Force update, Profile, Delete account.
-- [ ] Paywall và Rate app prompt (nếu App 1 cần).
+- [x] Rate app prompt (`RatePromptState`, `tkRequestReview`).
+- [ ] Paywall (cần `TitanPurchase`, nếu App 1 có mua trong app).
 - [ ] Mỗi màn hình có trang Catalog và snapshot test.
 - [ ] Nối các màn hình vào Router của App 1 bằng `Config` và callback.
 
@@ -88,7 +89,8 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [ ] TitanAuth: Apple, Google, email; xóa tài khoản.
 - [ ] TitanRemoteConfig: `LaunchChecker` cho bảo trì và bắt buộc cập nhật (kit và Mock đã xong; còn adapter Firebase).
 - [ ] TitanAnalytics: sự kiện chung của kit + sự kiện riêng App 1.
-- [ ] TitanPurchase (StoreKit 2 hoặc RevenueCat), TitanAds (AdMob + UMP), TitanPush nếu cần.
+- [x] TitanPurchase: `PurchaseService`, adapter StoreKit 2 và Mock (chưa có RevenueCat, chưa có file `.storekit`).
+- [ ] TitanAds (AdMob + UMP), TitanPush nếu cần.
 - [ ] `AppContainer` chọn adapter theo môi trường.
 
 **Xong khi:** App1-Staging đăng nhập thật, đọc Remote Config thật, sự kiện analytics hiện trên console.

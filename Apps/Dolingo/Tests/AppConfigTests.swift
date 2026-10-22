@@ -1,5 +1,6 @@
 import XCTest
 import TitanCore
+import TitanPurchase
 @testable import Dolingo
 
 final class AppConfigTests: XCTestCase {
@@ -17,5 +18,11 @@ final class AppConfigTests: XCTestCase {
     func testUnknownEnvironmentFallsBackToDev() {
         let config = AppConfig(infoDictionary: ["TitanAppEnvironment": "bogus"])
         XCTAssertEqual(config.environment, .dev)
+    }
+
+    func testPremiumProductsUseTheBundlePrefix() {
+        XCTAssertEqual(AppConfig.purchase.productIds.count, 2)
+        XCTAssertTrue(AppConfig.purchase.productIds.allSatisfy { $0.hasPrefix("com.titanstudio.dolingo.premium.") })
+        XCTAssertEqual(Set(AppConfig.purchase.productIds), AppConfig.purchase.premiumProductIds)
     }
 }
