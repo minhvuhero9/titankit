@@ -630,6 +630,23 @@
           }
         }
       }
+    },
+    "kit.purchase.currentPlan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your current plan"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gói hiện tại của bạn"
+          }
+        }
+      }
     }
   }
 }

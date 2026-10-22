@@ -170,6 +170,17 @@ TKPeriodHeader(title: Text(vm.rangeTitle), onPrevious: vm.previous, onNext: vm.c
 TKProgressRing(0.3) { Text("30") }
 TKMessageBubble(message.text, time: message.time, direction: .outgoing, status: .read)
 TKCategoryItem("Ngữ pháp", icon: Image(tk: .document, style: .bold)) { open(.grammar) }
+
+// Màn Cài đặt và Paywall (theo trang Settings Elements, Account List, Select Country, Subscriptions Card)
+TKUpgradeBanner(title: Text("Nâng cấp ngay!"), message: Text("Mở khoá mọi bài học")) { showPaywall() }
+TKListRow(user.name, subtitle: user.email) { TKAvatar(image: user.photo, size: 60) } trailing: { ... }
+TKSettingsRow("Tuỳ chọn", icon: Image(tk: .setting)) { router.push(.preferences) }
+TKSettingsRow("Nhắc học hằng ngày", accessory: .toggle($remind))   // .chevron, .value, .toggle, .checkmark, .none
+TKSettingsRow("Đăng xuất", icon: Image(tk: .logout), role: .destructive, accessory: .none) { logOut() }
+TKOptionCard("Việt Nam", isSelected: country == .vn) { flag } action: { country = .vn }
+TKPlanCard(title: Text("Premium"), price: Text(product.displayPrice), period: Text("/ tháng"),
+           benefits: benefits, badge: Text("Phổ biến nhất"), actionTitle: Text("Chọn gói")) { buy(product) }
+content.tkOutlinedCard(isSelected: isPicked)                    // viền 2 pt, cạnh dưới dày, viền tím khi chọn
 ```
 
 | Kiểu nút | Trông thế nào |
@@ -213,6 +224,12 @@ Danh sách component:
 | `TKProgressRing` | Vòng tiến độ 42 pt chạy theo chiều kim đồng hồ từ đỉnh, có thể có chữ ở giữa |
 | `TKMessageBubble` | Bong bóng chat: tin đến màu xám bên trái (có tên người gửi), tin đi màu thương hiệu bên phải (có dấu đã gửi / đã đọc) |
 | `TKCategoryItem` | Icon tròn nền nhạt kèm nhãn, dùng cho lưới danh mục |
+| `TKSettingsRow` | Một dòng cài đặt: icon, tiêu đề, cuối dòng là mũi tên, giá trị, công tắc hoặc dấu tick; kiểu đỏ cho Đăng xuất |
+| `TKListRow` | Dòng danh sách tài khoản: avatar, tên đậm, dòng phụ xám, bất kỳ view nào ở cuối |
+| `TKOptionCard` | Thẻ có viền để chọn quốc gia, tài khoản liên kết, phương thức thanh toán; viền tím và dấu tick khi chọn |
+| `TKPlanCard` | Thẻ gói trả phí: giá, chu kỳ, danh sách quyền lợi, huy hiệu góc, nút chọn hoặc "Gói hiện tại của bạn" |
+| `TKUpgradeBanner` | Băng rôn tím "Nâng cấp ngay" ở đầu màn Cài đặt |
+| `.tkOutlinedCard` | Kiểu thẻ có viền dùng chung cho các thẻ trên |
 | `TKSheet` | Để sau, làm khi màn hình cần |
 | `TKToast` | Thông báo ngắn tự ẩn |
 | `TKEmptyState` | Màn hình trống: icon, tiêu đề, nút hành động |
@@ -298,6 +315,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - Unit test điều hướng: thanh tiến độ giới hạn trong 0...1; chữ "Tìm kiếm", "Xoá" có đủ hai ngôn ngữ.
 - Unit test cảnh báo và avatar: màu từng trạng thái trên nền 8%; chữ cái đầu của tên tiếng Việt.
 - Unit test lịch: lưới tháng 12/2024 bắt đầu Chủ nhật hoặc thứ Hai đúng như Figma; tuần chứa một ngày; tên thứ theo ngày đầu tuần; vòng tiến độ giới hạn 0...1; chữ "Trước", "Sau" có đủ hai ngôn ngữ.
+- Unit test thẻ có viền: viền 2 pt, 3 pt khi chọn, cạnh dưới đủ 5 pt như Figma; chữ "Gói hiện tại của bạn" có đủ hai ngôn ngữ.
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).
