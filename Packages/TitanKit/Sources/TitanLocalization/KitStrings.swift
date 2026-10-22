@@ -38,6 +38,24 @@ public enum KitStrings {
         public static let shortPassword = "kit.login.error.password"
     }
 
+    public enum Settings {
+        public static let title = "kit.settings.title"
+        public static let logout = "kit.settings.logout"
+        public static let logoutConfirm = "kit.settings.logout.confirm"
+        public static let logoutAction = "kit.settings.logout.action"
+        public static let appearance = "kit.settings.appearance"
+        public static let theme = "kit.settings.theme"
+        public static let chooseTheme = "kit.settings.theme.choose"
+        public static let themeSystem = "kit.settings.theme.system"
+        public static let themeLight = "kit.settings.theme.light"
+        public static let themeDark = "kit.settings.theme.dark"
+        public static let language = "kit.settings.language"
+        public static let chooseLanguage = "kit.settings.language.choose"
+        public static let helpSupport = "kit.settings.helpSupport"
+        public static let privacy = "kit.settings.privacy"
+        public static let terms = "kit.settings.terms"
+    }
+
     /// Looks the key up for `locale`: app bundle (Localizable) first, then the kit (TitanKit),
     /// then returns the key so a missing string is easy to spot.
     public static func string(_ key: String, locale: Locale, appBundle: Bundle = .main) -> String {

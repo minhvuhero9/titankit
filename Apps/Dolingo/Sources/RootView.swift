@@ -68,7 +68,6 @@ private struct FlowView: View {
 private struct StatusList: View {
     let container: AppContainer
     @ObservedObject var network: NetworkMonitor
-    @EnvironmentObject private var localization: LocalizationService
     @EnvironmentObject private var router: Router<AppRoute>
     @Environment(\.theme) private var theme
 
@@ -88,22 +87,12 @@ private struct StatusList: View {
                 .tkTextStyle(.callout)
                 .foregroundStyle(network.isOnline ? theme.colors.feedbackSuccess.color : theme.colors.feedbackError.color)
 
-            Picker("root.language", selection: Binding(
-                get: { localization.currentLanguage },
-                set: { localization.setLanguage($0) }
-            )) {
-                ForEach(localization.supportedLanguages) { language in
-                    Text(verbatim: language.displayName).tag(language)
-                }
+            TKButton("root.settings", style: .light, size: .medium) {
+                router.push(.settings)
             }
-            .pickerStyle(.segmented)
             .padding(.top, Spacing.lg)
-
-            TKButton("root.catalog", style: .light, size: .medium) {
+            TKButton("root.catalog", style: .outline, size: .medium) {
                 router.push(.catalog)
-            }
-            TKButton("root.signOut", style: .outline, size: .medium) {
-                Task { await container.flow.signOut() }
             }
         }
         .padding(Spacing.md)

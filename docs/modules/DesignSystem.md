@@ -155,6 +155,13 @@ root.tkModal(isPresented: $showDone) {                           // gắn vào g
         TKSuccessIllustration(.confetti)
     }
 }
+screen.tkSheet(isPresented: $choosing) {                         // bottom sheet cao vừa nội dung
+    TKSheet(title: Text("Chọn chủ đề"), primary: .init("OK") { apply() },
+            secondary: .init("Huỷ") { choosing = false }) {
+        TKRadioGroup(selection: $draft, options: options)
+    }
+}
+RootView().tkAppearance(appearance)                              // .system / .light / .dark
 TKNotificationRow("Bài học mới", message: "Unit 3 đã mở", time: "2 giờ trước",
                   leading: .icon(.tickSquare), isUnread: true) { open(item) }
 
@@ -230,7 +237,8 @@ Danh sách component:
 | `TKPlanCard` | Thẻ gói trả phí: giá, chu kỳ, danh sách quyền lợi, huy hiệu góc, nút chọn hoặc "Gói hiện tại của bạn" |
 | `TKUpgradeBanner` | Băng rôn tím "Nâng cấp ngay" ở đầu màn Cài đặt |
 | `.tkOutlinedCard` | Kiểu thẻ có viền dùng chung cho các thẻ trên |
-| `TKSheet` | Để sau, làm khi màn hình cần |
+| `TKSheet`, `.tkSheet` | Bottom sheet cao vừa nội dung: tiêu đề giữa, nội dung giữa hai đường kẻ, nút Huỷ và OK cạnh nhau |
+| `TKAppearance`, `.tkAppearance` | Lựa chọn Sáng / Tối / Theo hệ thống; app lưu lại và gắn ở gốc |
 | `TKToast` | Thông báo ngắn tự ẩn |
 | `TKEmptyState` | Màn hình trống: icon, tiêu đề, nút hành động |
 | `TKErrorView` | Hiển thị `TitanError`, có nút thử lại (dùng cho offline) |
@@ -316,6 +324,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - Unit test cảnh báo và avatar: màu từng trạng thái trên nền 8%; chữ cái đầu của tên tiếng Việt.
 - Unit test lịch: lưới tháng 12/2024 bắt đầu Chủ nhật hoặc thứ Hai đúng như Figma; tuần chứa một ngày; tên thứ theo ngày đầu tuần; vòng tiến độ giới hạn 0...1; chữ "Trước", "Sau" có đủ hai ngôn ngữ.
 - Unit test thẻ có viền: viền 2 pt, 3 pt khi chọn, cạnh dưới đủ 5 pt như Figma; chữ "Gói hiện tại của bạn" có đủ hai ngôn ngữ.
+- Unit test giao diện: `TKAppearance` ra đúng `ColorScheme` và được lưu bằng tên.
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).

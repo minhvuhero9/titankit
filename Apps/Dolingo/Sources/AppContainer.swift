@@ -71,6 +71,9 @@ final class AppContainer: ObservableObject, DependencyContainer {
     func makeView(for route: AppRoute) -> some View {
         switch route {
         case .catalog: TKCatalogView()
+        case .settings: DolingoSettingsScreen(container: self)
+        case .appearance: DolingoAppearanceScreen(localization: localization) { [router] in router.pop() }
+        case let .webPage(page): DolingoWebPage(page: page) { [router] in router.pop() }
         }
     }
 

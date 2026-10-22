@@ -24,6 +24,8 @@ public struct TKCatalogView: View {
     @State private var underlineTab = 0
     @State private var query = ""
     @State private var showModal = false
+    @State private var showSheet = false
+    @State private var sheetTheme = 1
     @State private var day: Date? = Date()
     @State private var weekDay = Date()
     @State private var period = 0
@@ -82,6 +84,15 @@ public struct TKCatalogView: View {
                      primary: TKModalAction("Tiếp tục") { showModal = false },
                      secondary: TKModalAction("Xem lại") { showModal = false }) {
                 TKSuccessIllustration(.confetti)
+            }
+        }
+        .tkSheet(isPresented: $showSheet) {
+            TKSheet(title: Text("Chọn chủ đề"),
+                    primary: TKModalAction("OK") { showSheet = false },
+                    secondary: TKModalAction("Huỷ") { showSheet = false }) {
+                TKRadioGroup(selection: $sheetTheme, options: [
+                    TKOption(0, title: "Theo hệ thống"), TKOption(1, title: "Sáng"), TKOption(2, title: "Tối"),
+                ])
             }
         }
     }
@@ -325,6 +336,7 @@ public struct TKCatalogView: View {
                 TKAlert(title: Text("Cảnh báo kiểu \(status.rawValue)"), status: status)
             }
             TKButton("Mở hộp thoại", style: .light, size: .small) { showModal = true }
+            TKButton("Mở bottom sheet", style: .light, size: .small) { showSheet = true }
             HStack(spacing: Spacing.lg) {
                 TKSuccessIllustration(.checkmark)
                 TKSuccessIllustration(.confetti)
