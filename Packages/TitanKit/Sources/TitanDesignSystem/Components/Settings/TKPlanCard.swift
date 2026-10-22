@@ -58,7 +58,7 @@ public struct TKPlanCard: View {
                     .font(theme.typography.font(size: 20, weight: .bold, relativeTo: .title3))
                 HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
                     price
-                        .font(theme.typography.font(size: 48, weight: .bold, relativeTo: .largeTitle))
+                        .font(theme.typography.font(size: 48, weight: .bold, relativeTo: .display))
                         .minimumScaleFactor(0.6)
                     period?
                         .font(theme.typography.font(size: 18, weight: .semibold, relativeTo: .body))
