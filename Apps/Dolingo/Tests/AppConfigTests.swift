@@ -7,8 +7,10 @@ final class AppConfigTests: XCTestCase {
         let config = AppConfig(infoDictionary: [
             "TitanAppEnvironment": "staging",
             "TitanAPIBaseURL": "https://api-staging.example.com",
+            "CFBundleShortVersionString": "1.4.2",
         ])
         XCTAssertEqual(config.environment, .staging)
+        XCTAssertEqual(config.appVersion, "1.4.2")
         XCTAssertEqual(config.apiBaseURL.host, "api-staging.example.com")
     }
 

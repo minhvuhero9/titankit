@@ -1,4 +1,5 @@
-// Placeholder for phase 0. The module's real API is described in docs/modules.
+// Remote config behind a protocol: typed keys with safe defaults, and the launch check
+// (maintenance, forced update). The Firebase adapter lives outside the kit.
 public enum TitanRemoteConfigModule {
     public static let moduleName = "TitanRemoteConfig"
 }

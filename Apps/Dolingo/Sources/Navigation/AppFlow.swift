@@ -1,6 +1,7 @@
 import Foundation
 import TitanAuth
 import TitanDesignSystem
+import TitanRemoteConfig
 import TitanStorage
 
 enum DolingoKeys {
@@ -9,11 +10,14 @@ enum DolingoKeys {
     static let appearance = PreferenceKey<TKAppearance>("dolingo.appearance", default: .system)
 }
 
-/// Which part of the app is showing: splash, onboarding, sign-in, or the signed-in app.
+/// Which part of the app is showing: splash, onboarding, sign-in, the signed-in app,
+/// or a screen that blocks the app (maintenance, forced update).
 @MainActor
 final class AppFlow: ObservableObject {
     enum Stage: Equatable {
         case splash, onboarding, login, home
+        case maintenance(message: String)
+        case forceUpdate(storeURL: URL)
     }
 
     @Published private(set) var stage: Stage = .splash
@@ -21,14 +25,44 @@ final class AppFlow: ObservableObject {
 
     private let auth: any AuthService
     private let preferences: Preferences
+    private let launchChecker: LaunchChecker?
 
-    init(auth: any AuthService, preferences: Preferences) {
+    /// - Parameter launchChecker: nil skips the maintenance and update check.
+    init(auth: any AuthService, preferences: Preferences, launchChecker: LaunchChecker? = nil) {
         self.auth = auth
         self.preferences = preferences
+        self.launchChecker = launchChecker
     }
 
     /// Runs while the splash is up.
     func prepareLaunch() async {
+        if let blocked = await blockingStage() {
+            stageAfterSplash = blocked
+            return
+        }
+        await chooseFirstScreen()
+    }
+
+    /// "Thử lại" on the maintenance screen: checks again and lets the user in once it's over.
+    func retryLaunch() async {
+        if let blocked = await blockingStage() {
+            stage = blocked
+            return
+        }
+        await chooseFirstScreen()
+        stage = stageAfterSplash
+    }
+
+    private func blockingStage() async -> Stage? {
+        let status = await launchChecker?.check() ?? .ok
+        switch status {
+        case .ok: return nil
+        case let .maintenance(message): return .maintenance(message: message)
+        case let .forceUpdate(storeURL): return .forceUpdate(storeURL: storeURL)
+        }
+    }
+
+    private func chooseFirstScreen() async {
         if await auth.currentUser() != nil {
             stageAfterSplash = .home
         } else if preferences.value(DolingoKeys.hasSeenOnboarding) {

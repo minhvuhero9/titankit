@@ -37,3 +37,17 @@ final class SettingsScreenTests: XCTestCase {
         }
     }
 }
+
+final class LaunchBlockScreenTests: XCTestCase {
+    func testEveryLaunchStringExistsInBothLanguages() {
+        let keys = [
+            KitStrings.Launch.maintenanceTitle, KitStrings.Launch.maintenanceMessage,
+            KitStrings.Launch.updateTitle, KitStrings.Launch.updateMessage, KitStrings.Launch.updateAction,
+        ]
+        for key in keys {
+            for code in ["vi", "en"] {
+                XCTAssertNotEqual(KitStrings.string(key, locale: Locale(identifier: code)), key, "\(key) \(code)")
+            }
+        }
+    }
+}

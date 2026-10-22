@@ -70,7 +70,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 - [x] TitanNavigation: `Route`, Router, tab, sheet, deep link.
 - [x] TitanLocalization: catalog kit, đổi ngôn ngữ, formatter.
-- [ ] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage (đã xong); Profile, Delete account, Maintenance, Force update (còn lại).
+- [ ] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage, Maintenance, Force update (đã xong); Profile, Delete account (còn lại).
 - [ ] Paywall và Rate app prompt (nếu App 1 cần).
 - [ ] Mỗi màn hình có trang Catalog và snapshot test.
 - [ ] Nối các màn hình vào Router của App 1 bằng `Config` và callback.
@@ -86,7 +86,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [ ] Tạo project Firebase cho Dev, Staging, Prod.
 - [ ] `Adapters/TitanFirebase`: Auth, Firestore/Backend, Remote Config, Analytics, Messaging.
 - [ ] TitanAuth: Apple, Google, email; xóa tài khoản.
-- [ ] TitanRemoteConfig: `LaunchChecker` cho bảo trì và bắt buộc cập nhật.
+- [ ] TitanRemoteConfig: `LaunchChecker` cho bảo trì và bắt buộc cập nhật (kit và Mock đã xong; còn adapter Firebase).
 - [ ] TitanAnalytics: sự kiện chung của kit + sự kiện riêng App 1.
 - [ ] TitanPurchase (StoreKit 2 hoặc RevenueCat), TitanAds (AdMob + UMP), TitanPush nếu cần.
 - [ ] `AppContainer` chọn adapter theo môi trường.

@@ -376,6 +376,91 @@
         }
       }
     },
+    "kit.launch.maintenance.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We're upgrading our systems. Please come back in a few minutes."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúng tôi đang nâng cấp hệ thống. Bạn quay lại sau ít phút nhé."
+          }
+        }
+      }
+    },
+    "kit.launch.maintenance.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Under maintenance"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang bảo trì"
+          }
+        }
+      }
+    },
+    "kit.launch.update.action": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update now"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cập nhật ngay"
+          }
+        }
+      }
+    },
+    "kit.launch.update.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please update the app to keep using it."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy cập nhật ứng dụng để tiếp tục sử dụng."
+          }
+        }
+      }
+    },
+    "kit.launch.update.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A new version is available"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã có phiên bản mới"
+          }
+        }
+      }
+    },
     "kit.login.email": {
       "extractionState": "manual",
       "localizations": {

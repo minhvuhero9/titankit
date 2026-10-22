@@ -156,7 +156,7 @@ LoginScreen(config: LoginConfig(socialOptions: [SocialLoginOption(.apple, icon: 
 - Ảnh của Dolingo nằm trong `Apps/Dolingo/Resources/Assets.xcassets`: logo gốc từ Figma (`Logo`, `LogoCircle`, `LogoText` có bản cho dark mode), icon app vẽ từ logo gốc, ảnh Welcome và logo Google, Apple, Facebook. File Figma hiện là bản mẫu, các màn hình chỉ là ảnh phẳng 430×932, nên ảnh Welcome đang được cắt từ đó và hơi mờ. Có file gốc thì thay ảnh này.
 - Trước giai đoạn 4, ba nút mạng xã hội của Dolingo đăng nhập dạng khách (`AppFlow.signInWithSocial`) để thử được trọn luồng.
 - Đăng nhập Apple, Google thật làm ở giai đoạn 4 cùng adapter Firebase. Hiện Dolingo dùng `MockAuthService` (tài khoản thử `demo@titan.app` / `123456`).
-- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Profile, xóa tài khoản, Maintenance, Force update, Paywall.
+- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Profile, xóa tài khoản, Paywall.
 
 ## 8c. Đã làm (giai đoạn 3b, đợt 2)
 
@@ -187,6 +187,23 @@ WebPageScreen(title: Text.kit(KitStrings.Settings.privacy, locale: locale), url:
 - Link Privacy Policy và Terms của Dolingo đang là chỗ giữ (`example.com`) trong `AppConfig`, thay khi có trang thật.
 - Dolingo: màn Home tạm có nút "Cài đặt"; deep link `dolingo://settings` mở thẳng màn này.
 
+## 8d. Đã làm (giai đoạn 3b, đợt 3)
+
+```swift
+switch flow.stage {
+case .maintenance(let message):
+    MaintenanceScreen(message: message) { await flow.retryLaunch() }   // nút Thử lại
+case .forceUpdate(let storeURL):
+    ForceUpdateScreen(storeURL: storeURL)                               // nút Cập nhật ngay mở App Store
+...
+}
+```
+
+- Hai màn chặn dùng chung một bố cục: hình trong vòng tròn màu nhạt, tiêu đề, mô tả, một nút ở dưới. App có thể đưa hình riêng qua `illustration`. Figma Dolingo không có hai màn này nên bố cục theo các màn trống khác của kit.
+- Thông điệp bảo trì lấy từ remote config (`maintenance_message`); để trống thì dùng câu của kit.
+- Màn cập nhật không có đường vượt qua: chỉ có nút mở App Store.
+- Dolingo: `AppFlow.prepareLaunch()` chạy `LaunchChecker` trước khi chọn màn đầu; `retryLaunch()` kiểm tra lại và cho vào app khi hết bảo trì. Link App Store đang là chỗ giữ trong `AppConfig.appStoreURL`.
+
 ## 9. Checklist cho App 1
 
 - [ ] Chọn màn hình App 1 dùng: Splash, Onboarding, Login, Paywall, Settings, Profile, Delete account...
@@ -195,5 +212,5 @@ WebPageScreen(title: Text.kit(KitStrings.Settings.privacy, locale: locale), url:
 - [ ] Nối callback vào Router của App 1 (xem [Navigation.md](Navigation.md)).
 - [ ] Gắn link Terms và Privacy thật.
 - [ ] So từng màn hình với Figma của App 1, quyết định cấu hình, dùng slot hay thay thế.
-- [ ] Kiểm tra Maintenance, Force update, Offline hiển thị đúng.
+- [ ] Kiểm tra Maintenance, Force update, Offline hiển thị đúng (Maintenance và Force update xem được bằng launch argument `-maintenance`, `-forceUpdate`).
 - [ ] Bật `RateAppPrompt` sau một hành động tích cực của người dùng, không phải lúc mở app.
