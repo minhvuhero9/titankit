@@ -27,6 +27,9 @@ public struct TKCatalogView: View {
     @State private var day: Date? = Date()
     @State private var weekDay = Date()
     @State private var period = 0
+    @State private var reminders = true
+    @State private var language = 0
+    @State private var country = 0
 
     public init() {}
 
@@ -63,6 +66,10 @@ public struct TKCatalogView: View {
                 Group {
                     section("Lịch và tiến độ") { dates }
                     section("Chat và danh mục") { chat }
+                }
+                Group {
+                    section("Cài đặt") { settings }
+                    section("Gói trả phí") { plans }
                 }
             }
             .padding(Spacing.md)
@@ -381,6 +388,49 @@ public struct TKCatalogView: View {
                 TKCategoryItem("Nghe", icon: Image(tk: TKIcon.voice, style: .bold)) {}
             }
             .padding(.top, Spacing.md)
+        }
+    }
+
+    private var settings: some View {
+        VStack(alignment: .leading, spacing: Spacing.lg) {
+            TKUpgradeBanner(title: Text(verbatim: "Nâng cấp ngay!"),
+                            message: Text(verbatim: "Mở khoá mọi bài học và bỏ quảng cáo")) {}
+            TKListRow("Nguyễn Văn An", subtitle: "an@titanstudio.com") {
+                TKAvatar(name: "Nguyễn Văn An", size: 60)
+            } trailing: {
+                Image(tk: TKSymbol.rotate).renderingMode(.template).foregroundStyle(theme.colors.textPrimary.color)
+            }
+            TKDivider()
+            TKSettingsRow("Tuỳ chọn", icon: Image(tk: TKIcon.setting)) {}
+            TKSettingsRow("Ngôn ngữ", icon: Image(tk: TKIcon.document), accessory: .value(Text(verbatim: "Tiếng Việt"))) {}
+            TKSettingsRow("Nhắc học hằng ngày", accessory: .toggle($reminders))
+            ForEach(["Tiếng Việt", "English"].indices, id: \.self) { index in
+                TKSettingsRow(title: Text(verbatim: ["Tiếng Việt", "English"][index]),
+                              accessory: .checkmark(language == index)) { language = index }
+            }
+            TKSettingsRow("Đăng xuất", icon: Image(tk: TKIcon.logout), role: .destructive, accessory: .none) {}
+            ForEach(["Việt Nam", "Nhật Bản"].indices, id: \.self) { index in
+                TKOptionCard(["Việt Nam", "Nhật Bản"][index], isSelected: country == index) {
+                    Text(verbatim: index == 0 ? "🇻🇳" : "🇯🇵").font(.system(size: 40))
+                } action: { country = index }
+            }
+            TKOptionCard("Google", detail: "an@gmail.com") {
+                Image(tk: TKIcon.profile, style: .bold).resizable().frame(width: 48, height: 48)
+            } trailing: {
+                Text(verbatim: "Đã liên kết")
+            } action: {}
+        }
+    }
+
+    private var plans: some View {
+        VStack(spacing: Spacing.lg) {
+            TKPlanCard(title: Text(verbatim: "Dolingo Premium"), price: Text(verbatim: "79.000 ₫"),
+                       period: Text(verbatim: "/ tháng"),
+                       benefits: [Text(verbatim: "Không quảng cáo"), Text(verbatim: "Học offline"),
+                                  Text(verbatim: "Trái tim vô hạn")],
+                       badge: Text(verbatim: "Phổ biến nhất"), actionTitle: Text(verbatim: "Chọn gói")) {}
+            TKPlanCard(title: Text(verbatim: "Dolingo Free"), price: Text(verbatim: "Miễn phí"),
+                       benefits: [Text(verbatim: "5 trái tim mỗi ngày")], isCurrent: true)
         }
     }
 
