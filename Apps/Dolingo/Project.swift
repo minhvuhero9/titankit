@@ -7,7 +7,7 @@ let bundlePrefix = "com.titanstudio"
 let kitModules = [
     "TitanCore", "TitanNetworking", "TitanStorage",
     "TitanIcons", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig",
-    "TitanFeatures",
+    "TitanPurchase", "TitanFeatures",
 ]
 
 let project = Project(
@@ -53,7 +53,7 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .default,
             sources: ["Tests/**"],
-            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanFeatures"].map { .external(name: $0) }
+            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanPurchase", "TitanFeatures"].map { .external(name: $0) }
         ),
     ],
     schemes: ["Dev", "Staging", "Prod"].map { env in
