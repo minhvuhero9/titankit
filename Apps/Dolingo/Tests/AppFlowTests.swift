@@ -1,5 +1,6 @@
 import XCTest
 import TitanAuth
+import TitanFeatures
 import TitanRemoteConfig
 import TitanStorage
 @testable import Dolingo
@@ -95,5 +96,23 @@ final class AppFlowTests: XCTestCase {
         flow.finishSplash()
         flow.didDeleteAccount()
         XCTAssertEqual(flow.stage, .login)
+    }
+
+    func testAsksForReviewAfterLaunchesAndGoodMomentsAndOnlyOnce() async {
+        let preferences = makePreferences()
+        let flow = AppFlow(auth: MockAuthService(), preferences: preferences, appVersion: "1.0.0")
+        await flow.prepareLaunch()
+        XCTAssertEqual(preferences.value(DolingoKeys.ratePrompt).launches, 1)
+        XCTAssertFalse(flow.shouldAskForReview)
+
+        preferences.set(RatePromptState(firstLaunch: Date().addingTimeInterval(-10 * 86_400), launches: 2, significantEvents: 2), for: DolingoKeys.ratePrompt)
+        await flow.prepareLaunch()
+        XCTAssertFalse(flow.shouldAskForReview)
+        flow.recordSignificantEvent()
+        XCTAssertTrue(flow.shouldAskForReview)
+
+        flow.didAskForReview()
+        XCTAssertFalse(flow.shouldAskForReview)
+        XCTAssertEqual(preferences.value(DolingoKeys.ratePrompt).lastPromptVersion, "1.0.0")
     }
 }

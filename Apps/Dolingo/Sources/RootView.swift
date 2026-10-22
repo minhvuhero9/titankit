@@ -59,6 +59,7 @@ private struct FlowView: View {
             case .home:
                 RouterView(router: container.router) {
                     StatusList(container: container, network: container.networkMonitor)
+                        .tkRequestReview(when: flow.shouldAskForReview) { flow.didAskForReview() }
                 } destination: { route in
                     container.makeView(for: route)
                 }

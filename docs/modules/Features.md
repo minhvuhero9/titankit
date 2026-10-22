@@ -221,6 +221,24 @@ DeleteAccountScreen(auth: container.auth, onBack: { router.pop() }) {
 - Figma Dolingo có màn "93 personal info" và "97 account & security", nhưng lần này chưa đọc được vì tài khoản Figma đã hết lượt gọi của gói Starter. Bố cục đang theo các màn khác của kit; khi đọc được Figma sẽ chỉnh lại.
 - Dolingo: Cài đặt có thêm dòng "Thông tin cá nhân" ở đầu.
 
+## 8f. Đã làm (giai đoạn 3, Rate app)
+
+```swift
+var state = preferences.value(Keys.ratePrompt)       // RatePromptState, app tự lưu
+state.recordLaunch()                                 // mỗi lần mở app
+state.recordSignificantEvent()                       // sau một việc tốt, ví dụ học xong bài
+HomeScreen()
+    .tkRequestReview(when: state.isDue(RatePromptPolicy(), version: appVersion)) {
+        state.recordPrompt(version: appVersion)
+    }
+```
+
+- `RatePromptPolicy` mặc định: ít nhất 3 lần mở app, 3 việc tốt, 3 ngày từ lần cài, 120 ngày giữa hai lần hỏi, mỗi phiên bản hỏi một lần. Apple còn tự giới hạn tối đa 3 lần một năm.
+- `tkRequestReview` gọi hộp đánh giá của hệ thống (`requestReview` của StoreKit), không tự vẽ hộp hỏi "Bạn có thích app không?" vì Apple không cho lọc người đánh giá.
+- `AppStoreLink.writeReview(id:)` mở thẳng trang viết đánh giá, dùng cho dòng "Đánh giá ứng dụng" trong Cài đặt.
+- Dolingo: đếm lần mở app trong `AppFlow.prepareLaunch`, Home hỏi khi đủ điều kiện. Chưa có bài học nên chưa có việc tốt nào được đếm, vì vậy hộp đánh giá chưa hiện cho tới giai đoạn 5. Cài đặt có thêm dòng "Đánh giá ứng dụng". App Store id vẫn là số giả.
+- Paywall làm sau, cùng `TitanPurchase`.
+
 ## 9. Checklist cho App 1
 
 - [ ] Chọn màn hình App 1 dùng: Splash, Onboarding, Login, Paywall, Settings, Profile, Delete account...
@@ -230,4 +248,4 @@ DeleteAccountScreen(auth: container.auth, onBack: { router.pop() }) {
 - [ ] Gắn link Terms và Privacy thật.
 - [ ] So từng màn hình với Figma của App 1, quyết định cấu hình, dùng slot hay thay thế.
 - [ ] Kiểm tra Maintenance, Force update, Offline hiển thị đúng (Maintenance và Force update xem được bằng launch argument `-maintenance`, `-forceUpdate`).
-- [ ] Bật `RateAppPrompt` sau một hành động tích cực của người dùng, không phải lúc mở app.
+- [x] Rate app: `RatePromptState` + `tkRequestReview`, chỉ hỏi sau việc tốt (Dolingo gọi `recordSignificantEvent` khi có bài học).

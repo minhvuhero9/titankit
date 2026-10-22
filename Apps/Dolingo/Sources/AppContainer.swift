@@ -66,7 +66,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         let remoteConfig = remoteConfig ?? AppContainer.launchArgumentConfig(ProcessInfo.processInfo.arguments)
         self.remoteConfig = remoteConfig
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
-        flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker)
+        flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
         let router = Router<AppRoute>()
         self.router = router
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in

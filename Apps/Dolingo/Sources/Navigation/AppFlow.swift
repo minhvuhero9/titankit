@@ -1,6 +1,7 @@
 import Foundation
 import TitanAuth
 import TitanDesignSystem
+import TitanFeatures
 import TitanRemoteConfig
 import TitanStorage
 
@@ -8,6 +9,8 @@ enum DolingoKeys {
     static let hasSeenOnboarding = PreferenceKey("dolingo.hasSeenOnboarding", default: false)
     /// Light, dark or follow the device, picked on the App Appearance screen.
     static let appearance = PreferenceKey<TKAppearance>("dolingo.appearance", default: .system)
+    /// Launches and good moments counted for the App Store rating prompt.
+    static let ratePrompt = PreferenceKey("dolingo.ratePrompt", default: RatePromptState())
 }
 
 /// Which part of the app is showing: splash, onboarding, sign-in, the signed-in app,
@@ -26,16 +29,22 @@ final class AppFlow: ObservableObject {
     private let auth: any AuthService
     private let preferences: Preferences
     private let launchChecker: LaunchChecker?
+    private let appVersion: String
+    /// Asks only after good moments, never on the first launches. Lessons (phase 5) call
+    /// `recordSignificantEvent`, so the prompt cannot show before then.
+    private let ratePolicy = RatePromptPolicy()
 
     /// - Parameter launchChecker: nil skips the maintenance and update check.
-    init(auth: any AuthService, preferences: Preferences, launchChecker: LaunchChecker? = nil) {
+    init(auth: any AuthService, preferences: Preferences, launchChecker: LaunchChecker? = nil, appVersion: String = "0.0.0") {
         self.auth = auth
         self.preferences = preferences
         self.launchChecker = launchChecker
+        self.appVersion = appVersion
     }
 
     /// Runs while the splash is up.
     func prepareLaunch() async {
+        updateRatePrompt { $0.recordLaunch() }
         if let blocked = await blockingStage() {
             stageAfterSplash = blocked
             return
@@ -96,6 +105,26 @@ final class AppFlow: ObservableObject {
     /// The account is already gone on the backend; back to sign-in.
     func didDeleteAccount() {
         stage = .login
+    }
+
+    /// Read by the home screen, which shows the system rating prompt when this is true.
+    var shouldAskForReview: Bool {
+        preferences.value(DolingoKeys.ratePrompt).isDue(ratePolicy, version: appVersion)
+    }
+
+    func didAskForReview() {
+        updateRatePrompt { $0.recordPrompt(version: appVersion) }
+    }
+
+    /// Called when something goes well, e.g. a finished lesson.
+    func recordSignificantEvent() {
+        updateRatePrompt { $0.recordSignificantEvent() }
+    }
+
+    private func updateRatePrompt(_ change: (inout RatePromptState) -> Void) {
+        var state = preferences.value(DolingoKeys.ratePrompt)
+        change(&state)
+        preferences.set(state, for: DolingoKeys.ratePrompt)
     }
 
     func signOut() async {

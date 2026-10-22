@@ -10,6 +10,7 @@ import TitanStorage
 enum DolingoSettings {
     static let profile = "profile"
     static let appearance = "appearance"
+    static let rateApp = "rateApp"
     static let privacy = "privacy"
     static let terms = "terms"
     static let catalog = "catalog"
@@ -30,6 +31,7 @@ enum DolingoSettings {
 struct DolingoSettingsScreen: View {
     let container: AppContainer
     @Environment(\.locale) private var locale
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         SettingsScreen(
@@ -37,6 +39,7 @@ struct DolingoSettingsScreen: View {
                 SettingsSection("app", items: [
                     SettingsItem(DolingoSettings.profile, title: kit(KitStrings.Profile.title), icon: Image(tk: .profile)),
                     SettingsItem(DolingoSettings.appearance, title: kit(KitStrings.Settings.appearance), icon: Image(tk: .show)),
+                    SettingsItem(DolingoSettings.rateApp, title: kit(KitStrings.Settings.rateApp), icon: Image(tk: .star)),
                     SettingsItem(DolingoSettings.catalog, title: Text("root.catalog"), icon: Image(tk: .category)),
                 ]),
                 SettingsSection("legal", items: [
@@ -46,6 +49,7 @@ struct DolingoSettingsScreen: View {
             ],
             onBack: { container.router.pop() },
             onSelect: { id in
+                if id == DolingoSettings.rateApp { openURL(AppConfig.writeReviewURL) }
                 if let route = DolingoSettings.route(for: id) { container.router.push(route) }
             },
             onLogout: {

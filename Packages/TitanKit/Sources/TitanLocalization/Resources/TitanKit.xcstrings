@@ -1107,6 +1107,23 @@
         }
       }
     },
+    "kit.settings.rateApp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rate the app"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đánh giá ứng dụng"
+          }
+        }
+      }
+    },
     "kit.settings.terms": {
       "extractionState": "manual",
       "localizations": {
