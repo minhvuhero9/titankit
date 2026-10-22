@@ -161,6 +161,15 @@ TKNotificationRow("Bài học mới", message: "Unit 3 đã mở", time: "2 gi�
 // Hiển thị (theo trang Avatar, Divider của Figma)
 TKAvatar(image: user.photo, name: user.name, badge: .online)   // không có ảnh thì hiện chữ cái đầu
 TKDivider("hoặc tiếp tục với")
+
+// Lịch, tiến độ, chat, danh mục (theo trang Calendar, Date & Progress, Goals Percentage, Message, Category Menu)
+TKCalendar(selection: $day)                                      // tuần bắt đầu theo \.calendar, tên tháng theo \.locale
+TKCalendar(selection: $day) { vm.goalProgress(on: $0) }          // vòng tiến độ quanh từng ngày
+TKWeekStrip(selection: $day) { vm.goalProgress(on: $0) }         // một tuần, ngày chọn có khung
+TKPeriodHeader(title: Text(vm.rangeTitle), onPrevious: vm.previous, onNext: vm.canGoNext ? vm.next : nil)
+TKProgressRing(0.3) { Text("30") }
+TKMessageBubble(message.text, time: message.time, direction: .outgoing, status: .read)
+TKCategoryItem("Ngữ pháp", icon: Image(tk: .document, style: .bold)) { open(.grammar) }
 ```
 
 | Kiểu nút | Trông thế nào |
@@ -198,6 +207,12 @@ Danh sách component:
 | `TKNotificationRow` | Một dòng thông báo: ảnh hoặc icon, tiêu đề, mô tả, thời gian, chấm chưa đọc, mũi tên |
 | `TKAvatar` | Ảnh đại diện tròn; không có ảnh thì hiện chữ cái đầu; huy hiệu online, offline, sửa, LIVE |
 | `TKDivider` | Đường kẻ 1 pt màu viền, có thể có chữ ở giữa |
+| `TKCalendar` | Lịch tháng có mũi tên đổi tháng; chọn ngày; có thể vẽ vòng tiến độ mục tiêu quanh mỗi ngày |
+| `TKWeekStrip` | Dải 7 ngày của tuần đang chọn, kèm vòng tiến độ; dùng làm bản thu gọn của lịch |
+| `TKPeriodHeader` | Tiêu đề khoảng thời gian có mũi tên trước / sau; ghép với `TKSegmentedTabs` cho Tuần / Tháng / Năm |
+| `TKProgressRing` | Vòng tiến độ 42 pt chạy theo chiều kim đồng hồ từ đỉnh, có thể có chữ ở giữa |
+| `TKMessageBubble` | Bong bóng chat: tin đến màu xám bên trái (có tên người gửi), tin đi màu thương hiệu bên phải (có dấu đã gửi / đã đọc) |
+| `TKCategoryItem` | Icon tròn nền nhạt kèm nhãn, dùng cho lưới danh mục |
 | `TKSheet` | Để sau, làm khi màn hình cần |
 | `TKToast` | Thông báo ngắn tự ẩn |
 | `TKEmptyState` | Màn hình trống: icon, tiêu đề, nút hành động |
@@ -282,6 +297,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - Unit test component chọn: màu switch, chip, tag theo từng kiểu; chọn nhiều bật / tắt đúng.
 - Unit test điều hướng: thanh tiến độ giới hạn trong 0...1; chữ "Tìm kiếm", "Xoá" có đủ hai ngôn ngữ.
 - Unit test cảnh báo và avatar: màu từng trạng thái trên nền 8%; chữ cái đầu của tên tiếng Việt.
+- Unit test lịch: lưới tháng 12/2024 bắt đầu Chủ nhật hoặc thứ Hai đúng như Figma; tuần chứa một ngày; tên thứ theo ngày đầu tuần; vòng tiến độ giới hạn 0...1; chữ "Trước", "Sau" có đủ hai ngôn ngữ.
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).

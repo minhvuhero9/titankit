@@ -24,6 +24,9 @@ public struct TKCatalogView: View {
     @State private var underlineTab = 0
     @State private var query = ""
     @State private var showModal = false
+    @State private var day: Date? = Date()
+    @State private var weekDay = Date()
+    @State private var period = 0
 
     public init() {}
 
@@ -56,6 +59,10 @@ public struct TKCatalogView: View {
                 Group {
                     section("Cảnh báo và hộp thoại") { alerts }
                     section("Hiển thị") { display }
+                }
+                Group {
+                    section("Lịch và tiến độ") { dates }
+                    section("Chat và danh mục") { chat }
                 }
             }
             .padding(Spacing.md)
@@ -333,6 +340,47 @@ public struct TKCatalogView: View {
             .padding(.bottom, Spacing.xs)
             TKDivider()
             TKDivider("hoặc tiếp tục với")
+        }
+    }
+
+    private var dates: some View {
+        VStack(alignment: .leading, spacing: Spacing.lg) {
+            HStack(spacing: Spacing.sm) {
+                ForEach([0, 0.3, 0.7, 1], id: \.self) { value in
+                    TKProgressRing(value) { Text(verbatim: "\(Int(value * 100))").tkTextStyle(.caption) }
+                }
+                TKProgressRing(0.6, size: 64)
+            }
+            TKWeekStrip(selection: $weekDay) { Self.demoProgress($0) }
+            TKSegmentedTabs(selection: $period, options: [
+                TKOption(0, title: Text(verbatim: "Tuần")),
+                TKOption(1, title: Text(verbatim: "Tháng")),
+                TKOption(2, title: Text(verbatim: "Năm")),
+            ])
+            TKPeriodHeader(title: Text(verbatim: "16 – 22/12/2024"), onPrevious: {}, onNext: nil)
+            TKCalendar(selection: $day)
+            TKCalendar(selection: $day) { Self.demoProgress($0) }
+        }
+    }
+
+    /// Made-up goal progress for the demo: varies by day, nothing in the future.
+    nonisolated private static func demoProgress(_ date: Date) -> Double? {
+        guard date <= Date() else { return 0 }
+        let day = Calendar.current.component(.day, from: date)
+        return Double((day * 37) % 11) / 10
+    }
+
+    private var chat: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            TKMessageBubble("Chào bạn, hôm nay học gì?", time: "09:41", direction: .incoming, sender: "Anna")
+            TKMessageBubble("Mình học Unit 3 nhé", time: "09:42", direction: .outgoing, status: .read)
+            TKMessageBubble("Ok!", time: "09:42", direction: .incoming)
+            HStack(spacing: Spacing.lg) {
+                TKCategoryItem("Ngữ pháp", icon: Image(tk: TKIcon.document, style: .bold)) {}
+                TKCategoryItem("Từ vựng", icon: Image(tk: TKIcon.bookmark, style: .bold)) {}
+                TKCategoryItem("Nghe", icon: Image(tk: TKIcon.voice, style: .bold)) {}
+            }
+            .padding(.top, Spacing.md)
         }
     }
 
