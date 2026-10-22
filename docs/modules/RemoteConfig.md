@@ -144,12 +144,21 @@ case .forceUpdate(let url): router.show(.forceUpdate(storeURL: url))
 - `RemoteConfigKeyTests`: thiếu key thì trả `defaultValue`; JSON sai định dạng thì trả `defaultValue`.
 - ViewModel dùng flag được test bằng cách set giá trị trong Mock.
 
+## 8b. Đã làm
+
+- `RemoteConfigService` có hai hàm: `fetchAndActivate()` và `raw(for:)` trả giá trị thô (`RemoteConfigRaw`: bool, số hoặc chuỗi). `value(for:)` dựng trên `raw(for:)`, nên adapter chỉ cần cài hai hàm này.
+- Key khai báo bằng `RemoteConfigKey("ten_key", default: ...)`. Key chung của kit là thuộc tính tĩnh: `.maintenanceEnabled`, `.maintenanceMessage`, `.minimumVersion`.
+- Kiểu `Decodable` muốn đọc từ JSON thì khai báo thêm `RemoteConfigValue` (không cần viết gì thêm).
+- `LaunchChecker.check()` chạy fetch song song với đồng hồ `timeout`; xong cái nào trước thì quyết định theo giá trị đang có. Bảo trì được ưu tiên hơn cập nhật; phiên bản không đọc được thì không bao giờ bắt cập nhật.
+- `MockRemoteConfig` cho test, có thể giả lỗi (`fetchError`) và giả chậm (`fetchDelay`).
+- Dolingo đang dùng `MockRemoteConfig` đến giai đoạn 4. Để xem thử hai màn chặn trên simulator, thêm `-maintenance` hoặc `-forceUpdate` vào Arguments của scheme trong Xcode.
+
 ## 9. Checklist cho App 1
 
 - [ ] Tạo project Firebase cho Dev, Staging, Prod và bật Remote Config.
 - [ ] Tạo key `maintenance_enabled`, `maintenance_message`, `minimum_version` trên console.
-- [ ] Gắn `LaunchChecker` vào Splash, nối với màn hình Maintenance và Force update của [Features.md](Features.md).
+- [x] Gắn `LaunchChecker` vào Splash, nối với màn hình Maintenance và Force update của [Features.md](Features.md).
 - [ ] Khai báo feature flag riêng của App 1 với tiền tố `app1_`.
 - [ ] Thử bật bảo trì trên Staging và kiểm tra app hiện đúng màn hình.
 - [ ] Thử tăng `minimum_version` trên Staging và kiểm tra màn hình Force update.
-- [ ] Viết test `LaunchChecker` cho trường hợp mất mạng.
+- [x] Viết test `LaunchChecker` cho trường hợp mất mạng.

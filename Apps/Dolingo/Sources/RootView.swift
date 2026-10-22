@@ -52,6 +52,10 @@ private struct FlowView: View {
                     onSuccess: { _ in flow.didSignIn() },
                     onSocial: { provider in Task { await flow.signInWithSocial(provider) } }
                 )
+            case let .maintenance(message):
+                MaintenanceScreen(message: message) { await flow.retryLaunch() }
+            case let .forceUpdate(storeURL):
+                ForceUpdateScreen(storeURL: storeURL)
             case .home:
                 RouterView(router: container.router) {
                     StatusList(container: container, network: container.networkMonitor)

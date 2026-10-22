@@ -5,6 +5,7 @@ import TitanDesignSystem
 import TitanLocalization
 import TitanNavigation
 import TitanNetworking
+import TitanRemoteConfig
 import TitanStorage
 
 /// Composition Root: the one place that builds services and picks adapters.
@@ -20,6 +21,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let networkMonitor: NetworkMonitor
     let localization: LocalizationService
     let auth: any AuthService
+    let remoteConfig: any RemoteConfigService
     let flow: AppFlow
     let router: Router<AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -33,7 +35,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         preferences: Preferences = Preferences(),
         networkMonitor: NetworkMonitor? = nil,
         languageDefaults: UserDefaults = .standard,
-        auth: (any AuthService)? = nil
+        auth: (any AuthService)? = nil,
+        remoteConfig: (any RemoteConfigService)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -58,7 +61,11 @@ final class AppContainer: ObservableObject, DependencyContainer {
         // Firebase adapter replaces the mock in phase 4.
         let auth = auth ?? MockAuthService(delay: .milliseconds(600))
         self.auth = auth
-        flow = AppFlow(auth: auth, preferences: preferences)
+        // Firebase Remote Config replaces the mock in phase 4.
+        let remoteConfig = remoteConfig ?? AppContainer.launchArgumentConfig(ProcessInfo.processInfo.arguments)
+        self.remoteConfig = remoteConfig
+        let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
+        flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker)
         let router = Router<AppRoute>()
         self.router = router
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -77,6 +84,19 @@ final class AppContainer: ObservableObject, DependencyContainer {
         }
     }
 
+    /// Until the real remote config exists, the blocking screens can be tried from Xcode:
+    /// add `-maintenance` or `-forceUpdate` to the scheme's launch arguments.
+    static func launchArgumentConfig(_ arguments: [String]) -> MockRemoteConfig {
+        var values: [String: RemoteConfigRaw] = [:]
+        if arguments.contains("-maintenance") {
+            values[RemoteConfigKey<Bool>.maintenanceEnabled.name] = .bool(true)
+        }
+        if arguments.contains("-forceUpdate") {
+            values[RemoteConfigKey<String>.minimumVersion.name] = .string("999.0.0")
+        }
+        return MockRemoteConfig(values: values)
+    }
+
     /// Container for tests and previews: no network, no Keychain, nothing written to disk.
     static func preview(environment: AppEnvironment = .dev) -> AppContainer {
         AppContainer(
@@ -87,7 +107,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             imageCache: MockImageCache(),
             preferences: Preferences(defaults: UserDefaults(suiteName: "preview") ?? .standard),
             networkMonitor: NetworkMonitor(startMonitoring: false),
-            languageDefaults: UserDefaults(suiteName: "preview") ?? .standard
+            languageDefaults: UserDefaults(suiteName: "preview") ?? .standard,
+            remoteConfig: MockRemoteConfig()
         )
     }
 

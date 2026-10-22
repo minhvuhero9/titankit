@@ -5,6 +5,8 @@ import TitanCore
 struct AppConfig: Equatable, Sendable {
     let environment: AppEnvironment
     let apiBaseURL: URL
+    /// CFBundleShortVersionString, compared with `minimum_version` at launch.
+    var appVersion = "0.0.0"
 
     static let current = AppConfig(infoDictionary: Bundle.main.infoDictionary ?? [:])
 
@@ -15,6 +17,8 @@ struct AppConfig: Equatable, Sendable {
     /// Placeholders until the real Privacy Policy and Terms pages are published.
     static let privacyURL = URL(string: "https://www.example.com/privacy")!
     static let termsURL = URL(string: "https://www.example.com/terms")!
+    /// Opened by the force update screen. Placeholder until the app has its App Store id.
+    static let appStoreURL = URL(string: "https://apps.apple.com/app/id0000000000")!
 
     init(environment: AppEnvironment, apiBaseURL: URL) {
         self.environment = environment
@@ -29,5 +33,6 @@ struct AppConfig: Equatable, Sendable {
             environment: AppEnvironment(infoDictionary: infoDictionary),
             apiBaseURL: URL(string: rawURL) ?? fallbackURL
         )
+        appVersion = infoDictionary["CFBundleShortVersionString"] as? String ?? "0.0.0"
     }
 }

@@ -1,5 +1,6 @@
 import XCTest
 import TitanAuth
+import TitanRemoteConfig
 import TitanStorage
 @testable import Dolingo
 
@@ -51,5 +52,39 @@ final class AppFlowTests: XCTestCase {
         XCTAssertEqual(flow.stage, .home)
         let user = await auth.currentUser()
         XCTAssertEqual(user?.isAnonymous, true)
+    }
+
+    func testMaintenanceBlocksTheAppUntilItEnds() async {
+        let config = MockRemoteConfig(values: ["maintenance_enabled": .bool(true)])
+        let checker = LaunchChecker(config: config, appVersion: "1.0.0", storeURL: AppConfig.appStoreURL)
+        let flow = AppFlow(auth: MockAuthService(), preferences: makePreferences(), launchChecker: checker)
+        await flow.prepareLaunch()
+        flow.finishSplash()
+        XCTAssertEqual(flow.stage, .maintenance(message: ""))
+
+        await flow.retryLaunch()
+        XCTAssertEqual(flow.stage, .maintenance(message: ""))
+
+        config.set(.bool(false), for: "maintenance_enabled")
+        await flow.retryLaunch()
+        XCTAssertEqual(flow.stage, .onboarding)
+    }
+
+    func testOldVersionMustUpdate() async {
+        let config = MockRemoteConfig(values: ["minimum_version": .string("2.0.0")])
+        let checker = LaunchChecker(config: config, appVersion: "1.0.0", storeURL: AppConfig.appStoreURL)
+        let flow = AppFlow(auth: MockAuthService(), preferences: makePreferences(), launchChecker: checker)
+        await flow.prepareLaunch()
+        flow.finishSplash()
+        XCTAssertEqual(flow.stage, .forceUpdate(storeURL: AppConfig.appStoreURL))
+    }
+
+    func testLaunchArgumentsTurnOnTheBlockingScreens() {
+        let normal = AppContainer.launchArgumentConfig([])
+        XCTAssertFalse(normal.value(for: .maintenanceEnabled))
+        let maintenance = AppContainer.launchArgumentConfig(["-maintenance"])
+        XCTAssertTrue(maintenance.value(for: .maintenanceEnabled))
+        let update = AppContainer.launchArgumentConfig(["-forceUpdate"])
+        XCTAssertEqual(update.value(for: .minimumVersion), "999.0.0")
     }
 }

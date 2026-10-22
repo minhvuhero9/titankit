@@ -56,6 +56,14 @@ public enum KitStrings {
         public static let terms = "kit.settings.terms"
     }
 
+    public enum Launch {
+        public static let maintenanceTitle = "kit.launch.maintenance.title"
+        public static let maintenanceMessage = "kit.launch.maintenance.message"
+        public static let updateTitle = "kit.launch.update.title"
+        public static let updateMessage = "kit.launch.update.message"
+        public static let updateAction = "kit.launch.update.action"
+    }
+
     /// Looks the key up for `locale`: app bundle (Localizable) first, then the kit (TitanKit),
     /// then returns the key so a missing string is easy to spot.
     public static func string(_ key: String, locale: Locale, appBundle: Bundle = .main) -> String {
