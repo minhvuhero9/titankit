@@ -172,6 +172,11 @@ public extension View {
     func tkNavigationBar(progress: Double, onBack: (() -> Void)? = nil) -> some View {
         tkNavigationBar(progress: progress, onBack: onBack) { EmptyView() }
     }
+
+    /// Takes a ready Text, e.g. a kit string already looked up for the current language.
+    func tkNavigationBar(title: Text, onBack: (() -> Void)? = nil) -> some View {
+        modifier(TKNavBarModifier(bar: TKNavBar(title: title, onBack: onBack)))
+    }
 }
 
 private struct TKNavBarModifier<Trailing: View>: ViewModifier {

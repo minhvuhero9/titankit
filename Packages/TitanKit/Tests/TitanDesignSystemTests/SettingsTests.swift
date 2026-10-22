@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 import TitanLocalization
 @testable import TitanDesignSystem
 
@@ -13,5 +14,18 @@ final class SettingsTests: XCTestCase {
     func testCurrentPlanStringExistsInBothLanguages() {
         XCTAssertEqual(KitStrings.string(KitStrings.currentPlan, locale: Locale(identifier: "vi")), "Gói hiện tại của bạn")
         XCTAssertEqual(KitStrings.string(KitStrings.currentPlan, locale: Locale(identifier: "en")), "Your current plan")
+    }
+}
+
+final class AppearanceTests: XCTestCase {
+    func testAppearanceMapsToColorScheme() {
+        XCTAssertNil(TKAppearance.system.colorScheme)
+        XCTAssertEqual(TKAppearance.light.colorScheme, .light)
+        XCTAssertEqual(TKAppearance.dark.colorScheme, .dark)
+    }
+
+    func testAppearanceIsStoredByName() throws {
+        let data = try JSONEncoder().encode(TKAppearance.dark)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "\"dark\"")
     }
 }

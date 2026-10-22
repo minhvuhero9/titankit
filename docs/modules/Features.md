@@ -56,11 +56,12 @@ Danh sách màn hình:
 | `OnboardingScreen` | danh sách trang (ảnh, tiêu đề, mô tả) | `onFinish` | — |
 | `LoginScreen` | phương thức đăng nhập, link điều khoản | `onSuccess(User)`, `onSkip` | Auth |
 | `PaywallScreen` | product ID, lợi ích, kiểu bố cục | `onPurchased`, `onClose` | Purchase |
-| `SettingsScreen` | danh sách mục, link hỗ trợ | `onLogout`, `onSelect(item)` | Auth, Localization |
+| `SettingsScreen` | danh sách mục, header tuỳ chọn | `onLogout`, `onSelect(id)` | — |
+| `AppearanceScreen` | binding chủ đề, `LocalizationService` | `onBack` | Localization |
 | `ProfileScreen` | trường cho phép sửa | `onSaved` | Auth |
 | `DeleteAccountScreen` | lý do, cảnh báo | `onDeleted` | Auth |
 | `RateAppPrompt` | số lần mở app / sự kiện trước khi hỏi | — | Storage |
-| `WebPageScreen` | URL, tiêu đề (Terms, Privacy) | `onClose` | — |
+| `WebPageScreen` | URL, tiêu đề (Terms, Privacy) | `onBack` | — |
 | `MaintenanceScreen` | thông điệp | `onRetry` | RemoteConfig |
 | `ForceUpdateScreen` | link App Store | — | — |
 | `StateView` | `.offline`, `.error(Error)`, `.empty(EmptyConfig)` | `onRetry` | — |
@@ -155,7 +156,36 @@ LoginScreen(config: LoginConfig(socialOptions: [SocialLoginOption(.apple, icon: 
 - Ảnh của Dolingo nằm trong `Apps/Dolingo/Resources/Assets.xcassets`: logo gốc từ Figma (`Logo`, `LogoCircle`, `LogoText` có bản cho dark mode), icon app vẽ từ logo gốc, ảnh Welcome và logo Google, Apple, Facebook. File Figma hiện là bản mẫu, các màn hình chỉ là ảnh phẳng 430×932, nên ảnh Welcome đang được cắt từ đó và hơi mờ. Có file gốc thì thay ảnh này.
 - Trước giai đoạn 4, ba nút mạng xã hội của Dolingo đăng nhập dạng khách (`AppFlow.signInWithSocial`) để thử được trọn luồng.
 - Đăng nhập Apple, Google thật làm ở giai đoạn 4 cùng adapter Firebase. Hiện Dolingo dùng `MockAuthService` (tài khoản thử `demo@titan.app` / `123456`).
-- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Settings, Profile, xóa tài khoản, WebPage, Maintenance, Force update, Paywall.
+- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Profile, xóa tài khoản, Maintenance, Force update, Paywall.
+
+## 8c. Đã làm (giai đoạn 3b, đợt 2)
+
+Bố cục theo các màn "86 account & settings", "104 app appearance", "105 theme", "110 privacy policy" và "112 logout" trong Figma Dolingo.
+
+```swift
+SettingsScreen(sections: [
+    SettingsSection(items: [
+        SettingsItem("appearance", title: Text.kit(KitStrings.Settings.appearance, locale: locale), icon: Image(tk: .show)),
+        SettingsItem("privacy", title: Text.kit(KitStrings.Settings.privacy, locale: locale), icon: Image(tk: .shieldDone)),
+    ]),
+], onBack: { router.pop() },
+   onSelect: { id in router.push(route(for: id)) },
+   onLogout: { await flow.signOut() }) {
+    TKUpgradeBanner(title: Text("Nâng cấp ngay!")) { router.present(.paywall) }   // header tuỳ chọn
+}
+
+AppearanceScreen(appearance: $appearance, localization: container.localization, onBack: { router.pop() })
+
+WebPageScreen(title: Text.kit(KitStrings.Settings.privacy, locale: locale), url: AppConfig.privacyURL,
+              onBack: { router.pop() })
+```
+
+- `SettingsScreen` không tự điều hướng: mỗi dòng có một id, app nhận id qua `onSelect` rồi tự chọn màn. Dòng Đăng xuất màu đỏ nằm cuối thẻ cuối, bấm vào hiện bottom sheet hỏi lại.
+- Slot `header` dùng cho băng rôn nâng cấp và thẻ hồ sơ. Dolingo chưa gắn hai khối này: chúng đi cùng Paywall và Profile.
+- `AppearanceScreen` có hai dòng Chủ đề và Ngôn ngữ ứng dụng, mỗi dòng mở một bottom sheet chọn bằng radio. Chủ đề lưu trong `Preferences` của app (`DolingoKeys.appearance`) và gắn ở gốc bằng `.tkAppearance`; ngôn ngữ đổi qua `LocalizationService`.
+- `WebPageScreen` mở trang web trong app; đang tải thì hiện spinner, lỗi thì hiện `TKErrorView` có nút thử lại (mất mạng ra lỗi offline).
+- Link Privacy Policy và Terms của Dolingo đang là chỗ giữ (`example.com`) trong `AppConfig`, thay khi có trang thật.
+- Dolingo: màn Home tạm có nút "Cài đặt"; deep link `dolingo://settings` mở thẳng màn này.
 
 ## 9. Checklist cho App 1
 

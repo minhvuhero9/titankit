@@ -1,9 +1,12 @@
 import Foundation
 import TitanAuth
+import TitanDesignSystem
 import TitanStorage
 
 enum DolingoKeys {
     static let hasSeenOnboarding = PreferenceKey("dolingo.hasSeenOnboarding", default: false)
+    /// Light, dark or follow the device, picked on the App Appearance screen.
+    static let appearance = PreferenceKey<TKAppearance>("dolingo.appearance", default: .system)
 }
 
 /// Which part of the app is showing: splash, onboarding, sign-in, or the signed-in app.

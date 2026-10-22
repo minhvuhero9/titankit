@@ -70,23 +70,6 @@
         }
       }
     },
-    "root.language": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Language"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ngôn ngữ"
-          }
-        }
-      }
-    },
     "root.network.offline": {
       "extractionState": "manual",
       "localizations": {
@@ -121,19 +104,19 @@
         }
       }
     },
-    "root.signOut": {
+    "root.settings": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sign out"
+            "value": "Settings"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Đăng xuất"
+            "value": "Cài đặt"
           }
         }
       }

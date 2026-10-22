@@ -2,10 +2,12 @@ import SwiftUI
 import TitanCore
 import TitanDesignSystem
 import TitanLocalization
+import TitanStorage
 
 @main
 struct DolingoApp: App {
     @StateObject private var container = AppContainer(config: .current)
+    @Preference(DolingoKeys.appearance) private var appearance
 
     var body: some Scene {
         WindowGroup {
@@ -18,6 +20,7 @@ struct DolingoApp: App {
             .environment(\.container, container)
             .environment(\.logger, container.logger)
             .environment(\.imageCache, container.imageCache)
+            .tkAppearance(appearance)
             .onOpenURL { _ = container.deepLinks.handle($0) }
         }
     }

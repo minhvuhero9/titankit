@@ -12,6 +12,9 @@ struct AppConfig: Equatable, Sendable {
     static let defaultLanguage = "vi"
     /// Custom URL scheme for deep links, registered in Project.swift.
     static let urlScheme = "dolingo"
+    /// Placeholders until the real Privacy Policy and Terms pages are published.
+    static let privacyURL = URL(string: "https://www.example.com/privacy")!
+    static let termsURL = URL(string: "https://www.example.com/terms")!
 
     init(environment: AppEnvironment, apiBaseURL: URL) {
         self.environment = environment
