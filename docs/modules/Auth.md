@@ -35,7 +35,7 @@ sequenceDiagram
 
 ## 3. API chính
 
-> Trạng thái: giai đoạn 3b đã có `AuthUser`, `AuthProvider`, `AuthState`, `SignInMethod`, `Credentials` (kiểm tra email, mật khẩu) và bản rút gọn của `AuthService` (`currentUser()`, `signIn`, `signUp`, `sendPasswordReset`, `signOut`, `deleteAccount`, ném `TitanError` có kiểu), cùng `MockAuthService`. `stateStream`, `idToken`, `reauthenticate` và adapter Firebase làm ở giai đoạn 4.
+> Trạng thái: giai đoạn 3b đã có `AuthUser`, `AuthProvider`, `AuthState`, `SignInMethod`, `Credentials` (kiểm tra email, mật khẩu) và bản rút gọn của `AuthService` (`currentUser()`, `signIn`, `signUp`, `sendPasswordReset`, `updateProfile(displayName:)`, `signOut`, `deleteAccount`, ném `TitanError` có kiểu), cùng `MockAuthService`. `stateStream`, `idToken`, `reauthenticate` và adapter Firebase làm ở giai đoạn 4.
 
 ```swift
 public struct AuthUser: Sendable, Equatable, Codable {
@@ -69,6 +69,7 @@ public protocol AuthService: Sendable {
     func signIn(_ method: SignInMethod) async throws -> AuthUser
     func signUp(email: String, password: String) async throws -> AuthUser
     func sendPasswordReset(email: String) async throws
+    func updateProfile(displayName: String) async throws -> AuthUser
     func signOut() async throws
     func idToken(forceRefresh: Bool) async throws -> String
     func reauthenticate(_ method: SignInMethod) async throws

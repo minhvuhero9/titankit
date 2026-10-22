@@ -62,6 +62,18 @@ public actor MockAuthService: AuthService {
         resetRequests.append(email.lowercased())
     }
 
+    public func updateProfile(displayName: String) async throws(TitanError) -> AuthUser {
+        try await prepare()
+        guard let user = signedIn else { throw .unauthorized }
+        let updated = AuthUser(id: user.id, email: user.email, displayName: displayName,
+                               provider: user.provider, isAnonymous: user.isAnonymous)
+        signedIn = updated
+        if let email = user.email?.lowercased(), let account = accounts[email] {
+            accounts[email] = (account.password, updated)
+        }
+        return updated
+    }
+
     public func signOut() async throws(TitanError) {
         try await prepare()
         signedIn = nil

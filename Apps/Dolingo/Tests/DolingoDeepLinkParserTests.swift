@@ -19,6 +19,7 @@ final class DolingoDeepLinkParserTests: XCTestCase {
     }
 
     func testSettingsRowsLeadToTheirScreens() {
+        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.profile), .profile)
         XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.appearance), .appearance)
         XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.privacy), .webPage(.privacy))
         XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.terms), .webPage(.terms))

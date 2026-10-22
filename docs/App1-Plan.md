@@ -70,7 +70,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 - [x] TitanNavigation: `Route`, Router, tab, sheet, deep link.
 - [x] TitanLocalization: catalog kit, đổi ngôn ngữ, formatter.
-- [ ] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage, Maintenance, Force update (đã xong); Profile, Delete account (còn lại).
+- [x] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage, Maintenance, Force update, Profile, Delete account.
 - [ ] Paywall và Rate app prompt (nếu App 1 cần).
 - [ ] Mỗi màn hình có trang Catalog và snapshot test.
 - [ ] Nối các màn hình vào Router của App 1 bằng `Config` và callback.

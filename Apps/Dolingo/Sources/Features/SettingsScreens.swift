@@ -8,6 +8,7 @@ import TitanStorage
 /// Dolingo's rows on the kit's settings screen. More rows arrive with their screens
 /// (profile, notifications, subscription...).
 enum DolingoSettings {
+    static let profile = "profile"
     static let appearance = "appearance"
     static let privacy = "privacy"
     static let terms = "terms"
@@ -16,6 +17,7 @@ enum DolingoSettings {
     /// Where each row leads.
     static func route(for id: String) -> AppRoute? {
         switch id {
+        case profile: .profile
         case appearance: .appearance
         case privacy: .webPage(.privacy)
         case terms: .webPage(.terms)
@@ -33,6 +35,7 @@ struct DolingoSettingsScreen: View {
         SettingsScreen(
             sections: [
                 SettingsSection("app", items: [
+                    SettingsItem(DolingoSettings.profile, title: kit(KitStrings.Profile.title), icon: Image(tk: .profile)),
                     SettingsItem(DolingoSettings.appearance, title: kit(KitStrings.Settings.appearance), icon: Image(tk: .show)),
                     SettingsItem(DolingoSettings.catalog, title: Text("root.catalog"), icon: Image(tk: .category)),
                 ]),

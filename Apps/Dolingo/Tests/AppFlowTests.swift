@@ -87,4 +87,13 @@ final class AppFlowTests: XCTestCase {
         let update = AppContainer.launchArgumentConfig(["-forceUpdate"])
         XCTAssertEqual(update.value(for: .minimumVersion), "999.0.0")
     }
+
+    func testDeletedAccountGoesBackToSignIn() async {
+        let user = AuthUser(id: "1", email: "a@b.co", provider: .email)
+        let flow = AppFlow(auth: MockAuthService(signedIn: user), preferences: makePreferences())
+        await flow.prepareLaunch()
+        flow.finishSplash()
+        flow.didDeleteAccount()
+        XCTAssertEqual(flow.stage, .login)
+    }
 }

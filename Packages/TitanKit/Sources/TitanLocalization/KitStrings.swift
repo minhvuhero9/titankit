@@ -64,6 +64,26 @@ public enum KitStrings {
         public static let updateAction = "kit.launch.update.action"
     }
 
+    public enum Profile {
+        public static let title = "kit.profile.title"
+        public static let name = "kit.profile.name"
+        public static let email = "kit.profile.email"
+        public static let save = "kit.profile.save"
+        public static let saved = "kit.profile.saved"
+    }
+
+    public enum DeleteAccount {
+        public static let title = "kit.deleteAccount.title"
+        public static let warning = "kit.deleteAccount.warning"
+        public static let lossProgress = "kit.deleteAccount.loss.progress"
+        public static let lossProfile = "kit.deleteAccount.loss.profile"
+        public static let lossSubscription = "kit.deleteAccount.loss.subscription"
+        public static let confirmCheck = "kit.deleteAccount.confirmCheck"
+        public static let confirmTitle = "kit.deleteAccount.confirmTitle"
+        public static let action = "kit.deleteAccount.action"
+        public static let signInAgain = "kit.deleteAccount.signInAgain"
+    }
+
     /// Looks the key up for `locale`: app bundle (Localizable) first, then the kit (TitanKit),
     /// then returns the key so a missing string is easy to spot.
     public static func string(_ key: String, locale: Locale, appBundle: Bundle = .main) -> String {
