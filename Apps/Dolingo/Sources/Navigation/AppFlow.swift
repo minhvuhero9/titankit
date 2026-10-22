@@ -56,9 +56,9 @@ final class AppFlow: ObservableObject {
     private func blockingStage() async -> Stage? {
         let status = await launchChecker?.check() ?? .ok
         switch status {
-        case .ok: nil
-        case let .maintenance(message): .maintenance(message: message)
-        case let .forceUpdate(storeURL): .forceUpdate(storeURL: storeURL)
+        case .ok: return nil
+        case let .maintenance(message): return .maintenance(message: message)
+        case let .forceUpdate(storeURL): return .forceUpdate(storeURL: storeURL)
         }
     }
 
