@@ -58,4 +58,23 @@ final class MockAuthServiceTests: XCTestCase {
             XCTAssertEqual(error, .unauthorized)
         }
     }
+
+    func testUpdateProfileKeepsTheAccount() async throws {
+        let auth = MockAuthService()
+        do {
+            _ = try await auth.updateProfile(displayName: "Nobody")
+            XCTFail("needs a signed-in user")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+        _ = try await auth.signIn(.email(email: "demo@titan.app", password: "123456"))
+        let updated = try await auth.updateProfile(displayName: "Jack")
+        XCTAssertEqual(updated.displayName, "Jack")
+        try await auth.signOut()
+        let again = try await auth.signIn(.email(email: "demo@titan.app", password: "123456"))
+        XCTAssertEqual(again.displayName, "Jack")
+        try await auth.deleteAccount()
+        let current = await auth.currentUser()
+        XCTAssertNil(current)
+    }
 }

@@ -155,6 +155,159 @@
         }
       }
     },
+    "kit.deleteAccount.action": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá tài khoản"
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.confirmCheck": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I understand and want to delete my account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tôi hiểu và muốn xoá tài khoản"
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.confirmTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete your account permanently?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá vĩnh viễn tài khoản?"
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.loss.profile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your personal info and settings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thông tin cá nhân và cài đặt"
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.loss.progress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All your learning progress and achievements"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toàn bộ tiến độ học và thành tích của bạn"
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.loss.subscription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions aren't cancelled automatically; cancel them in App Store Subscriptions"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gói trả phí không tự huỷ, hãy huỷ trong phần Đăng ký của App Store"
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.signInAgain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For your security, sign in again and then delete your account."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vì lý do bảo mật, hãy đăng nhập lại rồi thử xoá tài khoản."
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá tài khoản"
+          }
+        }
+      }
+    },
+    "kit.deleteAccount.warning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A deleted account can't be restored."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản bị xoá sẽ không thể khôi phục."
+          }
+        }
+      }
+    },
     "kit.error.cancelled": {
       "extractionState": "manual",
       "localizations": {
@@ -712,6 +865,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trang %1$lld trên %2$lld"
+          }
+        }
+      }
+    },
+    "kit.profile.email": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
+        }
+      }
+    },
+    "kit.profile.name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full name"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Họ và tên"
+          }
+        }
+      }
+    },
+    "kit.profile.save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu"
+          }
+        }
+      }
+    },
+    "kit.profile.saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your info has been saved"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã lưu thông tin"
+          }
+        }
+      }
+    },
+    "kit.profile.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal Info"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thông tin cá nhân"
           }
         }
       }

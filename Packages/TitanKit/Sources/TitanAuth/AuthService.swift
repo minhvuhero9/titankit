@@ -8,6 +8,9 @@ public protocol AuthService: Sendable {
     func signIn(_ method: SignInMethod) async throws(TitanError) -> AuthUser
     func signUp(email: String, password: String, displayName: String?) async throws(TitanError) -> AuthUser
     func sendPasswordReset(email: String) async throws(TitanError)
+    /// Changes the signed-in user's name and returns the updated user.
+    func updateProfile(displayName: String) async throws(TitanError) -> AuthUser
     func signOut() async throws(TitanError)
+    /// Throws `.unauthorized` when the backend wants a fresh sign-in first.
     func deleteAccount() async throws(TitanError)
 }

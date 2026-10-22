@@ -6,6 +6,8 @@ enum AppRoute: Routable {
     case catalog
     case settings
     case appearance
+    case profile
+    case deleteAccount
     case webPage(WebPage)
 }
 

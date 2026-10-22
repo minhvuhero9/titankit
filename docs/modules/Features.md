@@ -156,7 +156,7 @@ LoginScreen(config: LoginConfig(socialOptions: [SocialLoginOption(.apple, icon: 
 - Ảnh của Dolingo nằm trong `Apps/Dolingo/Resources/Assets.xcassets`: logo gốc từ Figma (`Logo`, `LogoCircle`, `LogoText` có bản cho dark mode), icon app vẽ từ logo gốc, ảnh Welcome và logo Google, Apple, Facebook. File Figma hiện là bản mẫu, các màn hình chỉ là ảnh phẳng 430×932, nên ảnh Welcome đang được cắt từ đó và hơi mờ. Có file gốc thì thay ảnh này.
 - Trước giai đoạn 4, ba nút mạng xã hội của Dolingo đăng nhập dạng khách (`AppFlow.signInWithSocial`) để thử được trọn luồng.
 - Đăng nhập Apple, Google thật làm ở giai đoạn 4 cùng adapter Firebase. Hiện Dolingo dùng `MockAuthService` (tài khoản thử `demo@titan.app` / `123456`).
-- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Profile, xóa tài khoản, Paywall.
+- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Paywall.
 
 ## 8c. Đã làm (giai đoạn 3b, đợt 2)
 
@@ -203,6 +203,23 @@ case .forceUpdate(let storeURL):
 - Thông điệp bảo trì lấy từ remote config (`maintenance_message`); để trống thì dùng câu của kit.
 - Màn cập nhật không có đường vượt qua: chỉ có nút mở App Store.
 - Dolingo: `AppFlow.prepareLaunch()` chạy `LaunchChecker` trước khi chọn màn đầu; `retryLaunch()` kiểm tra lại và cho vào app khi hết bảo trì. Link App Store đang là chỗ giữ trong `AppConfig.appStoreURL`.
+
+## 8e. Đã làm (giai đoạn 3b, đợt 4)
+
+```swift
+ProfileScreen(auth: container.auth, onBack: { router.pop() },
+              onDeleteAccount: { router.push(.deleteAccount) })
+
+DeleteAccountScreen(auth: container.auth, onBack: { router.pop() }) {
+    flow.didDeleteAccount()          // tài khoản đã xoá trên backend, về màn đăng nhập
+}
+```
+
+- `ProfileScreen`: avatar chữ cái đầu, ô Họ và tên sửa được, email chỉ đọc, nút Lưu chỉ bật khi tên đổi và không để trống. Lưu gọi `AuthService.updateProfile(displayName:)` (hàm mới của protocol). Dưới cùng có dòng đỏ "Xoá tài khoản" nếu app truyền `onDeleteAccount`.
+- `DeleteAccountScreen`: cảnh báo không khôi phục được, danh sách những gì sẽ mất (app thay bằng `consequences`), ô tick xác nhận, nút đỏ, rồi bottom sheet hỏi lại lần cuối. Backend báo cần đăng nhập lại (`.unauthorized`) thì hiện lời nhắc đăng nhập lại.
+- Đây là màn xoá tài khoản ngay trong app mà App Review yêu cầu với app có đăng ký tài khoản.
+- Figma Dolingo có màn "93 personal info" và "97 account & security", nhưng lần này chưa đọc được vì tài khoản Figma đã hết lượt gọi của gói Starter. Bố cục đang theo các màn khác của kit; khi đọc được Figma sẽ chỉnh lại.
+- Dolingo: Cài đặt có thêm dòng "Thông tin cá nhân" ở đầu.
 
 ## 9. Checklist cho App 1
 

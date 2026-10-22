@@ -93,6 +93,11 @@ final class AppFlow: ObservableObject {
         didSignIn()
     }
 
+    /// The account is already gone on the backend; back to sign-in.
+    func didDeleteAccount() {
+        stage = .login
+    }
+
     func signOut() async {
         try? await auth.signOut()
         stage = .login
