@@ -6,6 +6,7 @@ import TitanFeatures
 import TitanLocalization
 import TitanNavigation
 import TitanNetworking
+import TitanPurchase
 import TitanRemoteConfig
 import TitanStorage
 
@@ -23,6 +24,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let localization: LocalizationService
     let auth: any AuthService
     let remoteConfig: any RemoteConfigService
+    let purchase: any PurchaseService
     let flow: AppFlow
     let router: Router<AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -37,7 +39,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         networkMonitor: NetworkMonitor? = nil,
         languageDefaults: UserDefaults = .standard,
         auth: (any AuthService)? = nil,
-        remoteConfig: (any RemoteConfigService)? = nil
+        remoteConfig: (any RemoteConfigService)? = nil,
+        purchase: (any PurchaseService)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -65,6 +68,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         // Firebase Remote Config replaces the mock in phase 4.
         let remoteConfig = remoteConfig ?? AppContainer.launchArgumentConfig(ProcessInfo.processInfo.arguments)
         self.remoteConfig = remoteConfig
+        self.purchase = purchase ?? StoreKitPurchaseService(config: AppConfig.purchase, logger: logger)
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
         flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
         let router = Router<AppRoute>()
@@ -117,7 +121,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             preferences: Preferences(defaults: UserDefaults(suiteName: "preview") ?? .standard),
             networkMonitor: NetworkMonitor(startMonitoring: false),
             languageDefaults: UserDefaults(suiteName: "preview") ?? .standard,
-            remoteConfig: MockRemoteConfig()
+            remoteConfig: MockRemoteConfig(),
+            purchase: MockPurchaseService()
         )
     }
 

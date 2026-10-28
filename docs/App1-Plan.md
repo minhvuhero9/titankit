@@ -89,7 +89,8 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [ ] TitanAuth: Apple, Google, email; xóa tài khoản.
 - [ ] TitanRemoteConfig: `LaunchChecker` cho bảo trì và bắt buộc cập nhật (kit và Mock đã xong; còn adapter Firebase).
 - [ ] TitanAnalytics: sự kiện chung của kit + sự kiện riêng App 1.
-- [ ] TitanPurchase (StoreKit 2 hoặc RevenueCat), TitanAds (AdMob + UMP), TitanPush nếu cần.
+- [x] TitanPurchase: `PurchaseService`, adapter StoreKit 2 và Mock (chưa có RevenueCat, chưa có file `.storekit`).
+- [ ] TitanAds (AdMob + UMP), TitanPush nếu cần.
 - [ ] `AppContainer` chọn adapter theo môi trường.
 
 **Xong khi:** App1-Staging đăng nhập thật, đọc Remote Config thật, sự kiện analytics hiện trên console.

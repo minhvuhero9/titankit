@@ -1,6 +1,7 @@
 import Foundation
 import TitanCore
 import TitanFeatures
+import TitanPurchase
 
 /// Values that differ per environment. They come from Config/*.xcconfig via Info.plist.
 struct AppConfig: Equatable, Sendable {
@@ -18,6 +19,11 @@ struct AppConfig: Equatable, Sendable {
     /// Placeholders until the real Privacy Policy and Terms pages are published.
     static let privacyURL = URL(string: "https://www.example.com/privacy")!
     static let termsURL = URL(string: "https://www.example.com/terms")!
+    /// Premium subscriptions. Placeholders until the products exist on App Store Connect.
+    static let purchase = PurchaseConfig(premiumProductIds: [
+        "com.titanstudio.dolingo.premium.monthly",
+        "com.titanstudio.dolingo.premium.yearly",
+    ])
     /// Placeholder until the app is registered on App Store Connect.
     static let appStoreID = "0000000000"
     /// Opened by the force update screen.

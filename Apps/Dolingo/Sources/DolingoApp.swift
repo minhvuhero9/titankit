@@ -22,6 +22,8 @@ struct DolingoApp: App {
             .environment(\.imageCache, container.imageCache)
             .tkAppearance(appearance)
             .onOpenURL { _ = container.deepLinks.handle($0) }
+            // Reads what the user owns and listens for renewals and refunds.
+            .task { container.purchase.start() }
         }
     }
 }
