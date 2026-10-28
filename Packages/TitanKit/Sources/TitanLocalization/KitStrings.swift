@@ -53,6 +53,7 @@ public enum KitStrings {
         public static let chooseLanguage = "kit.settings.language.choose"
         public static let helpSupport = "kit.settings.helpSupport"
         public static let privacy = "kit.settings.privacy"
+        public static let rateApp = "kit.settings.rateApp"
         public static let terms = "kit.settings.terms"
     }
 

@@ -1,5 +1,6 @@
 import Foundation
 import TitanCore
+import TitanFeatures
 
 /// Values that differ per environment. They come from Config/*.xcconfig via Info.plist.
 struct AppConfig: Equatable, Sendable {
@@ -17,8 +18,12 @@ struct AppConfig: Equatable, Sendable {
     /// Placeholders until the real Privacy Policy and Terms pages are published.
     static let privacyURL = URL(string: "https://www.example.com/privacy")!
     static let termsURL = URL(string: "https://www.example.com/terms")!
-    /// Opened by the force update screen. Placeholder until the app has its App Store id.
-    static let appStoreURL = URL(string: "https://apps.apple.com/app/id0000000000")!
+    /// Placeholder until the app is registered on App Store Connect.
+    static let appStoreID = "0000000000"
+    /// Opened by the force update screen.
+    static let appStoreURL = AppStoreLink.app(id: appStoreID)!
+    /// Opened by the "Rate the app" row in Settings.
+    static let writeReviewURL = AppStoreLink.writeReview(id: appStoreID)!
 
     init(environment: AppEnvironment, apiBaseURL: URL) {
         self.environment = environment

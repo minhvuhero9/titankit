@@ -23,6 +23,8 @@ final class DolingoDeepLinkParserTests: XCTestCase {
         XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.appearance), .appearance)
         XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.privacy), .webPage(.privacy))
         XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.terms), .webPage(.terms))
+        // Opens the App Store review page instead of a screen.
+        XCTAssertNil(DolingoSettings.route(for: DolingoSettings.rateApp))
         XCTAssertNil(DolingoSettings.route(for: "unknown"))
     }
 }
