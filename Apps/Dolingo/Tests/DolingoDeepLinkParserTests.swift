@@ -20,6 +20,13 @@ final class DolingoDeepLinkParserTests: XCTestCase {
     }
 
     @MainActor
+    func testSettingsLinkOpensTheAccountTab() {
+        let container = AppContainer.preview()
+        XCTAssertTrue(container.deepLinks.handle(URL(string: "dolingo://settings")!))
+        XCTAssertEqual(container.tabs.selected, .account)
+    }
+
+    @MainActor
     func testPremiumLinkOpensThePaywallInASheet() {
         let container = AppContainer.preview()
         XCTAssertTrue(container.deepLinks.handle(URL(string: "dolingo://premium")!))

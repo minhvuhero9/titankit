@@ -1,0 +1,602 @@
+{
+  "language": "en",
+  "chapters": [
+    {
+      "id": "en.basics",
+      "title": {
+        "vi": "Làm quen với tiếng Anh",
+        "en": "Introduction to English"
+      },
+      "lessons": [
+        {
+          "id": "en.basics.greetings",
+          "tutor": "Emma",
+          "title": {
+            "vi": "Chào hỏi",
+            "en": "Greetings"
+          },
+          "phrases": [
+            {
+              "text": "Hello!",
+              "meaning": {
+                "vi": "Xin chào!",
+                "en": "Hello!"
+              }
+            },
+            {
+              "text": "Good morning.",
+              "meaning": {
+                "vi": "Chào buổi sáng.",
+                "en": "Good morning."
+              }
+            },
+            {
+              "text": "How are you?",
+              "meaning": {
+                "vi": "Bạn khoẻ không?",
+                "en": "How are you?"
+              }
+            },
+            {
+              "text": "I'm fine, thank you.",
+              "meaning": {
+                "vi": "Tôi khoẻ, cảm ơn bạn.",
+                "en": "I'm fine, thank you."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.basics.introductions",
+          "tutor": "Liam",
+          "title": {
+            "vi": "Giới thiệu bản thân",
+            "en": "Introducing yourself"
+          },
+          "phrases": [
+            {
+              "text": "My name is Anna.",
+              "meaning": {
+                "vi": "Tên tôi là Anna.",
+                "en": "My name is Anna."
+              }
+            },
+            {
+              "text": "Nice to meet you.",
+              "meaning": {
+                "vi": "Rất vui được gặp bạn.",
+                "en": "Nice to meet you."
+              }
+            },
+            {
+              "text": "Where are you from?",
+              "meaning": {
+                "vi": "Bạn đến từ đâu?",
+                "en": "Where are you from?"
+              }
+            },
+            {
+              "text": "I'm from Vietnam.",
+              "meaning": {
+                "vi": "Tôi đến từ Việt Nam.",
+                "en": "I'm from Vietnam."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.basics.numbers",
+          "tutor": "Sofia",
+          "title": {
+            "vi": "Số đếm",
+            "en": "Numbers"
+          },
+          "phrases": [
+            {
+              "text": "One, two, three.",
+              "meaning": {
+                "vi": "Một, hai, ba.",
+                "en": "One, two, three."
+              }
+            },
+            {
+              "text": "I am twenty years old.",
+              "meaning": {
+                "vi": "Tôi hai mươi tuổi.",
+                "en": "I am twenty years old."
+              }
+            },
+            {
+              "text": "What's your phone number?",
+              "meaning": {
+                "vi": "Số điện thoại của bạn là gì?",
+                "en": "What's your phone number?"
+              }
+            },
+            {
+              "text": "It costs ten dollars.",
+              "meaning": {
+                "vi": "Nó giá mười đô la.",
+                "en": "It costs ten dollars."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.basics.family",
+          "tutor": "Noah",
+          "title": {
+            "vi": "Gia đình",
+            "en": "Family"
+          },
+          "phrases": [
+            {
+              "text": "This is my mother.",
+              "meaning": {
+                "vi": "Đây là mẹ tôi.",
+                "en": "This is my mother."
+              }
+            },
+            {
+              "text": "I have a brother.",
+              "meaning": {
+                "vi": "Tôi có một anh trai.",
+                "en": "I have a brother."
+              }
+            },
+            {
+              "text": "My sister is a teacher.",
+              "meaning": {
+                "vi": "Chị tôi là giáo viên.",
+                "en": "My sister is a teacher."
+              }
+            },
+            {
+              "text": "We live together.",
+              "meaning": {
+                "vi": "Chúng tôi sống cùng nhau.",
+                "en": "We live together."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.basics.routine",
+          "tutor": "Mia",
+          "title": {
+            "vi": "Một ngày của tôi",
+            "en": "Daily routine"
+          },
+          "phrases": [
+            {
+              "text": "I wake up at six.",
+              "meaning": {
+                "vi": "Tôi thức dậy lúc sáu giờ.",
+                "en": "I wake up at six."
+              }
+            },
+            {
+              "text": "I have breakfast.",
+              "meaning": {
+                "vi": "Tôi ăn sáng.",
+                "en": "I have breakfast."
+              }
+            },
+            {
+              "text": "I go to work by bus.",
+              "meaning": {
+                "vi": "Tôi đi làm bằng xe buýt.",
+                "en": "I go to work by bus."
+              }
+            },
+            {
+              "text": "I go to bed at eleven.",
+              "meaning": {
+                "vi": "Tôi đi ngủ lúc mười một giờ.",
+                "en": "I go to bed at eleven."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en.conversations",
+      "title": {
+        "vi": "Hội thoại hằng ngày",
+        "en": "Everyday conversations"
+      },
+      "lessons": [
+        {
+          "id": "en.conversations.cafe",
+          "tutor": "Oliver",
+          "title": {
+            "vi": "Ở quán cà phê",
+            "en": "At the café"
+          },
+          "phrases": [
+            {
+              "text": "Can I have a coffee, please?",
+              "meaning": {
+                "vi": "Cho tôi một ly cà phê nhé.",
+                "en": "Can I have a coffee, please?"
+              }
+            },
+            {
+              "text": "With milk, please.",
+              "meaning": {
+                "vi": "Cho thêm sữa nhé.",
+                "en": "With milk, please."
+              }
+            },
+            {
+              "text": "How much is it?",
+              "meaning": {
+                "vi": "Bao nhiêu tiền vậy?",
+                "en": "How much is it?"
+              }
+            },
+            {
+              "text": "Here you are.",
+              "meaning": {
+                "vi": "Của bạn đây.",
+                "en": "Here you are."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.conversations.shopping",
+          "tutor": "Ava",
+          "title": {
+            "vi": "Mua sắm",
+            "en": "Shopping"
+          },
+          "phrases": [
+            {
+              "text": "I'm just looking.",
+              "meaning": {
+                "vi": "Tôi chỉ xem thôi.",
+                "en": "I'm just looking."
+              }
+            },
+            {
+              "text": "Do you have this in blue?",
+              "meaning": {
+                "vi": "Cái này có màu xanh không?",
+                "en": "Do you have this in blue?"
+              }
+            },
+            {
+              "text": "Can I try it on?",
+              "meaning": {
+                "vi": "Tôi mặc thử được không?",
+                "en": "Can I try it on?"
+              }
+            },
+            {
+              "text": "I'll take it.",
+              "meaning": {
+                "vi": "Tôi lấy cái này.",
+                "en": "I'll take it."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.conversations.directions",
+          "tutor": "Lucas",
+          "title": {
+            "vi": "Hỏi đường",
+            "en": "Asking for directions"
+          },
+          "phrases": [
+            {
+              "text": "Excuse me, where is the station?",
+              "meaning": {
+                "vi": "Xin lỗi, nhà ga ở đâu?",
+                "en": "Excuse me, where is the station?"
+              }
+            },
+            {
+              "text": "Go straight ahead.",
+              "meaning": {
+                "vi": "Đi thẳng.",
+                "en": "Go straight ahead."
+              }
+            },
+            {
+              "text": "Turn left at the corner.",
+              "meaning": {
+                "vi": "Rẽ trái ở góc đường.",
+                "en": "Turn left at the corner."
+              }
+            },
+            {
+              "text": "It's next to the bank.",
+              "meaning": {
+                "vi": "Nó ở cạnh ngân hàng.",
+                "en": "It's next to the bank."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.conversations.weather",
+          "tutor": "Isabella",
+          "title": {
+            "vi": "Thời tiết",
+            "en": "The weather"
+          },
+          "phrases": [
+            {
+              "text": "It's sunny today.",
+              "meaning": {
+                "vi": "Hôm nay trời nắng.",
+                "en": "It's sunny today."
+              }
+            },
+            {
+              "text": "It's going to rain.",
+              "meaning": {
+                "vi": "Trời sắp mưa.",
+                "en": "It's going to rain."
+              }
+            },
+            {
+              "text": "It's very hot.",
+              "meaning": {
+                "vi": "Trời rất nóng.",
+                "en": "It's very hot."
+              }
+            },
+            {
+              "text": "Take an umbrella.",
+              "meaning": {
+                "vi": "Mang theo ô nhé.",
+                "en": "Take an umbrella."
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.conversations.plans",
+          "tutor": "Ethan",
+          "title": {
+            "vi": "Lên kế hoạch",
+            "en": "Making plans"
+          },
+          "phrases": [
+            {
+              "text": "Are you free tonight?",
+              "meaning": {
+                "vi": "Tối nay bạn rảnh không?",
+                "en": "Are you free tonight?"
+              }
+            },
+            {
+              "text": "Let's go to the cinema.",
+              "meaning": {
+                "vi": "Đi xem phim nhé.",
+                "en": "Let's go to the cinema."
+              }
+            },
+            {
+              "text": "What time shall we meet?",
+              "meaning": {
+                "vi": "Mấy giờ mình gặp nhau?",
+                "en": "What time shall we meet?"
+              }
+            },
+            {
+              "text": "See you at seven.",
+              "meaning": {
+                "vi": "Hẹn gặp bạn lúc bảy giờ.",
+                "en": "See you at seven."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en.grammar",
+      "title": {
+        "vi": "Ngữ pháp cần thiết",
+        "en": "Essential grammar"
+      },
+      "lessons": [
+        {
+          "id": "en.grammar.tobe",
+          "tutor": "Charlotte",
+          "title": {
+            "vi": "Động từ to be",
+            "en": "The verb to be"
+          },
+          "phrases": [
+            {
+              "text": "I am a student.",
+              "meaning": {
+                "vi": "Tôi là sinh viên.",
+                "en": "I am a student."
+              }
+            },
+            {
+              "text": "She is my friend.",
+              "meaning": {
+                "vi": "Cô ấy là bạn tôi.",
+                "en": "She is my friend."
+              }
+            },
+            {
+              "text": "They are at home.",
+              "meaning": {
+                "vi": "Họ đang ở nhà.",
+                "en": "They are at home."
+              }
+            },
+            {
+              "text": "Are you ready?",
+              "meaning": {
+                "vi": "Bạn sẵn sàng chưa?",
+                "en": "Are you ready?"
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.grammar.present",
+          "tutor": "James",
+          "title": {
+            "vi": "Thì hiện tại đơn",
+            "en": "Present simple"
+          },
+          "phrases": [
+            {
+              "text": "I like music.",
+              "meaning": {
+                "vi": "Tôi thích âm nhạc.",
+                "en": "I like music."
+              }
+            },
+            {
+              "text": "He works in a bank.",
+              "meaning": {
+                "vi": "Anh ấy làm ở ngân hàng.",
+                "en": "He works in a bank."
+              }
+            },
+            {
+              "text": "We don't eat meat.",
+              "meaning": {
+                "vi": "Chúng tôi không ăn thịt.",
+                "en": "We don't eat meat."
+              }
+            },
+            {
+              "text": "Does she speak English?",
+              "meaning": {
+                "vi": "Cô ấy có nói tiếng Anh không?",
+                "en": "Does she speak English?"
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.grammar.past",
+          "tutor": "Amelia",
+          "title": {
+            "vi": "Thì quá khứ đơn",
+            "en": "Past simple"
+          },
+          "phrases": [
+            {
+              "text": "I visited Hanoi last year.",
+              "meaning": {
+                "vi": "Năm ngoái tôi đến Hà Nội.",
+                "en": "I visited Hanoi last year."
+              }
+            },
+            {
+              "text": "She went to school.",
+              "meaning": {
+                "vi": "Cô ấy đã đi học.",
+                "en": "She went to school."
+              }
+            },
+            {
+              "text": "We didn't watch TV.",
+              "meaning": {
+                "vi": "Chúng tôi đã không xem TV.",
+                "en": "We didn't watch TV."
+              }
+            },
+            {
+              "text": "Did you call him?",
+              "meaning": {
+                "vi": "Bạn đã gọi cho anh ấy chưa?",
+                "en": "Did you call him?"
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.grammar.questions",
+          "tutor": "Benjamin",
+          "title": {
+            "vi": "Đặt câu hỏi",
+            "en": "Asking questions"
+          },
+          "phrases": [
+            {
+              "text": "What do you do?",
+              "meaning": {
+                "vi": "Bạn làm nghề gì?",
+                "en": "What do you do?"
+              }
+            },
+            {
+              "text": "Where do you live?",
+              "meaning": {
+                "vi": "Bạn sống ở đâu?",
+                "en": "Where do you live?"
+              }
+            },
+            {
+              "text": "Why are you learning English?",
+              "meaning": {
+                "vi": "Sao bạn học tiếng Anh?",
+                "en": "Why are you learning English?"
+              }
+            },
+            {
+              "text": "How often do you exercise?",
+              "meaning": {
+                "vi": "Bạn tập thể dục thường xuyên không?",
+                "en": "How often do you exercise?"
+              }
+            }
+          ]
+        },
+        {
+          "id": "en.grammar.future",
+          "tutor": "Harper",
+          "title": {
+            "vi": "Thì tương lai",
+            "en": "The future"
+          },
+          "phrases": [
+            {
+              "text": "I will call you tomorrow.",
+              "meaning": {
+                "vi": "Mai tôi sẽ gọi cho bạn.",
+                "en": "I will call you tomorrow."
+              }
+            },
+            {
+              "text": "It will be fine.",
+              "meaning": {
+                "vi": "Mọi chuyện sẽ ổn thôi.",
+                "en": "It will be fine."
+              }
+            },
+            {
+              "text": "I'm going to travel.",
+              "meaning": {
+                "vi": "Tôi sắp đi du lịch.",
+                "en": "I'm going to travel."
+              }
+            },
+            {
+              "text": "Will you come?",
+              "meaning": {
+                "vi": "Bạn sẽ đến chứ?",
+                "en": "Will you come?"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

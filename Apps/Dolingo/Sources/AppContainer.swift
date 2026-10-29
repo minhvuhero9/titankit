@@ -26,7 +26,9 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let remoteConfig: any RemoteConfigService
     let purchase: any PurchaseService
     let flow: AppFlow
-    let router: Router<AppRoute>
+    let learning: LearningStore
+    /// One navigation stack per tab.
+    let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
 
     init(
@@ -40,7 +42,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         languageDefaults: UserDefaults = .standard,
         auth: (any AuthService)? = nil,
         remoteConfig: (any RemoteConfigService)? = nil,
-        purchase: (any PurchaseService)? = nil
+        purchase: (any PurchaseService)? = nil,
+        courses: any CourseRepository = BundledCourseRepository()
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -71,19 +74,28 @@ final class AppContainer: ObservableObject, DependencyContainer {
         self.purchase = purchase ?? StoreKitPurchaseService(config: AppConfig.purchase, logger: logger)
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
         flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
-        let router = Router<AppRoute>()
-        self.router = router
+        learning = LearningStore(repository: courses, preferences: preferences)
+        let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
+        self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
-            router.open(link)
+            // Settings is the root of the Account tab.
+            if link.route == .settings {
+                tabs.selected = .account
+            } else {
+                tabs.open(link, in: .home)
+            }
         }
     }
 
-    /// The one place that turns a route into a screen.
+    /// The Home tab's stack, where deep links open.
+    var router: Router<AppRoute> { tabs.router(for: .home) }
+
+    /// The one place that turns a route into a screen. `router` is the stack the screen is in.
     @ViewBuilder
-    func makeView(for route: AppRoute) -> some View {
+    func makeView(for route: AppRoute, in router: Router<AppRoute>) -> some View {
         switch route {
         case .catalog: TKCatalogView()
-        case .settings: DolingoSettingsScreen(container: self)
+        case .settings: DolingoSettingsScreen(container: self, router: router, onBack: { router.pop() })
         case .appearance: DolingoAppearanceScreen(localization: localization) { [router] in router.pop() }
         case let .webPage(page): DolingoWebPage(page: page) { [router] in router.pop() }
         case .profile:
@@ -96,6 +108,10 @@ final class AppContainer: ObservableObject, DependencyContainer {
             }
         case .paywall:
             DolingoPaywall(purchase: purchase) { [router] in router.dismiss() }
+        case .myCourses:
+            MyCoursesSheet(learning: learning) { [router] in router.dismiss() }
+        case let .lesson(id):
+            LessonScreen(learning: learning, lessonId: id) { [router] in router.pop() }
         }
     }
 

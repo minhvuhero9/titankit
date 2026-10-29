@@ -10,6 +10,14 @@ enum AppRoute: Routable {
     case deleteAccount
     case paywall
     case webPage(WebPage)
+    /// "My Courses": switch or add a language, shown in a sheet.
+    case myCourses
+    case lesson(id: String)
+}
+
+/// The five tabs of the Figma "Menu Bar".
+enum AppTab: String, CaseIterable, Sendable {
+    case home, chats, speak, progress, account
 }
 
 /// Pages Dolingo shows in a web view.

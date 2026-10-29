@@ -102,6 +102,11 @@ enum DolingoSurvey {
         answers[Step.appLanguage]?.optionIds.first.flatMap { supported.contains($0) ? $0 : nil }
     }
 
+    /// The flag shown for a course, e.g. "🇪🇸".
+    static func flag(for language: String) -> String {
+        languages.first { $0.code == language }?.flag ?? "🏳️"
+    }
+
     static func languageName(_ code: String) -> Text {
         Text(LocalizedStringKey("survey.language.\(code)"))
     }

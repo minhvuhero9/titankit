@@ -3,6 +3,7 @@ import TitanDesignSystem
 import TitanFeatures
 import TitanIcons
 import TitanLocalization
+import TitanNavigation
 import TitanPurchase
 import TitanStorage
 
@@ -31,6 +32,10 @@ enum DolingoSettings {
 
 struct DolingoSettingsScreen: View {
     let container: AppContainer
+    /// The stack the screen is in: the Account tab's, or Home's when opened from a link.
+    let router: Router<AppRoute>
+    /// nil when Settings is the root of the Account tab.
+    var onBack: (() -> Void)?
     /// Hides the upgrade banner once the user has premium.
     @State private var isPremium = false
     @Environment(\.locale) private var locale
@@ -50,19 +55,19 @@ struct DolingoSettingsScreen: View {
                     SettingsItem(DolingoSettings.terms, title: kit(KitStrings.Settings.terms), icon: Image(tk: .document)),
                 ]),
             ],
-            onBack: { container.router.pop() },
+            onBack: onBack,
             onSelect: { id in
                 if id == DolingoSettings.rateApp { openURL(AppConfig.writeReviewURL) }
-                if let route = DolingoSettings.route(for: id) { container.router.push(route) }
+                if let route = DolingoSettings.route(for: id) { router.push(route) }
             },
             onLogout: {
                 await container.flow.signOut()
-                container.router.popToRoot()
+                router.popToRoot()
             }
         ) {
             if !isPremium {
                 TKUpgradeBanner(title: Text("settings.upgrade.title"), message: Text("settings.upgrade.message")) {
-                    container.router.present(.paywall)
+                    router.present(.paywall)
                 }
             }
         }
