@@ -19,24 +19,24 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 
 | # | Màn hình | Node | Trạng thái |
 | --- | --- | --- | --- |
-| 3 | sign up step 1 - select language to learn | `34455:27367` | Chưa làm |
-| 4 | sign up step 2 - select language for dolingo app | `34455:27732` | Chưa làm |
-| 5 | sign up step 3 - select current language level | `34457:28187` | Chưa làm |
-| 6 | sign up step 4 - select reason for language learning | `34457:29208` | Chưa làm |
-| 7 | sign up step 5 - select skills area to focus | `34457:30402` | Chưa làm |
-| 8 | sign up step 6 - select main challenge in language learning | `34457:30625` | Chưa làm |
-| 9 | sign up step 7 - select age | `34457:30974` | Chưa làm |
-| 10 | sign up step 8 - select profession area | `34457:31127` | Chưa làm |
-| 11 | sign up step 9 - select favorite topics | `34457:31277` | Chưa làm |
-| 12 | sign up step 10 - select learning time plan | `34457:36724` | Chưa làm |
-| 13 | sign up step 11 - set reminder time | `34457:37649` | Chưa làm |
-| 14 | sign up step 12 - select information source | `34458:38304` | Chưa làm |
-| 15 | preparing personalized learning plan | `34460:39659` | Chưa làm |
-| 16 | your plan is ready | `34460:39912` | Chưa làm |
-| 17 | sign up - enter name | `34460:40734` | Chưa làm |
-| 18 | sign up - enter email address | `34460:41011` | Chưa làm |
-| 19 | sign up - create password | `34460:41074` | Chưa làm |
-| 20 | sign up - creating an account | `34462:44363` | Chưa làm |
+| 3 | sign up step 1 - select language to learn | `34455:27367` | Đã có (`SurveyScreen`) |
+| 4 | sign up step 2 - select language for dolingo app | `34455:27732` | Đã có (`SurveyScreen`) |
+| 5 | sign up step 3 - select current language level | `34457:28187` | Đã có (`SurveyScreen`) |
+| 6 | sign up step 4 - select reason for language learning | `34457:29208` | Đã có (`SurveyScreen`) |
+| 7 | sign up step 5 - select skills area to focus | `34457:30402` | Đã có (`SurveyScreen`) |
+| 8 | sign up step 6 - select main challenge in language learning | `34457:30625` | Đã có (`SurveyScreen`) |
+| 9 | sign up step 7 - select age | `34457:30974` | Đã có (`SurveyScreen`) |
+| 10 | sign up step 8 - select profession area | `34457:31127` | Đã có (`SurveyScreen`) |
+| 11 | sign up step 9 - select favorite topics | `34457:31277` | Đã có (`SurveyScreen`) |
+| 12 | sign up step 10 - select learning time plan | `34457:36724` | Đã có (`SurveyScreen`) |
+| 13 | sign up step 11 - set reminder time | `34457:37649` | Đã có (`SurveyScreen`) |
+| 14 | sign up step 12 - select information source | `34458:38304` | Đã có (`SurveyScreen`) |
+| 15 | preparing personalized learning plan | `34460:39659` | Đã có (`PreparingScreen`) |
+| 16 | your plan is ready | `34460:39912` | Đã có (`SuccessScreen`) |
+| 17 | sign up - enter name | `34460:40734` | Đã có (`SignUpScreen`) |
+| 18 | sign up - enter email address | `34460:41011` | Đã có (`SignUpScreen`) |
+| 19 | sign up - create password | `34460:41074` | Đã có (`SignUpScreen`) |
+| 20 | sign up - creating an account | `34462:44363` | Đã có (`SignUpScreen`) |
 
 ## Đăng nhập và quên mật khẩu (21–27)
 

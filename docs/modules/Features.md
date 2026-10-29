@@ -259,6 +259,31 @@ PaywallScreen(
 - Figma Dolingo chưa đọc được màn paywall (hết lượt gọi Figma), bố cục đang theo "Subscriptions Card" và các màn khác của kit.
 - Dolingo: Cài đặt có băng rôn "Nâng cấp ngay!" mở paywall trong sheet; deep link `dolingo://premium` cũng mở paywall. Sản phẩm vẫn là id giữ chỗ, nên trên simulator sẽ thấy lỗi "không tìm thấy" cho tới khi có file `.storekit` hoặc sản phẩm thật. Dùng `MockPurchaseService` trong preview để xem đủ giao diện.
 
+## 8h. Đã làm (giai đoạn 5, Đăng ký)
+
+Theo các màn 3–20 của Figma Dolingo (xem [Dolingo-Screens.md](../Dolingo-Screens.md)).
+
+```swift
+SurveyScreen(steps: [
+    SurveyStep("level", kind: .single([
+        SurveyOption("beginner", title: Text("survey.level.beginner"), detail: Text("..."), icon: Image(tk: TKColorIcon.signalLow)),
+    ])) { answers in Text("survey.level.title \(languageName(answers))") },   // tiêu đề theo câu trả lời trước
+    SurveyStep("topics", title: Text("survey.topics.title"), kind: .chips(topics)),
+    SurveyStep("reminder", title: Text("survey.reminder.title"), kind: .time(hour: 20, minute: 0)),
+], onExit: { flow.leaveSurvey() }) { answers in flow.finishSurvey(answers) }
+
+PreparingScreen(title: Text("plan.preparing.title"), message: Text("plan.preparing.message")) { flow.planIsReady() }
+SuccessScreen(title: Text("plan.ready.title"), actionTitle: Text("plan.ready.action")) { flow.createAccount() }
+SignUpScreen(auth: container.auth, onExit: { flow.leaveSignUp() }) { user in flow.didSignIn() }
+```
+
+- `SurveyScreen`: mỗi trang một câu hỏi, trên cùng có thanh tiến độ và "3 / 12", nút Tiếp tục ghim dưới đáy, chỉ bật khi đã chọn. Bốn kiểu câu: `.single` (thẻ, một đáp án), `.multiple` (thẻ, nhiều đáp án), `.chips` (chip tự xuống dòng bằng `TKFlowLayout`), `.time` (vòng quay chọn giờ). Đáp án trả về dạng `[id bước: SurveyAnswer]`, `Codable` để app lưu.
+- `PreparingScreen`: vòng tròn đếm tới 100 % trong `duration` (mặc định 3 giây) trong lúc chạy `work`; chỉ hiện 100 % khi cả hai xong.
+- `SuccessScreen`: hình thành công, tiêu đề, mô tả, một nút. Dùng lại cho "Đặt lại mật khẩu thành công" và "Nâng cấp thành công".
+- `SignUpScreen`: tên, rồi email ("Cảm ơn An! Email của bạn là gì?"), rồi mật khẩu hai lần; hộp "Đang tạo tài khoản..." khi gọi `AuthService.signUp`. Kiểm tra email, độ dài và khớp mật khẩu khi bấm Tiếp tục.
+- Dolingo: "Bắt đầu" ở màn chào và "Đăng ký" ở màn đăng nhập mở bộ 12 câu hỏi; câu 2 chọn ngôn ngữ của app (chỉ Tiếng Việt, English) và đổi ngay khi xong. Đáp án lưu trong `DolingoKeys.surveyAnswers` để các màn học sau dùng (ngôn ngữ, trình độ, mục tiêu mỗi ngày, giờ nhắc). Cờ quốc gia dùng emoji; icon trình độ, lý do và thời gian dùng `TKColorIcon` có sẵn.
+- Giờ nhắc mới được lưu, chưa đặt thông báo: phần này đi cùng TitanPush.
+
 ## 9. Checklist cho App 1
 
 - [ ] Chọn màn hình App 1 dùng: Splash, Onboarding, Login, Paywall, Settings, Profile, Delete account...
