@@ -5,6 +5,7 @@ Bộ kit iOS dùng chung cho nhiều app (SwiftUI, iOS 16+, Swift 6). Mỗi app 
 - Tài liệu kiến trúc: [docs/README.md](docs/README.md)
 - Bản đồ tương tác: mở [docs/index.html](docs/index.html) trong trình duyệt
 - Kế hoạch App 1: [docs/App1-Plan.md](docs/App1-Plan.md)
+- Danh sách màn hình Dolingo trong Figma: [docs/Dolingo-Screens.md](docs/Dolingo-Screens.md)
 
 ## Cấu trúc
 
