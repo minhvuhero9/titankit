@@ -10,13 +10,16 @@ import TitanSpeech
 struct LessonScreen: View {
     @ObservedObject var learning: LearningStore
     let speech: any SpeechRecognizer
+    let activity: ActivityStore
     let lessonId: String
     let onClose: () -> Void
 
     var body: some View {
         if case let .loaded(course?) = learning.course, let lesson = course.lessons.first(where: { $0.id == lessonId }) {
-            LessonPlayer(lesson: lesson, language: course.language, speech: speech, onClose: onClose) {
+            LessonPlayer(lesson: lesson, language: course.language, speech: speech, activity: activity,
+                         onClose: onClose) { accuracy, seconds in
                 learning.complete(lesson)
+                activity.recordLesson(accuracy: accuracy, seconds: seconds)
                 onClose()
             }
         } else {
@@ -28,7 +31,9 @@ struct LessonScreen: View {
 
 private struct LessonPlayer: View {
     let onClose: () -> Void
-    let onComplete: () -> Void
+    /// Accuracy (nil without the microphone) and seconds spent.
+    let onComplete: (Double?, TimeInterval) -> Void
+    private let activity: ActivityStore
 
     @StateObject private var viewModel: LessonViewModel
     @State private var confirmingLeave = false
@@ -40,12 +45,15 @@ private struct LessonPlayer: View {
         lesson: Lesson,
         language: String,
         speech: any SpeechRecognizer,
+        activity: ActivityStore,
         onClose: @escaping () -> Void,
-        onComplete: @escaping () -> Void
+        onComplete: @escaping (Double?, TimeInterval) -> Void
     ) {
         self.onClose = onClose
         self.onComplete = onComplete
-        _viewModel = StateObject(wrappedValue: LessonViewModel(lesson: lesson, language: language, speech: speech))
+        self.activity = activity
+        _viewModel = StateObject(wrappedValue: LessonViewModel(lesson: lesson, language: language, speech: speech,
+                                                               activity: activity))
     }
 
     var body: some View {
@@ -104,6 +112,7 @@ private struct LessonPlayer: View {
                 .id(viewModel.index)
                 .transition(.opacity)
                 TKButton("lesson.listen", style: .light, size: .medium, shape: .pill, leadingIcon: Image(tk: .volumeUp)) {
+                    activity.recordListened()
                     say(phrase)
                 }
                 .disabled(viewModel.attempt == .listening)
@@ -240,7 +249,9 @@ private struct LessonPlayer: View {
                 }
             }
             Spacer()
-            TKButton(Text.kit(KitStrings.continueAction, locale: locale), shape: .pill, action: onComplete)
+            TKButton(Text.kit(KitStrings.continueAction, locale: locale), shape: .pill) {
+                onComplete(viewModel.accuracy, viewModel.duration)
+            }
         }
         .padding(Spacing.lg)
     }

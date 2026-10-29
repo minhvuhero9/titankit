@@ -9,6 +9,7 @@ struct MainTabView: View {
     let container: AppContainer
     @ObservedObject var tabs: TabRouter<AppTab, AppRoute>
     @ObservedObject var flow: AppFlow
+    @ObservedObject var activity: ActivityStore
 
     var body: some View {
         TabView(selection: $tabs.selected) {
@@ -26,6 +27,16 @@ struct MainTabView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             TKTabBar(selected: tabs.selected, items: Self.items) { tabs.select($0) }
         }
+        .overlay {
+            if let celebration = activity.celebrations.first {
+                CelebrationView(celebration: celebration) {
+                    withAnimation { activity.dismissCelebration() }
+                }
+                .id(celebration.id)
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: activity.celebrations.first?.id)
         .tkRequestReview(when: flow.shouldAskForReview) { flow.didAskForReview() }
         .task { await container.learning.load() }
     }
@@ -40,7 +51,7 @@ struct MainTabView: View {
         case .speak:
             SpeakScreen(phrasebook: container.phrasebook, purchase: container.purchase, router: router)
         case .progress:
-            ComingSoonTab(title: "tab.progress", icon: Image(tk: .graph))
+            ProgressScreen(activity: container.activity, learning: container.learning, phrasebook: container.phrasebook)
         case .account:
             DolingoSettingsScreen(container: container, router: router)
         }
@@ -54,19 +65,5 @@ struct MainTabView: View {
             TKTabItem(.progress, title: "tab.progress", icon: .graph),
             TKTabItem(.account, title: "tab.account", icon: .profile),
         ]
-    }
-}
-
-/// Holds a tab's place until its screens are built.
-private struct ComingSoonTab: View {
-    let title: LocalizedStringKey
-    let icon: Image
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        TKEmptyState(icon: icon, title: title, message: "tab.comingSoon")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(theme.colors.surfaceBackground.color.ignoresSafeArea())
-            .tkNavigationBar(title)
     }
 }

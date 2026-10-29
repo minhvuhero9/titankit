@@ -30,13 +30,16 @@ final class RoleplayViewModel: ObservableObject {
     let roleplay: Roleplay
     let language: String
     private let speech: any SpeechRecognizer
+    private let activity: ActivityStore?
+    private let startedAt = Date()
     private var turn = 0
     private var hasPermission = false
 
-    init(roleplay: Roleplay, language: String, speech: any SpeechRecognizer) {
+    init(roleplay: Roleplay, language: String, speech: any SpeechRecognizer, activity: ActivityStore? = nil) {
         self.roleplay = roleplay
         self.language = language
         self.speech = speech
+        self.activity = activity
         showPartnerLine()
     }
 
@@ -86,6 +89,7 @@ final class RoleplayViewModel: ObservableObject {
     func answer(_ heard: String) {
         let scored = replies.map { (reply: $0, score: PronunciationScore(expected: $0.text, heard: heard)) }
         guard let best = scored.max(by: { $0.score.value < $1.score.value }) else { return }
+        activity?.recordSpoken(best.score)
         if best.score.verdict.isPass {
             send(best.reply)
         } else {
@@ -104,10 +108,21 @@ final class RoleplayViewModel: ObservableObject {
 
     private func showPartnerLine() {
         guard roleplay.turns.indices.contains(turn) else {
-            state = .finished
+            finish()
             return
         }
         messages.append(Message(id: messages.count, phrase: roleplay.turns[turn].partner, isMine: false))
-        state = replies.isEmpty ? .finished : .ready
+        if replies.isEmpty {
+            finish()
+        } else {
+            state = .ready
+        }
+    }
+
+    private func finish() {
+        guard state != .finished else { return }
+        state = .finished
+        activity?.recordRoleplay(tasksDone: completedTaskCount, tasksTotal: taskCount,
+                                 seconds: Date().timeIntervalSince(startedAt))
     }
 }

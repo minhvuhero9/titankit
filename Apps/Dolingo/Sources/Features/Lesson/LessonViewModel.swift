@@ -23,16 +23,24 @@ final class LessonViewModel: ObservableObject {
     let lesson: Lesson
     let language: String
     private let speech: any SpeechRecognizer
+    private let activity: ActivityStore?
     private let startedAt: Date
     private let now: () -> Date
     private var hasPermission = false
     /// Best score for each phrase index; a skipped phrase counts as 0.
     private var bestScores: [Int: Double] = [:]
 
-    init(lesson: Lesson, language: String, speech: any SpeechRecognizer, now: @escaping () -> Date = Date.init) {
+    init(
+        lesson: Lesson,
+        language: String,
+        speech: any SpeechRecognizer,
+        activity: ActivityStore? = nil,
+        now: @escaping () -> Date = Date.init
+    ) {
         self.lesson = lesson
         self.language = language
         self.speech = speech
+        self.activity = activity
         self.now = now
         startedAt = now()
     }
@@ -78,6 +86,7 @@ final class LessonViewModel: ObservableObject {
             let heard = try await speech.transcribe(language: language, timeout: .seconds(8))
             let score = PronunciationScore(expected: phrase.text, heard: heard)
             bestScores[index] = max(bestScores[index] ?? 0, score.value)
+            activity?.recordSpoken(score)
             attempt = .scored(score)
         } catch {
             if error == .unauthorized { isMicBlocked = true }

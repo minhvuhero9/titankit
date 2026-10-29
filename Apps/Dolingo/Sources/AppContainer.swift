@@ -32,6 +32,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let roleplays: any RoleplayRepository
     let phrasebook: any PhrasebookRepository
     let savedPhrases: SavedPhrases
+    let activity: ActivityStore
     /// One navigation stack per tab.
     let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -82,11 +83,15 @@ final class AppContainer: ObservableObject, DependencyContainer {
         self.purchase = purchase ?? StoreKitPurchaseService(config: AppConfig.purchase, logger: logger)
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
         flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
-        learning = LearningStore(repository: courses, preferences: preferences)
+        let learning = LearningStore(repository: courses, preferences: preferences)
+        self.learning = learning
         self.speech = speech ?? AppleSpeechRecognizer()
         self.roleplays = roleplays
         self.phrasebook = phrasebook
         savedPhrases = SavedPhrases(preferences: preferences)
+        let activity = ActivityStore(preferences: preferences)
+        activity.chaptersDone = { learning.chaptersDone }
+        self.activity = activity
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -121,17 +126,18 @@ final class AppContainer: ObservableObject, DependencyContainer {
         case .paywall:
             DolingoPaywall(purchase: purchase) { [router] in router.dismiss() }
         case let .lesson(id):
-            LessonScreen(learning: learning, speech: speech, lessonId: id) { [router] in router.dismiss() }
+            LessonScreen(learning: learning, speech: speech, activity: activity, lessonId: id) { [router] in router.dismiss() }
         case let .roleplay(roleplay):
             RoleplayDetailScreen(roleplay: roleplay, onBack: { [router] in router.pop() }) { [router] in
                 router.push(.roleplayChat(roleplay))
             }
         case let .phrasePractice(category):
-            PhrasePracticeScreen(category: category, saved: savedPhrases, speech: speech) { [router] in router.dismiss() }
+            PhrasePracticeScreen(category: category, saved: savedPhrases, speech: speech, activity: activity) { [router] in router.dismiss() }
         case .savedPhrases:
             SavedPhrasesScreen(saved: savedPhrases) { [router] in router.pop() }
         case let .roleplayChat(roleplay):
-            RoleplayChatScreen(roleplay: roleplay, language: AppConfig.learningLanguage, speech: speech) { [router] in
+            RoleplayChatScreen(roleplay: roleplay, language: AppConfig.learningLanguage, speech: speech,
+                               activity: activity) { [router] in
                 router.popToRoot()
             }
         }

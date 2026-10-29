@@ -9,6 +9,7 @@ import UIKit
 /// "Tasks Achieved!" closes the roleplay.
 struct RoleplayChatScreen: View {
     let onBack: () -> Void
+    private let activity: ActivityStore
 
     @StateObject private var viewModel: RoleplayViewModel
     @State private var speaker = PhraseSpeaker()
@@ -17,9 +18,17 @@ struct RoleplayChatScreen: View {
     @Environment(\.theme) private var theme
     @Environment(\.locale) private var locale
 
-    init(roleplay: Roleplay, language: String, speech: any SpeechRecognizer, onBack: @escaping () -> Void) {
+    init(
+        roleplay: Roleplay,
+        language: String,
+        speech: any SpeechRecognizer,
+        activity: ActivityStore,
+        onBack: @escaping () -> Void
+    ) {
         self.onBack = onBack
-        _viewModel = StateObject(wrappedValue: RoleplayViewModel(roleplay: roleplay, language: language, speech: speech))
+        self.activity = activity
+        _viewModel = StateObject(wrappedValue: RoleplayViewModel(roleplay: roleplay, language: language, speech: speech,
+                                                                 activity: activity))
     }
 
     var body: some View {
@@ -29,6 +38,7 @@ struct RoleplayChatScreen: View {
                     LazyVStack(spacing: Spacing.md) {
                         ForEach(viewModel.messages) { message in
                             RoleplayBubble(message: message, languageCode: languageCode) {
+                                activity.recordListened()
                                 speaker.say(message.phrase.text, language: viewModel.language)
                             }
                             .id(message.id)
@@ -156,7 +166,10 @@ struct RoleplayChatScreen: View {
                 .foregroundStyle(theme.colors.textPrimary.color)
             TKDivider()
             HStack(alignment: .top, spacing: Spacing.sm) {
-                Button { speaker.say(reply.text, language: viewModel.language) } label: {
+                Button {
+                    activity.recordListened()
+                    speaker.say(reply.text, language: viewModel.language)
+                } label: {
                     Image(tk: .volumeUp)
                         .resizable().scaledToFit()
                         .frame(width: 20, height: 20)

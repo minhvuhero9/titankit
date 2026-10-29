@@ -9,6 +9,7 @@ import TitanSpeech
 struct PhrasePracticeScreen: View {
     @ObservedObject var saved: SavedPhrases
     let onClose: () -> Void
+    private let activity: ActivityStore
 
     @StateObject private var viewModel: PhrasePracticeViewModel
     @State private var speaker = PhraseSpeaker()
@@ -16,11 +17,18 @@ struct PhrasePracticeScreen: View {
     @Environment(\.theme) private var theme
     @Environment(\.locale) private var locale
 
-    init(category: PhraseCategory, saved: SavedPhrases, speech: any SpeechRecognizer, onClose: @escaping () -> Void) {
+    init(
+        category: PhraseCategory,
+        saved: SavedPhrases,
+        speech: any SpeechRecognizer,
+        activity: ActivityStore,
+        onClose: @escaping () -> Void
+    ) {
         self.saved = saved
         self.onClose = onClose
+        self.activity = activity
         _viewModel = StateObject(wrappedValue: PhrasePracticeViewModel(
-            category: category, language: AppConfig.learningLanguage, speech: speech
+            category: category, language: AppConfig.learningLanguage, speech: speech, activity: activity
         ))
     }
 
@@ -68,6 +76,7 @@ struct PhrasePracticeScreen: View {
                 title: Text("lesson.leave.title"),
                 primary: TKModalAction(title: Text("lesson.leave.confirm")) {
                     confirmingLeave = false
+                    viewModel.finish()
                     onClose()
                 },
                 secondary: TKModalAction(title: Text("lesson.leave.stay")) { confirmingLeave = false }
@@ -103,11 +112,15 @@ struct PhrasePracticeScreen: View {
             }
             .multilineTextAlignment(.center)
             HStack(spacing: Spacing.md) {
-                listenButton(Image(tk: .volumeUp), label: "speak.play") { speaker.say(phrase.text, language: viewModel.language) }
+                listenButton(Image(tk: .volumeUp), label: "speak.play") {
+                    activity.recordListened()
+                    speaker.say(phrase.text, language: viewModel.language)
+                }
                 Rectangle()
                     .fill(theme.colors.border.color)
                     .frame(height: 2)
                 listenButton(Text(verbatim: "🐢"), label: "speak.playSlow") {
+                    activity.recordListened()
                     speaker.say(phrase.text, language: viewModel.language, slow: true)
                 }
             }

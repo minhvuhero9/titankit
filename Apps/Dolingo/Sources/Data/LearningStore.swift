@@ -55,6 +55,12 @@ final class LearningStore: ObservableObject {
         course.lessons.first { !completed.contains($0.id) }
     }
 
+    /// Chapters with every lesson finished.
+    var chaptersDone: Int {
+        guard case let .loaded(course?) = course else { return 0 }
+        return course.chapters.filter { progress(of: $0) >= 1 }.count
+    }
+
     /// Share of the chapter's lessons finished, from 0 to 1.
     func progress(of chapter: Chapter) -> Double {
         guard !chapter.lessons.isEmpty else { return 0 }

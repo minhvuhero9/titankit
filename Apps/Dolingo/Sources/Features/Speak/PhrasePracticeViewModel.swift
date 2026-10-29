@@ -20,12 +20,15 @@ final class PhrasePracticeViewModel: ObservableObject {
     let category: PhraseCategory
     let language: String
     private let speech: any SpeechRecognizer
+    private let activity: ActivityStore?
+    private let startedAt = Date()
     private var hasPermission = false
 
-    init(category: PhraseCategory, language: String, speech: any SpeechRecognizer) {
+    init(category: PhraseCategory, language: String, speech: any SpeechRecognizer, activity: ActivityStore? = nil) {
         self.category = category
         self.language = language
         self.speech = speech
+        self.activity = activity
     }
 
     var phrase: Phrase? {
@@ -57,7 +60,9 @@ final class PhrasePracticeViewModel: ObservableObject {
         attempt = .listening
         do {
             let heard = try await speech.transcribe(language: language, timeout: .seconds(8))
-            attempt = .scored(PronunciationScore(expected: phrase.text, heard: heard))
+            let score = PronunciationScore(expected: phrase.text, heard: heard)
+            activity?.recordSpoken(score, phraseId: phrase.text)
+            attempt = .scored(score)
         } catch {
             if error == .unauthorized { isMicBlocked = true }
             attempt = .idle
@@ -66,6 +71,11 @@ final class PhrasePracticeViewModel: ObservableObject {
 
     func stopListening() {
         speech.stop()
+    }
+
+    /// Leaving the practice: counts the time spent.
+    func finish() {
+        activity?.recordPractice(seconds: Date().timeIntervalSince(startedAt))
     }
 
     func next() {

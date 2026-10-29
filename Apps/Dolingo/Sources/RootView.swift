@@ -75,7 +75,7 @@ private struct FlowView: View {
             case let .forceUpdate(storeURL):
                 ForceUpdateScreen(storeURL: storeURL)
             case .home:
-                MainTabView(container: container, tabs: container.tabs, flow: flow)
+                MainTabView(container: container, tabs: container.tabs, flow: flow, activity: container.activity)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: flow.stage)

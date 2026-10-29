@@ -17,6 +17,8 @@ enum DolingoKeys {
     static let learningProgress = PreferenceKey("dolingo.learningProgress", default: LearningProgress())
     /// Phrases bookmarked on the Speak tab.
     static let savedPhrases = PreferenceKey<[Phrase]>("dolingo.savedPhrases", default: [])
+    /// Counts, streak days and badges for My Progress.
+    static let activity = PreferenceKey("dolingo.activity", default: ActivityStats())
 }
 
 /// Which part of the app is showing: splash, onboarding, the sign-up steps, sign-in,
