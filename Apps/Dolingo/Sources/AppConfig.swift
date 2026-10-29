@@ -24,6 +24,13 @@ struct AppConfig: Equatable, Sendable {
         "com.titanstudio.dolingo.premium.monthly",
         "com.titanstudio.dolingo.premium.yearly",
     ])
+    /// The yearly plan gets the "Most popular" badge.
+    static let paywall = PaywallConfig(
+        productIds: purchase.productIds,
+        highlightedProductId: "com.titanstudio.dolingo.premium.yearly",
+        termsURL: termsURL,
+        privacyURL: privacyURL
+    )
     /// Placeholder until the app is registered on App Store Connect.
     static let appStoreID = "0000000000"
     /// Opened by the force update screen.

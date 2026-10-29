@@ -72,7 +72,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] TitanLocalization: catalog kit, đổi ngôn ngữ, formatter.
 - [x] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage, Maintenance, Force update, Profile, Delete account.
 - [x] Rate app prompt (`RatePromptState`, `tkRequestReview`).
-- [ ] Paywall (cần `TitanPurchase`, nếu App 1 có mua trong app).
+- [x] Paywall (`PaywallScreen`, `PaywallViewModel`); Dolingo mở từ Cài đặt và `dolingo://premium`.
 - [ ] Mỗi màn hình có trang Catalog và snapshot test.
 - [ ] Nối các màn hình vào Router của App 1 bằng `Config` và callback.
 

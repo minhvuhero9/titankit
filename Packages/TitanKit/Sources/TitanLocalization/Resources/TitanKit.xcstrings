@@ -869,6 +869,261 @@
         }
       }
     },
+    "kit.paywall.autoRenew": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period. Payment is charged to your Apple account. Cancel anytime in Settings > Apple ID > Subscriptions."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gói tự động gia hạn khi hết kỳ, trừ khi bạn huỷ ít nhất 24 giờ trước khi kỳ hiện tại kết thúc. Tiền được trừ vào tài khoản Apple của bạn. Bạn có thể huỷ bất cứ lúc nào trong Cài đặt > Apple ID > Đăng ký."
+          }
+        }
+      }
+    },
+    "kit.paywall.choose": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose plan"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn gói"
+          }
+        }
+      }
+    },
+    "kit.paywall.close": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đóng"
+          }
+        }
+      }
+    },
+    "kit.paywall.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock every feature, no limits"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở khoá mọi tính năng, không giới hạn"
+          }
+        }
+      }
+    },
+    "kit.paywall.pending": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your purchase is waiting for approval. Premium unlocks once it goes through."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giao dịch đang chờ duyệt. Premium sẽ mở khi được chấp thuận."
+          }
+        }
+      }
+    },
+    "kit.paywall.period.day": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ ngày"
+          }
+        }
+      }
+    },
+    "kit.paywall.period.month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ month"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ tháng"
+          }
+        }
+      }
+    },
+    "kit.paywall.period.week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ tuần"
+          }
+        }
+      }
+    },
+    "kit.paywall.period.year": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ year"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ năm"
+          }
+        }
+      }
+    },
+    "kit.paywall.popular": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Most popular"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phổ biến nhất"
+          }
+        }
+      }
+    },
+    "kit.paywall.restore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore purchases"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khôi phục giao dịch"
+          }
+        }
+      }
+    },
+    "kit.paywall.restore.nothing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No purchases to restore"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tìm thấy gói nào để khôi phục"
+          }
+        }
+      }
+    },
+    "kit.paywall.startTrial": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start free trial"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bắt đầu dùng thử"
+          }
+        }
+      }
+    },
+    "kit.paywall.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade to Premium"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nâng cấp lên Premium"
+          }
+        }
+      }
+    },
+    "kit.paywall.trial %lld %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free for %1$lld days, then %2$@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miễn phí %1$lld ngày đầu, sau đó %2$@"
+          }
+        }
+      }
+    },
     "kit.profile.email": {
       "extractionState": "manual",
       "localizations": {

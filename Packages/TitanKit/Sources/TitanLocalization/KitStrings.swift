@@ -85,6 +85,25 @@ public enum KitStrings {
         public static let signInAgain = "kit.deleteAccount.signInAgain"
     }
 
+    public enum Paywall {
+        public static let title = "kit.paywall.title"
+        public static let message = "kit.paywall.message"
+        public static let close = "kit.paywall.close"
+        public static let popular = "kit.paywall.popular"
+        public static let choose = "kit.paywall.choose"
+        public static let startTrial = "kit.paywall.startTrial"
+        public static let perDay = "kit.paywall.period.day"
+        public static let perWeek = "kit.paywall.period.week"
+        public static let perMonth = "kit.paywall.period.month"
+        public static let perYear = "kit.paywall.period.year"
+        /// Days of the free trial, then the price and period after it.
+        public static let trial = "kit.paywall.trial %lld %@"
+        public static let autoRenew = "kit.paywall.autoRenew"
+        public static let restore = "kit.paywall.restore"
+        public static let nothingToRestore = "kit.paywall.restore.nothing"
+        public static let pending = "kit.paywall.pending"
+    }
+
     /// Looks the key up for `locale`: app bundle (Localizable) first, then the kit (TitanKit),
     /// then returns the key so a missing string is easy to spot.
     public static func string(_ key: String, locale: Locale, appBundle: Bundle = .main) -> String {

@@ -94,6 +94,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
                 flow.didDeleteAccount()
                 router.popToRoot()
             }
+        case .paywall:
+            DolingoPaywall(purchase: purchase) { [router] in router.dismiss() }
         }
     }
 
