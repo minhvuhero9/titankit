@@ -12,8 +12,8 @@ struct LessonPath: View {
 
     @Environment(\.theme) private var theme
 
-    static let rowHeight: CGFloat = 96
-    static let nodeSize: CGFloat = 72
+    nonisolated static let rowHeight: CGFloat = 96
+    nonisolated static let nodeSize: CGFloat = 72
 
     var body: some View {
         GeometryReader { proxy in
