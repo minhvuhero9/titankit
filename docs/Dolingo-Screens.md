@@ -65,10 +65,10 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 35 | learn a language - users practice speaking - oops.. try again | `38443:36399` | Đã có (`LessonScreen`) |
 | 36 | learn a language - users practice speaking - we can't hear you | `38443:36508` | Đã có (`LessonScreen`) |
 | 37 | learn language - lessons completed | `38443:37541` | Đã có (`LessonScreen`: thời gian, độ chính xác) |
-| 38 | streak modal | `36442:80868` | Chưa làm |
-| 39 | share streak milestone | `36443:83530` | Chưa làm |
-| 40 | user earned badge modal | `36443:83722` | Chưa làm |
-| 41 | share badge achievements | `36444:83903` | Chưa làm |
+| 38 | streak modal | `36442:80868` | Đã có (`CelebrationView`) |
+| 39 | share streak milestone | `36443:83530` | Đã có (`CelebrationView`, chia sẻ dạng chữ) |
+| 40 | user earned badge modal | `36443:83722` | Đã có (`CelebrationView`) |
+| 41 | share badge achievements | `36444:83903` | Đã có (`CelebrationView`, chia sẻ dạng chữ) |
 | 42 | learn a language - settings | `38443:36657` | Chưa làm |
 | 43 | home - learning language progress fit page | `38444:40404` | Đã có (`HomeScreen`) |
 | 44 | home - my courses | `38444:40811` | Bỏ: chỉ có một khoá tiếng Anh |
@@ -125,9 +125,9 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 
 | # | Màn hình | Node | Trạng thái |
 | --- | --- | --- | --- |
-| 83 | my progress - insights | `36444:95432` | Chưa làm |
-| 84 | my progress - achievements | `38461:38786` | Chưa làm |
-| 85 | my progress - achievements - badge | `38461:39248` | Chưa làm |
+| 83 | my progress - insights | `36444:95432` | Đã có (`ProgressScreen`) |
+| 84 | my progress - achievements | `38461:38786` | Đã có (`ProgressScreen`) |
+| 85 | my progress - achievements - badge | `38461:39248` | Đã có (`ProgressScreen`) |
 
 ## Tài khoản, cài đặt, nâng cấp (86–112)
 
@@ -168,5 +168,6 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 - Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/course-en.json` (3 chương, 15 bài, 60 câu, nghĩa tiếng Việt). Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
 - Thanh tab có 5 mục như Figma; Chats, Speak và My Progress đang là trang "sắp ra mắt", Account là màn Cài đặt.
 - Luyện nói trong bài học dùng `TitanSpeech` (nhận dạng giọng nói của Apple, chấm theo từng từ). Màn hoàn thành mới có Thời gian và Độ chính xác; sáu vòng điểm (Nghe, Phát âm, Lưu loát, Ngữ điệu, Trọng âm, Ngữ pháp) cần dịch vụ chấm phát âm riêng. Cài đặt trong bài (màn 42) chưa làm.
+- My Progress: `ActivityStore` đếm trên máy (lưu trong `DolingoKeys.activity`) ngày học, thời gian học, bài học, câu đã nói, số lần nghe, roleplay và 10 huy hiệu. Biểu đồ "Growth Area" dùng 5 trục đo được thật (Bài học, Phát âm, Hội thoại, Sổ tay câu, Đều đặn) thay cho 6 trục của Figma; lịch học chỉ có dạng tháng, thời gian học chỉ có dạng tuần. Hộp chúc mừng chuỗi ngày hiện ở hoạt động đầu tiên trong ngày, hộp huy hiệu hiện khi đạt huy hiệu mới.
 - Speak: sổ tay câu trong `Apps/Dolingo/Resources/Phrasebook/phrasebook-en.json` (7 chủ đề, 56 câu, 3 chủ đề premium). Nghe thường và chậm bằng giọng máy; chấm bằng `PronunciationScore`; câu đã lưu nằm trong `DolingoKeys.savedPhrases`.
 - Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. Tạo roleplay bằng AI, "My Roleplay" và "Chat with Dolingo" (màn 60–69) cần một backend AI: app không gọi thẳng API AI để không lộ khoá. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
