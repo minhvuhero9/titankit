@@ -14,6 +14,9 @@ enum AppRoute: Routable {
     /// Figma "roleplay - meeting new friends": scenario, goal and tasks before starting.
     case roleplay(Roleplay)
     case roleplayChat(Roleplay)
+    /// Figma "speaking practice": one Speak topic, phrase by phrase, full screen.
+    case phrasePractice(PhraseCategory)
+    case savedPhrases
 }
 
 /// The five tabs of the Figma "Menu Bar".

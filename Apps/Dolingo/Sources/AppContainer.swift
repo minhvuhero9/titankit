@@ -30,6 +30,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let learning: LearningStore
     let speech: any SpeechRecognizer
     let roleplays: any RoleplayRepository
+    let phrasebook: any PhrasebookRepository
+    let savedPhrases: SavedPhrases
     /// One navigation stack per tab.
     let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -48,6 +50,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         purchase: (any PurchaseService)? = nil,
         courses: any CourseRepository = BundledCourseRepository(),
         roleplays: any RoleplayRepository = BundledRoleplayRepository(),
+        phrasebook: any PhrasebookRepository = BundledPhrasebookRepository(),
         speech: (any SpeechRecognizer)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
@@ -82,6 +85,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         learning = LearningStore(repository: courses, preferences: preferences)
         self.speech = speech ?? AppleSpeechRecognizer()
         self.roleplays = roleplays
+        self.phrasebook = phrasebook
+        savedPhrases = SavedPhrases(preferences: preferences)
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -121,6 +126,10 @@ final class AppContainer: ObservableObject, DependencyContainer {
             RoleplayDetailScreen(roleplay: roleplay, onBack: { [router] in router.pop() }) { [router] in
                 router.push(.roleplayChat(roleplay))
             }
+        case let .phrasePractice(category):
+            PhrasePracticeScreen(category: category, saved: savedPhrases, speech: speech) { [router] in router.dismiss() }
+        case .savedPhrases:
+            SavedPhrasesScreen(saved: savedPhrases) { [router] in router.pop() }
         case let .roleplayChat(roleplay):
             RoleplayChatScreen(roleplay: roleplay, language: AppConfig.learningLanguage, speech: speech) { [router] in
                 router.popToRoot()
