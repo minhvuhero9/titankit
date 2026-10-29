@@ -102,7 +102,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 **Mục tiêu:** làm phần nghiệp vụ riêng theo Figma của App 1.
 
 - [x] Liệt kê màn hình riêng từ Figma ([Dolingo-Screens.md](Dolingo-Screens.md)).
-- [x] Đăng ký: 12 câu hỏi, chuẩn bị lộ trình, tạo tài khoản (màn 3–20).
+- [x] Đăng ký: 10 câu hỏi, chuẩn bị lộ trình, tạo tài khoản (màn 5–20).
 - [ ] Định nghĩa model và Repository của App 1 (ví dụ `UserRepository`).
 - [ ] Viết View + ViewModel cho từng màn trong `Apps/App1/Sources/Features/`.
 - [ ] Unit test ViewModel với Repository Mock.

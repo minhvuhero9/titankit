@@ -281,7 +281,7 @@ SignUpScreen(auth: container.auth, onExit: { flow.leaveSignUp() }) { user in flo
 - `PreparingScreen`: vòng tròn đếm tới 100 % trong `duration` (mặc định 3 giây) trong lúc chạy `work`; chỉ hiện 100 % khi cả hai xong.
 - `SuccessScreen`: hình thành công, tiêu đề, mô tả, một nút. Dùng lại cho "Đặt lại mật khẩu thành công" và "Nâng cấp thành công".
 - `SignUpScreen`: tên, rồi email ("Cảm ơn An! Email của bạn là gì?"), rồi mật khẩu hai lần; hộp "Đang tạo tài khoản..." khi gọi `AuthService.signUp`. Kiểm tra email, độ dài và khớp mật khẩu khi bấm Tiếp tục.
-- Dolingo: "Bắt đầu" ở màn chào và "Đăng ký" ở màn đăng nhập mở bộ 12 câu hỏi; câu 2 chọn ngôn ngữ của app (chỉ Tiếng Việt, English) và đổi ngay khi xong. Đáp án lưu trong `DolingoKeys.surveyAnswers` để các màn học sau dùng (ngôn ngữ, trình độ, mục tiêu mỗi ngày, giờ nhắc). Cờ quốc gia dùng emoji; icon trình độ, lý do và thời gian dùng `TKColorIcon` có sẵn.
+- Dolingo: "Bắt đầu" ở màn chào và "Đăng ký" ở màn đăng nhập mở bộ 10 câu hỏi (Dolingo chỉ dạy tiếng Anh cho người Việt nên bỏ hai câu chọn ngôn ngữ của Figma). Đáp án lưu trong `DolingoKeys.surveyAnswers` để các màn học sau dùng (trình độ, mục tiêu mỗi ngày, giờ nhắc). Icon trình độ, lý do và thời gian dùng `TKColorIcon` có sẵn.
 - Giờ nhắc mới được lưu, chưa đặt thông báo: phần này đi cùng TitanPush.
 
 ## 9. Checklist cho App 1

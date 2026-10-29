@@ -19,8 +19,8 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 
 | # | Màn hình | Node | Trạng thái |
 | --- | --- | --- | --- |
-| 3 | sign up step 1 - select language to learn | `34455:27367` | Đã có (`SurveyScreen`) |
-| 4 | sign up step 2 - select language for dolingo app | `34455:27732` | Đã có (`SurveyScreen`) |
+| 3 | sign up step 1 - select language to learn | `34455:27367` | Bỏ: Dolingo chỉ dạy tiếng Anh cho người Việt |
+| 4 | sign up step 2 - select language for dolingo app | `34455:27732` | Bỏ: Dolingo chỉ dạy tiếng Anh cho người Việt |
 | 5 | sign up step 3 - select current language level | `34457:28187` | Đã có (`SurveyScreen`) |
 | 6 | sign up step 4 - select reason for language learning | `34457:29208` | Đã có (`SurveyScreen`) |
 | 7 | sign up step 5 - select skills area to focus | `34457:30402` | Đã có (`SurveyScreen`) |
@@ -71,8 +71,8 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 41 | share badge achievements | `36444:83903` | Chưa làm |
 | 42 | learn a language - settings | `38443:36657` | Chưa làm |
 | 43 | home - learning language progress fit page | `38444:40404` | Đã có (`HomeScreen`) |
-| 44 | home - my courses | `38444:40811` | Đã có (`MyCoursesSheet`) |
-| 45 | home - my courses (multiple courses) | `38444:41201` | Đã có (`MyCoursesSheet`) |
+| 44 | home - my courses | `38444:40811` | Bỏ: chỉ có một khoá tiếng Anh |
+| 45 | home - my courses (multiple courses) | `38444:41201` | Bỏ: chỉ có một khoá tiếng Anh |
 | 46 | home - learning language progress scroll page | `38444:41901` | Đã có (`HomeScreen`) |
 | 47 | learn a language - leave lessons | `38443:37352` | Đã có (`LessonScreen`) |
 
@@ -164,7 +164,8 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 ## Ghi chú
 
 - Màn 89–91 và 101–103 (chọn phương thức thanh toán, nhập thẻ) không làm: gói Premium là hàng số, App Store bắt buộc bán qua In-App Purchase. Sheet thanh toán của Apple thay cho các màn này; màn 92 (nâng cấp thành công) vẫn làm.
-- Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/course-<ngôn ngữ>.json` (tiếng Anh và tiếng Tây Ban Nha, mỗi khoá 3 chương, 15 bài, 60 câu, nghĩa tiếng Việt và tiếng Anh). Ngôn ngữ khác hiện "sắp ra mắt". Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
+- Dolingo dạy tiếng Anh cho người Việt (`AppConfig.learningLanguage`). Figma là bản mẫu học tiếng Tây Ban Nha nên câu chữ trong app khác Figma; hai bước chọn ngôn ngữ (màn 3, 4) và "My Courses" (44, 45) được bỏ.
+- Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/course-en.json` (3 chương, 15 bài, 60 câu, nghĩa tiếng Việt). Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
 - Thanh tab có 5 mục như Figma; Chats, Speak và My Progress đang là trang "sắp ra mắt", Account là màn Cài đặt.
 - Luyện nói trong bài học dùng `TitanSpeech` (nhận dạng giọng nói của Apple, chấm theo từng từ). Màn hoàn thành mới có Thời gian và Độ chính xác; sáu vòng điểm (Nghe, Phát âm, Lưu loát, Ngữ điệu, Trọng âm, Ngữ pháp) cần dịch vụ chấm phát âm riêng. Cài đặt trong bài (màn 42) chưa làm.
-- Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-<ngôn ngữ>.json` (6 tình huống cho tiếng Anh và tiếng Tây Ban Nha, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. Tạo roleplay bằng AI, "My Roleplay" và "Chat with Dolingo" (màn 60–69) cần một backend AI: app không gọi thẳng API AI để không lộ khoá. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
+- Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. Tạo roleplay bằng AI, "My Roleplay" và "Chat with Dolingo" (màn 60–69) cần một backend AI: app không gọi thẳng API AI để không lộ khoá. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
