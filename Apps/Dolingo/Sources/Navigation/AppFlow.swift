@@ -11,14 +11,18 @@ enum DolingoKeys {
     static let appearance = PreferenceKey<TKAppearance>("dolingo.appearance", default: .system)
     /// Launches and good moments counted for the App Store rating prompt.
     static let ratePrompt = PreferenceKey("dolingo.ratePrompt", default: RatePromptState())
+    /// Sign-up questionnaire answers by step id (`DolingoSurvey.Step`).
+    static let surveyAnswers = PreferenceKey<[String: SurveyAnswer]>("dolingo.surveyAnswers", default: [:])
 }
 
-/// Which part of the app is showing: splash, onboarding, sign-in, the signed-in app,
-/// or a screen that blocks the app (maintenance, forced update).
+/// Which part of the app is showing: splash, onboarding, the sign-up steps, sign-in,
+/// the signed-in app, or a screen that blocks the app (maintenance, forced update).
 @MainActor
 final class AppFlow: ObservableObject {
     enum Stage: Equatable {
         case splash, onboarding, login, home
+        /// Sign-up: the questionnaire, the plan being prepared, the plan ready, the account form.
+        case survey, preparingPlan, planReady, signUp
         case maintenance(message: String)
         case forceUpdate(storeURL: URL)
     }
@@ -85,10 +89,44 @@ final class AppFlow: ObservableObject {
         stage = stageAfterSplash
     }
 
-    /// Both welcome buttons lead to sign-in until the sign-up questionnaire exists.
+    /// "I already have an account" on the welcome screen.
     func finishOnboarding() {
         preferences.set(true, for: DolingoKeys.hasSeenOnboarding)
         stage = .login
+    }
+
+    /// "Get started" on the welcome screen, or "Sign up" on the sign-in screen.
+    func startSignUp() {
+        preferences.set(true, for: DolingoKeys.hasSeenOnboarding)
+        stage = .survey
+    }
+
+    /// Back on the first question: the welcome screen.
+    func leaveSurvey() {
+        stage = .onboarding
+    }
+
+    var surveyAnswers: [String: SurveyAnswer] {
+        preferences.value(DolingoKeys.surveyAnswers)
+    }
+
+    func finishSurvey(_ answers: [String: SurveyAnswer]) {
+        preferences.set(answers, for: DolingoKeys.surveyAnswers)
+        stage = .preparingPlan
+    }
+
+    func planIsReady() {
+        stage = .planReady
+    }
+
+    /// "Create an Account" on the plan ready screen.
+    func createAccount() {
+        stage = .signUp
+    }
+
+    /// Back on the first sign-up field.
+    func leaveSignUp() {
+        stage = .planReady
     }
 
     func didSignIn() {

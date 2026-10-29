@@ -35,6 +35,37 @@ final class AppFlowTests: XCTestCase {
         XCTAssertEqual(relaunch.stage, .login)
     }
 
+    func testSignUpGoesThroughTheQuestionsThePlanAndTheAccount() async {
+        let preferences = makePreferences()
+        let flow = AppFlow(auth: MockAuthService(), preferences: preferences)
+        flow.startSignUp()
+        XCTAssertEqual(flow.stage, .survey)
+        flow.leaveSurvey()
+        XCTAssertEqual(flow.stage, .onboarding)
+
+        flow.startSignUp()
+        let answers: [String: SurveyAnswer] = [DolingoSurvey.Step.language: .options(["es"])]
+        flow.finishSurvey(answers)
+        XCTAssertEqual(flow.stage, .preparingPlan)
+        XCTAssertEqual(flow.surveyAnswers, answers)
+        flow.planIsReady()
+        XCTAssertEqual(flow.stage, .planReady)
+        flow.createAccount()
+        XCTAssertEqual(flow.stage, .signUp)
+        flow.leaveSignUp()
+        XCTAssertEqual(flow.stage, .planReady)
+        flow.createAccount()
+        flow.didSignIn()
+        XCTAssertEqual(flow.stage, .home)
+
+        // Someone who started signing up lands on sign-in next time, with the answers kept.
+        let relaunch = AppFlow(auth: MockAuthService(), preferences: preferences)
+        await relaunch.prepareLaunch()
+        relaunch.finishSplash()
+        XCTAssertEqual(relaunch.stage, .login)
+        XCTAssertEqual(relaunch.surveyAnswers, answers)
+    }
+
     func testSignedInUserSkipsToHome() async {
         let preferences = makePreferences()
         let user = AuthUser(id: "1", email: "a@b.co", provider: .email)

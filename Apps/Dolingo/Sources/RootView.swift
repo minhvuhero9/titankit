@@ -38,9 +38,30 @@ private struct FlowView: View {
                             message: "onboarding.welcome.message"
                         ),
                     ]),
-                    onGetStarted: { flow.finishOnboarding() },
+                    onGetStarted: { flow.startSignUp() },
                     onSignIn: { flow.finishOnboarding() }
                 )
+            case .survey:
+                SurveyScreen(steps: DolingoSurvey.steps(), answers: flow.surveyAnswers,
+                             onExit: { flow.leaveSurvey() }) { answers in
+                    if let code = DolingoSurvey.appLanguage(from: answers) {
+                        container.localization.setLanguage(Language(code))
+                    }
+                    flow.finishSurvey(answers)
+                }
+            case .preparingPlan:
+                PreparingScreen(title: Text("plan.preparing.title"), message: Text("plan.preparing.message")) {
+                    flow.planIsReady()
+                }
+            case .planReady:
+                SuccessScreen(title: Text("plan.ready.title"), message: Text("plan.ready.message"),
+                              actionTitle: Text("plan.ready.action")) {
+                    flow.createAccount()
+                }
+            case .signUp:
+                SignUpScreen(auth: container.auth, onExit: { flow.leaveSignUp() }) { _ in
+                    flow.didSignIn()
+                }
             case .login:
                 LoginScreen(
                     config: LoginConfig(socialOptions: [
@@ -50,7 +71,8 @@ private struct FlowView: View {
                     ]),
                     auth: container.auth,
                     onSuccess: { _ in flow.didSignIn() },
-                    onSocial: { provider in Task { await flow.signInWithSocial(provider) } }
+                    onSocial: { provider in Task { await flow.signInWithSocial(provider) } },
+                    onSignUp: { flow.startSignUp() }
                 )
             case let .maintenance(message):
                 MaintenanceScreen(message: message) { await flow.retryLaunch() }
