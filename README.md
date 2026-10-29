@@ -10,7 +10,7 @@ Bộ kit iOS dùng chung cho nhiều app (SwiftUI, iOS 16+, Swift 6). Mỗi app 
 ## Cấu trúc
 
 ```
-Packages/TitanKit/   # kit: 13 module (TitanCore, TitanNetworking, TitanDesignSystem...)
+Packages/TitanKit/   # kit: 14 module (TitanCore, TitanNetworking, TitanDesignSystem...)
 Apps/Dolingo/        # App 1 (tên tạm theo template Figma)
 Tuist/               # khai báo package cho Tuist
 Tools/               # script dùng chung cho máy dev và CI

@@ -56,15 +56,15 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | --- | --- | --- | --- |
 | 28 | home - learning language progress fit page | `38444:40009` | Đã có (`HomeScreen`) |
 | 28 | home - learning language progress scroll page | `38433:64225` | Đã có (`HomeScreen`) |
-| 29 | learn language - loading | `38439:34041` | Chưa làm |
-| 30 | learn a language - learn with tutor (interaction & speaking practice) | `38439:34644` | Một phần (`LessonScreen`: câu, nghĩa, nghe; chưa luyện nói) |
-| 31 | learn a language - users practice speaking | `38441:35638` | Chưa làm |
-| 32 | learn a language - users practice speaking | `38441:35794` | Chưa làm |
-| 33 | learn a language - users practice speaking - perfect | `38441:35930` | Chưa làm |
-| 34 | learn a language - users practice speaking - almost there | `38443:36290` | Chưa làm |
-| 35 | learn a language - users practice speaking - oops.. try again | `38443:36399` | Chưa làm |
-| 36 | learn a language - users practice speaking - we can't hear you | `38443:36508` | Chưa làm |
-| 37 | learn language - lessons completed | `38443:37541` | Một phần (`LessonScreen`: thời gian, số câu; chưa chấm điểm) |
+| 29 | learn language - loading | `38439:34041` | Đã có (`LessonScreen`) |
+| 30 | learn a language - learn with tutor (interaction & speaking practice) | `38439:34644` | Đã có (`LessonScreen`) |
+| 31 | learn a language - users practice speaking | `38441:35638` | Đã có (`LessonScreen`) |
+| 32 | learn a language - users practice speaking | `38441:35794` | Đã có (`LessonScreen`) |
+| 33 | learn a language - users practice speaking - perfect | `38441:35930` | Đã có (`LessonScreen`) |
+| 34 | learn a language - users practice speaking - almost there | `38443:36290` | Đã có (`LessonScreen`) |
+| 35 | learn a language - users practice speaking - oops.. try again | `38443:36399` | Đã có (`LessonScreen`) |
+| 36 | learn a language - users practice speaking - we can't hear you | `38443:36508` | Đã có (`LessonScreen`) |
+| 37 | learn language - lessons completed | `38443:37541` | Đã có (`LessonScreen`: thời gian, độ chính xác) |
 | 38 | streak modal | `36442:80868` | Chưa làm |
 | 39 | share streak milestone | `36443:83530` | Chưa làm |
 | 40 | user earned badge modal | `36443:83722` | Chưa làm |
@@ -166,4 +166,5 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 - Màn 89–91 và 101–103 (chọn phương thức thanh toán, nhập thẻ) không làm: gói Premium là hàng số, App Store bắt buộc bán qua In-App Purchase. Sheet thanh toán của Apple thay cho các màn này; màn 92 (nâng cấp thành công) vẫn làm.
 - Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/<ngôn ngữ>.json` (tiếng Anh và tiếng Tây Ban Nha, mỗi khoá 3 chương, 15 bài, 60 câu, nghĩa tiếng Việt và tiếng Anh). Ngôn ngữ khác hiện "sắp ra mắt". Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
 - Thanh tab có 5 mục như Figma; Chats, Speak và My Progress đang là trang "sắp ra mắt", Account là màn Cài đặt.
-- Roleplay, chatbot AI và chấm điểm phát âm cần backend. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
+- Luyện nói trong bài học dùng `TitanSpeech` (nhận dạng giọng nói của Apple, chấm theo từng từ). Màn hoàn thành mới có Thời gian và Độ chính xác; sáu vòng điểm (Nghe, Phát âm, Lưu loát, Ngữ điệu, Trọng âm, Ngữ pháp) cần dịch vụ chấm phát âm riêng. Cài đặt trong bài (màn 42) chưa làm.
+- Roleplay và chatbot AI cần backend. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
