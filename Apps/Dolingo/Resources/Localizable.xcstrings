@@ -36,6 +36,57 @@
         }
       }
     },
+    "paywall.benefit.noAds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Learn with no ads"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Học không có quảng cáo"
+          }
+        }
+      }
+    },
+    "paywall.benefit.offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Learn offline"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Học cả khi không có mạng"
+          }
+        }
+      }
+    },
+    "paywall.benefit.unlimited": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock every lesson"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở khoá mọi bài học"
+          }
+        }
+      }
+    },
     "root.catalog": {
       "extractionState": "manual",
       "localizations": {
@@ -117,6 +168,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cài đặt"
+          }
+        }
+      }
+    },
+    "settings.upgrade.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock every lesson with Dolingo Premium"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở khoá mọi bài học với Dolingo Premium"
+          }
+        }
+      }
+    },
+    "settings.upgrade.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade now!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nâng cấp ngay!"
           }
         }
       }

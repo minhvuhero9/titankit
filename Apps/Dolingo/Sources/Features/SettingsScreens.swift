@@ -3,10 +3,11 @@ import TitanDesignSystem
 import TitanFeatures
 import TitanIcons
 import TitanLocalization
+import TitanPurchase
 import TitanStorage
 
 /// Dolingo's rows on the kit's settings screen. More rows arrive with their screens
-/// (profile, notifications, subscription...).
+/// (notifications, subscription...).
 enum DolingoSettings {
     static let profile = "profile"
     static let appearance = "appearance"
@@ -30,6 +31,8 @@ enum DolingoSettings {
 
 struct DolingoSettingsScreen: View {
     let container: AppContainer
+    /// Hides the upgrade banner once the user has premium.
+    @State private var isPremium = false
     @Environment(\.locale) private var locale
     @Environment(\.openURL) private var openURL
 
@@ -56,7 +59,18 @@ struct DolingoSettingsScreen: View {
                 await container.flow.signOut()
                 container.router.popToRoot()
             }
-        )
+        ) {
+            if !isPremium {
+                TKUpgradeBanner(title: Text("settings.upgrade.title"), message: Text("settings.upgrade.message")) {
+                    container.router.present(.paywall)
+                }
+            }
+        }
+        .task {
+            for await entitlements in container.purchase.entitlementStream {
+                isPremium = entitlements.isPremium
+            }
+        }
     }
 
     private func kit(_ key: String) -> Text {

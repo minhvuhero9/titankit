@@ -1,5 +1,6 @@
 import XCTest
 import TitanCore
+import TitanFeatures
 import TitanPurchase
 @testable import Dolingo
 
@@ -24,5 +25,13 @@ final class AppConfigTests: XCTestCase {
         XCTAssertEqual(AppConfig.purchase.productIds.count, 2)
         XCTAssertTrue(AppConfig.purchase.productIds.allSatisfy { $0.hasPrefix("com.titanstudio.dolingo.premium.") })
         XCTAssertEqual(Set(AppConfig.purchase.productIds), AppConfig.purchase.premiumProductIds)
+    }
+
+    func testPaywallSellsThePremiumProducts() {
+        XCTAssertEqual(AppConfig.paywall.productIds, AppConfig.purchase.productIds)
+        let highlighted = AppConfig.paywall.highlightedProductId
+        XCTAssertTrue(highlighted.map(AppConfig.purchase.productIds.contains) ?? false)
+        XCTAssertEqual(AppConfig.paywall.termsURL, AppConfig.termsURL)
+        XCTAssertEqual(AppConfig.paywall.privacyURL, AppConfig.privacyURL)
     }
 }
