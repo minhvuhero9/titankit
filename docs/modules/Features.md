@@ -156,7 +156,7 @@ LoginScreen(config: LoginConfig(socialOptions: [SocialLoginOption(.apple, icon: 
 - Ảnh của Dolingo nằm trong `Apps/Dolingo/Resources/Assets.xcassets`: logo gốc từ Figma (`Logo`, `LogoCircle`, `LogoText` có bản cho dark mode), icon app vẽ từ logo gốc, ảnh Welcome và logo Google, Apple, Facebook. File Figma hiện là bản mẫu, các màn hình chỉ là ảnh phẳng 430×932, nên ảnh Welcome đang được cắt từ đó và hơi mờ. Có file gốc thì thay ảnh này.
 - Trước giai đoạn 4, ba nút mạng xã hội của Dolingo đăng nhập dạng khách (`AppFlow.signInWithSocial`) để thử được trọn luồng.
 - Đăng nhập Apple, Google thật làm ở giai đoạn 4 cùng adapter Firebase. Hiện Dolingo dùng `MockAuthService` (tài khoản thử `demo@titan.app` / `123456`).
-- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký, Paywall.
+- Chưa làm: quên mật khẩu, nhập mã OTP, đăng ký.
 
 ## 8c. Đã làm (giai đoạn 3b, đợt 2)
 
@@ -181,7 +181,7 @@ WebPageScreen(title: Text.kit(KitStrings.Settings.privacy, locale: locale), url:
 ```
 
 - `SettingsScreen` không tự điều hướng: mỗi dòng có một id, app nhận id qua `onSelect` rồi tự chọn màn. Dòng Đăng xuất màu đỏ nằm cuối thẻ cuối, bấm vào hiện bottom sheet hỏi lại.
-- Slot `header` dùng cho băng rôn nâng cấp và thẻ hồ sơ. Dolingo chưa gắn hai khối này: chúng đi cùng Paywall và Profile.
+- Slot `header` dùng cho băng rôn nâng cấp và thẻ hồ sơ. Dolingo gắn băng rôn nâng cấp (ẩn khi đã có premium), chưa gắn thẻ hồ sơ.
 - `AppearanceScreen` có hai dòng Chủ đề và Ngôn ngữ ứng dụng, mỗi dòng mở một bottom sheet chọn bằng radio. Chủ đề lưu trong `Preferences` của app (`DolingoKeys.appearance`) và gắn ở gốc bằng `.tkAppearance`; ngôn ngữ đổi qua `LocalizationService`.
 - `WebPageScreen` mở trang web trong app; đang tải thì hiện spinner, lỗi thì hiện `TKErrorView` có nút thử lại (mất mạng ra lỗi offline).
 - Link Privacy Policy và Terms của Dolingo đang là chỗ giữ (`example.com`) trong `AppConfig`, thay khi có trang thật.
@@ -237,7 +237,27 @@ HomeScreen()
 - `tkRequestReview` gọi hộp đánh giá của hệ thống (`requestReview` của StoreKit), không tự vẽ hộp hỏi "Bạn có thích app không?" vì Apple không cho lọc người đánh giá.
 - `AppStoreLink.writeReview(id:)` mở thẳng trang viết đánh giá, dùng cho dòng "Đánh giá ứng dụng" trong Cài đặt.
 - Dolingo: đếm lần mở app trong `AppFlow.prepareLaunch`, Home hỏi khi đủ điều kiện. Chưa có bài học nên chưa có việc tốt nào được đếm, vì vậy hộp đánh giá chưa hiện cho tới giai đoạn 5. Cài đặt có thêm dòng "Đánh giá ứng dụng". App Store id vẫn là số giả.
-- Paywall làm sau, cùng `TitanPurchase`.
+
+## 8g. Đã làm (giai đoạn 3, Paywall)
+
+```swift
+PaywallScreen(
+    purchase: container.purchase,
+    config: PaywallConfig(productIds: AppConfig.purchase.productIds,
+                          highlightedProductId: "com.titanstudio.dolingo.premium.yearly",
+                          termsURL: AppConfig.termsURL, privacyURL: AppConfig.privacyURL),
+    benefits: [Text("paywall.benefit.noAds"), Text("paywall.benefit.offline")],
+    onClose: { router.dismiss() },
+    onPurchased: { router.dismiss() }      // mua xong, hoặc khôi phục ra premium
+)
+```
+
+- Bố cục: nút đóng (X) luôn hiện ở góc phải, vương miện, tiêu đề, rồi mỗi sản phẩm một `TKPlanCard` theo thứ tự `productIds`. Gói `highlightedProductId` có nhãn "Phổ biến nhất". Gói người dùng đang có hiện "Gói hiện tại của bạn" thay cho nút.
+- Đủ các dòng App Review yêu cầu (xem [Compliance.md](Compliance.md#paywall)): giá và chu kỳ lấy từ store (`displayPrice`), gói có dùng thử ghi số ngày miễn phí và giá sau đó, câu tự động gia hạn và cách huỷ (chỉ khi có gói thuê bao), nút "Khôi phục giao dịch", link Terms và Privacy.
+- `PaywallViewModel`: không có sản phẩm nào (sai id hoặc chưa tạo trên App Store Connect) thì hiện lỗi `.notFound` có nút thử lại. Huỷ mua thì im lặng; giao dịch chờ duyệt (Ask to Buy) thì báo bằng toast; khôi phục không ra premium thì báo "Không tìm thấy gói nào để khôi phục". Trong lúc mua hoặc khôi phục, nút khác không chạy.
+- Màn hình nghe `entitlementStream`, nên gói được duyệt muộn vẫn cập nhật đúng.
+- Figma Dolingo chưa đọc được màn paywall (hết lượt gọi Figma), bố cục đang theo "Subscriptions Card" và các màn khác của kit.
+- Dolingo: Cài đặt có băng rôn "Nâng cấp ngay!" mở paywall trong sheet; deep link `dolingo://premium` cũng mở paywall. Sản phẩm vẫn là id giữ chỗ, nên trên simulator sẽ thấy lỗi "không tìm thấy" cho tới khi có file `.storekit` hoặc sản phẩm thật. Dùng `MockPurchaseService` trong preview để xem đủ giao diện.
 
 ## 9. Checklist cho App 1
 
