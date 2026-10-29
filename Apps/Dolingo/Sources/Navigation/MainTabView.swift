@@ -27,10 +27,7 @@ struct MainTabView: View {
             TKTabBar(selected: tabs.selected, items: Self.items) { tabs.select($0) }
         }
         .tkRequestReview(when: flow.shouldAskForReview) { flow.didAskForReview() }
-        .task {
-            container.learning.startIfNeeded(language: flow.surveyAnswers[DolingoSurvey.Step.language]?.optionIds.first)
-            await container.learning.load()
-        }
+        .task { await container.learning.load() }
     }
 
     @ViewBuilder
@@ -39,8 +36,7 @@ struct MainTabView: View {
         case .home:
             HomeScreen(learning: container.learning, purchase: container.purchase, router: router)
         case .chats:
-            ChatsScreen(learning: container.learning, roleplays: container.roleplays,
-                        purchase: container.purchase, router: router)
+            ChatsScreen(roleplays: container.roleplays, purchase: container.purchase, router: router)
         case .speak:
             ComingSoonTab(title: "tab.speak", icon: Image(tk: .voice))
         case .progress:

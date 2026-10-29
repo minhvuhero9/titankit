@@ -115,8 +115,6 @@ final class AppContainer: ObservableObject, DependencyContainer {
             }
         case .paywall:
             DolingoPaywall(purchase: purchase) { [router] in router.dismiss() }
-        case .myCourses:
-            MyCoursesSheet(learning: learning) { [router] in router.dismiss() }
         case let .lesson(id):
             LessonScreen(learning: learning, speech: speech, lessonId: id) { [router] in router.dismiss() }
         case let .roleplay(roleplay):
@@ -124,7 +122,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
                 router.push(.roleplayChat(roleplay))
             }
         case let .roleplayChat(roleplay):
-            RoleplayChatScreen(roleplay: roleplay, language: learning.activeLanguage, speech: speech) { [router] in
+            RoleplayChatScreen(roleplay: roleplay, language: AppConfig.learningLanguage, speech: speech) { [router] in
                 router.popToRoot()
             }
         }

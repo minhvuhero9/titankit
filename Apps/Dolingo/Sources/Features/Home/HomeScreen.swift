@@ -23,7 +23,7 @@ struct HomeScreen: View {
                 if let course {
                     path(course)
                 } else {
-                    comingSoon
+                    TKErrorView(error: .notFound) { Task { await learning.load() } }
                 }
             }
         }
@@ -38,13 +38,11 @@ struct HomeScreen: View {
 
     private var header: some View {
         HStack {
-            Button { router.present(.myCourses) } label: {
-                Text(verbatim: DolingoSurvey.flag(for: learning.activeLanguage))
-                    .font(.system(size: 24))
-                    .frame(width: 40, height: 40)
-                    .background(theme.colors.actionOnPrimary.color, in: Circle())
-            }
-            .accessibilityLabel(Text("home.myCourses"))
+            Text(verbatim: "🇺🇸")
+                .font(.system(size: 24))
+                .frame(width: 40, height: 40)
+                .background(theme.colors.actionOnPrimary.color, in: Circle())
+                .accessibilityLabel(Text("home.course"))
             Spacer()
             Text(verbatim: "Dolingo")
                 .tkTextStyle(.title2)
@@ -85,17 +83,6 @@ struct HomeScreen: View {
                 }
             }
             .padding(Spacing.lg)
-        }
-    }
-
-    private var comingSoon: some View {
-        TKEmptyState(
-            icon: Image(tk: TKColorIcon.greenBook),
-            title: "home.comingSoon.title",
-            message: "home.comingSoon.message",
-            actionTitle: "home.myCourses"
-        ) {
-            router.present(.myCourses)
         }
     }
 

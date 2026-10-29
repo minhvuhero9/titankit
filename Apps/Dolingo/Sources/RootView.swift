@@ -43,9 +43,6 @@ private struct FlowView: View {
             case .survey:
                 SurveyScreen(steps: DolingoSurvey.steps(), answers: flow.surveyAnswers,
                              onExit: { flow.leaveSurvey() }) { answers in
-                    if let code = DolingoSurvey.appLanguage(from: answers) {
-                        container.localization.setLanguage(Language(code))
-                    }
                     flow.finishSurvey(answers)
                 }
             case .preparingPlan:

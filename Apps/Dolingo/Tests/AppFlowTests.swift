@@ -44,7 +44,7 @@ final class AppFlowTests: XCTestCase {
         XCTAssertEqual(flow.stage, .onboarding)
 
         flow.startSignUp()
-        let answers: [String: SurveyAnswer] = [DolingoSurvey.Step.language: .options(["es"])]
+        let answers: [String: SurveyAnswer] = [DolingoSurvey.Step.level: .options(["beginner"])]
         flow.finishSurvey(answers)
         XCTAssertEqual(flow.stage, .preparingPlan)
         XCTAssertEqual(flow.surveyAnswers, answers)

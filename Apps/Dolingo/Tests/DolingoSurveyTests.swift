@@ -5,31 +5,22 @@ import TitanLocalization
 
 @MainActor
 final class DolingoSurveyTests: XCTestCase {
-    func testTwelveStepsWithUniqueIds() {
+    func testTenStepsWithUniqueIds() {
         let steps = DolingoSurvey.steps()
-        XCTAssertEqual(steps.count, 12)
-        XCTAssertEqual(Set(steps.map(\.id)).count, 12)
-        XCTAssertEqual(steps.first?.id, DolingoSurvey.Step.language)
+        XCTAssertEqual(steps.count, 10)
+        XCTAssertEqual(Set(steps.map(\.id)).count, 10)
+        XCTAssertEqual(steps.first?.id, DolingoSurvey.Step.level)
         XCTAssertEqual(steps.last?.id, DolingoSurvey.Step.source)
-    }
-
-    func testAppLanguageStepOffersOnlySupportedLanguages() {
-        let answers: [String: SurveyAnswer] = [DolingoSurvey.Step.appLanguage: .options(["en"])]
-        XCTAssertEqual(DolingoSurvey.appLanguage(from: answers), "en")
-        let unsupported: [String: SurveyAnswer] = [DolingoSurvey.Step.appLanguage: .options(["fr"])]
-        XCTAssertNil(DolingoSurvey.appLanguage(from: unsupported))
-        XCTAssertNil(DolingoSurvey.appLanguage(from: [:]))
     }
 
     func testEverySurveyStringExistsInBothLanguages() {
         var keys = [
-            "survey.language.title", "survey.appLanguage.title", "survey.level.title %@", "survey.reason.title %@",
+            "survey.level.title", "survey.reason.title",
             "survey.skills.title", "survey.challenge.title", "survey.age.title", "survey.profession.title",
             "survey.topics.title", "survey.dailyGoal.title", "survey.dailyGoal.minutes %lld", "survey.reminder.title",
             "survey.reminder.footnote", "survey.source.title", "survey.option.other",
             "plan.preparing.title", "plan.preparing.message", "plan.ready.title", "plan.ready.message", "plan.ready.action",
         ]
-        keys += DolingoSurvey.languages.map { "survey.language.\($0.code)" }
         keys += DolingoSurvey.dailyMinutes.map { "survey.dailyGoal.\($0).detail" }
         for level in ["beginner", "elementary", "intermediate", "advanced"] {
             keys += ["survey.level.\(level)", "survey.level.\(level).detail"]

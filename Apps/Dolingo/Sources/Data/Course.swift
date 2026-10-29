@@ -52,9 +52,6 @@ protocol CourseRepository: Sendable {
 struct BundledCourseRepository: CourseRepository {
     var bundle: Bundle = .main
 
-    /// Languages with a course file.
-    static let available = ["en", "es"]
-
     func course(language: String) async throws(TitanError) -> Course? {
         guard let url = bundle.url(forResource: "course-\(language)", withExtension: "json") else { return nil }
         do {

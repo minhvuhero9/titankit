@@ -12,7 +12,6 @@ struct ChatsScreen: View {
         case roleplay, mine
     }
 
-    @ObservedObject var learning: LearningStore
     let roleplays: any RoleplayRepository
     let purchase: any PurchaseService
     let router: Router<AppRoute>
@@ -44,7 +43,7 @@ struct ChatsScreen: View {
         }
         .background(theme.colors.surfaceBackground.color.ignoresSafeArea())
         .tkNavigationBar("tab.chats")
-        .task(id: learning.activeLanguage) { await load() }
+        .task { await load() }
         .task {
             for await entitlements in purchase.entitlementStream {
                 isPremium = entitlements.isPremium
@@ -90,7 +89,7 @@ struct ChatsScreen: View {
     private func load() async {
         state = .loading
         do {
-            state = .loaded(try await roleplays.roleplays(language: learning.activeLanguage))
+            state = .loaded(try await roleplays.roleplays(language: AppConfig.learningLanguage))
         } catch {
             state = .failed(error)
         }

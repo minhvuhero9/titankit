@@ -2,25 +2,21 @@ import Foundation
 import TitanCore
 import TitanStorage
 
-/// What the learner has done, saved in Preferences: the courses they added, the one they
-/// are on, and the lessons they finished in each.
+/// What the learner has done, saved in Preferences.
 struct LearningProgress: Codable, Equatable, Sendable {
-    /// Language codes, in the order the courses were added.
-    var courses: [String] = []
-    var activeCourse: String?
-    /// Finished lesson ids by course language.
-    var completedLessons: [String: Set<String>] = [:]
+    /// Ids of the finished lessons of the English course.
+    var completedLessons: Set<String> = []
 }
 
 enum LessonStatus: Equatable, Sendable {
     case done, current, locked
 }
 
-/// Loads the active course and keeps the learner's progress in it.
+/// Loads the English course and keeps the learner's progress in it.
 @MainActor
 final class LearningStore: ObservableObject {
     @Published private(set) var progress: LearningProgress
-    /// The active course: `.loaded(nil)` when Dolingo has no course for that language yet.
+    /// The course: `.loaded(nil)` only if the bundled course file is missing.
     @Published private(set) var course: LoadState<Course?> = .idle
 
     private let repository: any CourseRepository
@@ -32,45 +28,21 @@ final class LearningStore: ObservableObject {
         progress = preferences.value(DolingoKeys.learningProgress)
     }
 
-    /// The language being learned; English until the learner picks one.
-    var activeLanguage: String {
-        progress.activeCourse ?? progress.courses.first ?? "en"
-    }
-
-    /// Adds the language picked in the sign-up questionnaire as the first course.
-    func startIfNeeded(language: String?) {
-        guard progress.courses.isEmpty else { return }
-        let language = language ?? "en"
-        update {
-            $0.courses = [language]
-            $0.activeCourse = language
-        }
-    }
-
     func load() async {
         course = .loading
         do {
-            course = .loaded(try await repository.course(language: activeLanguage))
+            course = .loaded(try await repository.course(language: AppConfig.learningLanguage))
         } catch {
             course = .failed(error)
         }
     }
 
-    /// Switches to a course, adding it to My Courses the first time.
-    func select(language: String) async {
-        update {
-            if !$0.courses.contains(language) { $0.courses.append(language) }
-            $0.activeCourse = language
-        }
-        await load()
-    }
-
     func complete(_ lesson: Lesson) {
-        update { $0.completedLessons[activeLanguage, default: []].insert(lesson.id) }
+        update { $0.completedLessons.insert(lesson.id) }
     }
 
     private var completed: Set<String> {
-        progress.completedLessons[activeLanguage] ?? []
+        progress.completedLessons
     }
 
     /// Lessons open one after another: the first unfinished one is current, the rest are locked.

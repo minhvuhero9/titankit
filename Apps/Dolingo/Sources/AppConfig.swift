@@ -13,6 +13,8 @@ struct AppConfig: Equatable, Sendable {
     static let current = AppConfig(infoDictionary: Bundle.main.infoDictionary ?? [:])
 
     static let languages = ["vi", "en"]
+    /// The language Dolingo teaches; Vietnamese speakers learning English.
+    static let learningLanguage = "en"
     static let defaultLanguage = "vi"
     /// Custom URL scheme for deep links, registered in Project.swift.
     static let urlScheme = "dolingo"

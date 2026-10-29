@@ -14,30 +14,20 @@ final class LearningStoreTests: XCTestCase {
 
     func testBundledCoursesDecode() async throws {
         let repository = BundledCourseRepository()
-        for language in BundledCourseRepository.available {
-            let course = try await repository.course(language: language)
-            XCTAssertEqual(course?.language, language)
-            XCTAssertEqual(course?.chapters.count, 3)
-            XCTAssertEqual(course?.lessons.count, 15)
-            XCTAssertEqual(Set(course?.lessons.map(\.id) ?? []).count, 15, "lesson ids are unique")
-            XCTAssertTrue(course?.lessons.allSatisfy { !$0.phrases.isEmpty } ?? false)
-        }
-        let missing = try await repository.course(language: "ko")
+        let course = try await repository.course(language: AppConfig.learningLanguage)
+        XCTAssertEqual(course?.language, "en")
+        XCTAssertEqual(course?.chapters.count, 3)
+        XCTAssertEqual(course?.lessons.count, 15)
+        XCTAssertEqual(Set(course?.lessons.map(\.id) ?? []).count, 15, "lesson ids are unique")
+        XCTAssertTrue(course?.lessons.allSatisfy { !$0.phrases.isEmpty } ?? false)
+        XCTAssertTrue(course?.lessons.flatMap(\.phrases).allSatisfy { $0.meaning["vi"] != nil } ?? false, "every phrase has a Vietnamese meaning")
+        let missing = try await repository.course(language: "es")
         XCTAssertNil(missing)
-    }
-
-    func testStartsWithTheSurveyLanguageOnce() {
-        let store = LearningStore(repository: BundledCourseRepository(), preferences: makePreferences())
-        store.startIfNeeded(language: "es")
-        store.startIfNeeded(language: "en")
-        XCTAssertEqual(store.progress.courses, ["es"])
-        XCTAssertEqual(store.activeLanguage, "es")
     }
 
     func testLessonsOpenOneAfterAnother() async throws {
         let preferences = makePreferences()
         let store = LearningStore(repository: BundledCourseRepository(), preferences: preferences)
-        store.startIfNeeded(language: "en")
         await store.load()
         let course = try XCTUnwrap(store.course.value.flatMap { $0 })
         let first = course.lessons[0], second = course.lessons[1], third = course.lessons[2]
@@ -54,18 +44,7 @@ final class LearningStoreTests: XCTestCase {
         XCTAssertFalse(store.isUnlocked(course.chapters[1], in: course))
 
         let reopened = LearningStore(repository: BundledCourseRepository(), preferences: preferences)
-        XCTAssertEqual(reopened.progress.completedLessons["en"], [first.id])
-    }
-
-    func testSwitchingCourseAddsItAndKeepsProgressApart() async {
-        let store = LearningStore(repository: BundledCourseRepository(), preferences: makePreferences())
-        store.startIfNeeded(language: "en")
-        await store.select(language: "ko")
-        XCTAssertEqual(store.progress.courses, ["en", "ko"])
-        XCTAssertEqual(store.course, .loaded(nil))
-        await store.select(language: "en")
-        XCTAssertEqual(store.progress.courses, ["en", "ko"])
-        XCTAssertEqual(store.activeLanguage, "en")
+        XCTAssertEqual(reopened.progress.completedLessons, [first.id])
     }
 
     func testPathSwingsWithinTheWidth() {

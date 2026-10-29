@@ -12,7 +12,7 @@ final class RoleplayTests: XCTestCase {
 
     func testBundledRoleplaysAreWellFormed() async throws {
         let repository = BundledRoleplayRepository()
-        for language in ["en", "es"] {
+        for language in [AppConfig.learningLanguage] {
             let roleplays = try await repository.roleplays(language: language)
             XCTAssertEqual(roleplays.count, 6, language)
             XCTAssertEqual(roleplays.filter { !$0.isPremium }.count, 3, language)
@@ -26,7 +26,7 @@ final class RoleplayTests: XCTestCase {
                 XCTAssertEqual(completable, taskIds, "\(roleplay.id): every task can be done")
             }
         }
-        let none = try await repository.roleplays(language: "ko")
+        let none = try await repository.roleplays(language: "es")
         XCTAssertTrue(none.isEmpty)
     }
 

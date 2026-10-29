@@ -8,13 +8,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Roleplays are available for English and Spanish for now."
+            "value": "New roleplays arrive in a coming update."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Roleplay hiện có cho tiếng Anh và tiếng Tây Ban Nha."
+            "value": "Roleplay mới sẽ có trong bản cập nhật tới."
           }
         }
       }
@@ -25,13 +25,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No roleplays for this language yet"
+            "value": "No roleplays yet"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chưa có roleplay cho ngôn ngữ này"
+            "value": "Chưa có roleplay"
           }
         }
       }
@@ -172,23 +172,6 @@
         }
       }
     },
-    "home.addCourse": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add Course"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thêm khoá học"
-          }
-        }
-      }
-    },
     "home.chapter %lld": {
       "extractionState": "manual",
       "localizations": {
@@ -206,53 +189,19 @@
         }
       }
     },
-    "home.comingSoon.message": {
+    "home.course": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Meanwhile, you can learn English or Spanish."
+            "value": "English course"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Trong lúc chờ, bạn có thể học tiếng Anh hoặc tiếng Tây Ban Nha."
-          }
-        }
-      }
-    },
-    "home.comingSoon.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This course is coming soon"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Khoá học này sắp ra mắt"
-          }
-        }
-      }
-    },
-    "home.myCourses": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "My Courses"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Khoá học của tôi"
+            "value": "Khoá tiếng Anh"
           }
         }
       }
@@ -1209,23 +1158,6 @@
         }
       }
     },
-    "survey.appLanguage.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What language do you want to use for Dolingo?"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bạn muốn dùng Dolingo bằng ngôn ngữ nào?"
-          }
-        }
-      }
-    },
     "survey.challenge.grammar": {
       "extractionState": "manual",
       "localizations": {
@@ -1481,176 +1413,6 @@
         }
       }
     },
-    "survey.language.ar": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arabic"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Ả Rập"
-          }
-        }
-      }
-    },
-    "survey.language.de": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "German"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Đức"
-          }
-        }
-      }
-    },
-    "survey.language.en": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "English"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Anh"
-          }
-        }
-      }
-    },
-    "survey.language.es": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spanish"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Tây Ban Nha"
-          }
-        }
-      }
-    },
-    "survey.language.fr": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "French"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Pháp"
-          }
-        }
-      }
-    },
-    "survey.language.hi": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hindi"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Hindi"
-          }
-        }
-      }
-    },
-    "survey.language.ja": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Japanese"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Nhật"
-          }
-        }
-      }
-    },
-    "survey.language.ko": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Korean"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Hàn"
-          }
-        }
-      }
-    },
-    "survey.language.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What language do you want to learn?"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bạn muốn học ngôn ngữ nào?"
-          }
-        }
-      }
-    },
-    "survey.language.zh": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mandarin Chinese"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tiếng Trung (Quan thoại)"
-          }
-        }
-      }
-    },
     "survey.level.advanced": {
       "extractionState": "manual",
       "localizations": {
@@ -1787,19 +1549,19 @@
         }
       }
     },
-    "survey.level.title %@": {
+    "survey.level.title": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nice! What's your current level of %@?"
+            "value": "Nice! What's your current level of English?"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tuyệt! Trình độ %@ hiện tại của bạn thế nào?"
+            "value": "Tuyệt! Trình độ tiếng Anh hiện tại của bạn thế nào?"
           }
         }
       }
@@ -2025,19 +1787,19 @@
         }
       }
     },
-    "survey.reason.title %@": {
+    "survey.reason.title": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Then, why do you want to learn %@?"
+            "value": "Why do you want to learn English?"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vậy vì sao bạn muốn học %@?"
+            "value": "Vì sao bạn muốn học tiếng Anh?"
           }
         }
       }

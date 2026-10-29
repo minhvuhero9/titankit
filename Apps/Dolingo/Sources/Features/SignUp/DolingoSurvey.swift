@@ -1,15 +1,13 @@
 import SwiftUI
 import TitanFeatures
 import TitanIcons
-import TitanLocalization
 
-/// The 12 sign-up questions from the Figma screens "sign up step 1" to "step 12".
+/// The sign-up questions from the Figma screens "sign up step 3" to "step 12". Dolingo teaches
+/// English to Vietnamese speakers, so the two language steps of the Figma flow are left out.
 /// Answers are saved by step id in `DolingoKeys.surveyAnswers`.
 @MainActor
 enum DolingoSurvey {
     enum Step {
-        static let language = "language"
-        static let appLanguage = "appLanguage"
         static let level = "level"
         static let reason = "reason"
         static let skills = "skills"
@@ -22,43 +20,25 @@ enum DolingoSurvey {
         static let source = "source"
     }
 
-    /// Languages Dolingo teaches, with their flag.
-    static let languages: [(code: String, flag: String)] = [
-        ("en", "🇺🇸"), ("zh", "🇨🇳"), ("es", "🇪🇸"), ("fr", "🇫🇷"), ("hi", "🇮🇳"),
-        ("ar", "🇦🇪"), ("ja", "🇯🇵"), ("ko", "🇰🇷"), ("de", "🇩🇪"),
-    ]
-
     /// Minutes a day for each daily goal option.
     static let dailyMinutes = [5, 10, 15, 30, 60]
 
-    static func steps(appLanguages: [String] = AppConfig.languages) -> [SurveyStep] {
+    static func steps() -> [SurveyStep] {
         [
-            SurveyStep(Step.language, title: Text("survey.language.title"), kind: .single(
-                languages.map { SurveyOption($0.code, title: languageName($0.code), emoji: $0.flag) }
-            )),
-            SurveyStep(Step.appLanguage, title: Text("survey.appLanguage.title"), kind: .single(
-                appLanguages.map { code in
-                    SurveyOption(code, title: Text(verbatim: Language(code).displayName), emoji: appLanguageFlag(code))
-                }
-            )),
-            SurveyStep(Step.level, kind: .single([
+            SurveyStep(Step.level, title: Text("survey.level.title"), kind: .single([
                 SurveyOption("beginner", title: Text("survey.level.beginner"), detail: Text("survey.level.beginner.detail"), icon: Image(tk: TKColorIcon.signalLow)),
                 SurveyOption("elementary", title: Text("survey.level.elementary"), detail: Text("survey.level.elementary.detail"), icon: Image(tk: TKColorIcon.signalMedium)),
                 SurveyOption("intermediate", title: Text("survey.level.intermediate"), detail: Text("survey.level.intermediate.detail"), icon: Image(tk: TKColorIcon.signalHigh)),
                 SurveyOption("advanced", title: Text("survey.level.advanced"), detail: Text("survey.level.advanced.detail"), icon: Image(tk: TKColorIcon.signalFull)),
-            ])) { answers in
-                Text("survey.level.title \(learningLanguageName(answers))")
-            },
-            SurveyStep(Step.reason, kind: .single([
+            ])),
+            SurveyStep(Step.reason, title: Text("survey.reason.title"), kind: .single([
                 SurveyOption("travel", title: Text("survey.reason.travel"), icon: Image(tk: TKColorIcon.airplane)),
                 SurveyOption("career", title: Text("survey.reason.career"), icon: Image(tk: TKColorIcon.briefcase)),
                 SurveyOption("education", title: Text("survey.reason.education"), icon: Image(tk: TKColorIcon.greenBook)),
                 SurveyOption("culture", title: Text("survey.reason.culture"), icon: Image(tk: TKColorIcon.familyManGirl)),
                 SurveyOption("fun", title: Text("survey.reason.fun"), icon: Image(tk: TKColorIcon.confettiBall)),
                 SurveyOption("other", title: Text("survey.option.other"), icon: Image(tk: TKColorIcon.other)),
-            ])) { answers in
-                Text("survey.reason.title \(learningLanguageName(answers))")
-            },
+            ])),
             SurveyStep(Step.skills, title: Text("survey.skills.title"), kind: .multiple(
                 textOptions("survey.skills", ["all", "grammar", "speaking", "listening", "writing", "reading", "vocabulary"])
             )),
@@ -95,32 +75,6 @@ enum DolingoSurvey {
                 SurveyOption("other", title: Text("survey.option.other"), icon: Image(tk: TKColorIcon.other)),
             ])),
         ]
-    }
-
-    /// The app language the user picked in step 2, if Dolingo supports it.
-    static func appLanguage(from answers: [String: SurveyAnswer], supported: [String] = AppConfig.languages) -> String? {
-        answers[Step.appLanguage]?.optionIds.first.flatMap { supported.contains($0) ? $0 : nil }
-    }
-
-    /// The flag shown for a course, e.g. "🇪🇸".
-    static func flag(for language: String) -> String {
-        languages.first { $0.code == language }?.flag ?? "🏳️"
-    }
-
-    static func languageName(_ code: String) -> Text {
-        Text(LocalizedStringKey("survey.language.\(code)"))
-    }
-
-    private static func learningLanguageName(_ answers: [String: SurveyAnswer]) -> Text {
-        languageName(answers[Step.language]?.optionIds.first ?? "en")
-    }
-
-    private static func appLanguageFlag(_ code: String) -> String {
-        switch code {
-        case "vi": "🇻🇳"
-        case "en": "🇺🇸"
-        default: "🏳️"
-        }
     }
 
     /// Options that are only a line of text; each title is `<prefix>.<id>` in Localizable.
