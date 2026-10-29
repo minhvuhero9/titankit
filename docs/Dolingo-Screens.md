@@ -108,18 +108,18 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 
 | # | Màn hình | Node | Trạng thái |
 | --- | --- | --- | --- |
-| 71 | speak (phrasebook) | `38459:39518` | Chưa làm |
-| 72 | speaking practice | `38459:40146` | Chưa làm |
-| 73 | speaking practice - play audio | `38459:42234` | Chưa làm |
-| 74 | speaking practice - play audio in slow mode | `38459:42368` | Chưa làm |
-| 75 | speaking practice - user speak | `38459:42505` | Chưa làm |
-| 76 | speaking practice - perfect | `38459:42642` | Chưa làm |
-| 77 | speaking practice - almost there | `38461:20220` | Chưa làm |
-| 78 | speaking practice - oops.. try again | `38461:20351` | Chưa làm |
-| 79 | speaking practice - we can't hear you | `38461:20488` | Chưa làm |
-| 80 | speaking practice - save phrase | `38461:20679` | Chưa làm |
-| 81 | speaking practice - leave lessons | `38461:20818` | Chưa làm |
-| 82 | speak - saved phrases | `38461:20965` | Chưa làm |
+| 71 | speak (phrasebook) | `38459:39518` | Đã có (`SpeakScreen`) |
+| 72 | speaking practice | `38459:40146` | Đã có (`PhrasePracticeScreen`) |
+| 73 | speaking practice - play audio | `38459:42234` | Đã có (`PhrasePracticeScreen`) |
+| 74 | speaking practice - play audio in slow mode | `38459:42368` | Đã có (`PhrasePracticeScreen`) |
+| 75 | speaking practice - user speak | `38459:42505` | Đã có (`PhrasePracticeScreen`) |
+| 76 | speaking practice - perfect | `38459:42642` | Đã có (`PhrasePracticeScreen`) |
+| 77 | speaking practice - almost there | `38461:20220` | Đã có (`PhrasePracticeScreen`) |
+| 78 | speaking practice - oops.. try again | `38461:20351` | Đã có (`PhrasePracticeScreen`) |
+| 79 | speaking practice - we can't hear you | `38461:20488` | Đã có (`PhrasePracticeScreen`) |
+| 80 | speaking practice - save phrase | `38461:20679` | Đã có (`PhrasePracticeScreen`) |
+| 81 | speaking practice - leave lessons | `38461:20818` | Đã có (`PhrasePracticeScreen`) |
+| 82 | speak - saved phrases | `38461:20965` | Đã có (`SavedPhrasesScreen`) |
 
 ## Tiến độ và thành tích (83–85)
 
@@ -168,4 +168,5 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 - Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/course-en.json` (3 chương, 15 bài, 60 câu, nghĩa tiếng Việt). Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
 - Thanh tab có 5 mục như Figma; Chats, Speak và My Progress đang là trang "sắp ra mắt", Account là màn Cài đặt.
 - Luyện nói trong bài học dùng `TitanSpeech` (nhận dạng giọng nói của Apple, chấm theo từng từ). Màn hoàn thành mới có Thời gian và Độ chính xác; sáu vòng điểm (Nghe, Phát âm, Lưu loát, Ngữ điệu, Trọng âm, Ngữ pháp) cần dịch vụ chấm phát âm riêng. Cài đặt trong bài (màn 42) chưa làm.
+- Speak: sổ tay câu trong `Apps/Dolingo/Resources/Phrasebook/phrasebook-en.json` (7 chủ đề, 56 câu, 3 chủ đề premium). Nghe thường và chậm bằng giọng máy; chấm bằng `PronunciationScore`; câu đã lưu nằm trong `DolingoKeys.savedPhrases`.
 - Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. Tạo roleplay bằng AI, "My Roleplay" và "Chat with Dolingo" (màn 60–69) cần một backend AI: app không gọi thẳng API AI để không lộ khoá. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
