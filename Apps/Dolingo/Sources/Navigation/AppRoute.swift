@@ -13,6 +13,9 @@ enum AppRoute: Routable {
     /// "My Courses": switch or add a language, shown in a sheet.
     case myCourses
     case lesson(id: String)
+    /// Figma "roleplay - meeting new friends": scenario, goal and tasks before starting.
+    case roleplay(Roleplay)
+    case roleplayChat(Roleplay)
 }
 
 /// The five tabs of the Figma "Menu Bar".

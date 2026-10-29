@@ -29,6 +29,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let flow: AppFlow
     let learning: LearningStore
     let speech: any SpeechRecognizer
+    let roleplays: any RoleplayRepository
     /// One navigation stack per tab.
     let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -46,6 +47,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         remoteConfig: (any RemoteConfigService)? = nil,
         purchase: (any PurchaseService)? = nil,
         courses: any CourseRepository = BundledCourseRepository(),
+        roleplays: any RoleplayRepository = BundledRoleplayRepository(),
         speech: (any SpeechRecognizer)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
@@ -79,6 +81,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
         learning = LearningStore(repository: courses, preferences: preferences)
         self.speech = speech ?? AppleSpeechRecognizer()
+        self.roleplays = roleplays
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -116,6 +119,14 @@ final class AppContainer: ObservableObject, DependencyContainer {
             MyCoursesSheet(learning: learning) { [router] in router.dismiss() }
         case let .lesson(id):
             LessonScreen(learning: learning, speech: speech, lessonId: id) { [router] in router.dismiss() }
+        case let .roleplay(roleplay):
+            RoleplayDetailScreen(roleplay: roleplay, onBack: { [router] in router.pop() }) { [router] in
+                router.push(.roleplayChat(roleplay))
+            }
+        case let .roleplayChat(roleplay):
+            RoleplayChatScreen(roleplay: roleplay, language: learning.activeLanguage, speech: speech) { [router] in
+                router.popToRoot()
+            }
         }
     }
 

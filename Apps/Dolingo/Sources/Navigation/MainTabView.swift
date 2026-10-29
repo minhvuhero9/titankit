@@ -39,7 +39,8 @@ struct MainTabView: View {
         case .home:
             HomeScreen(learning: container.learning, purchase: container.purchase, router: router)
         case .chats:
-            ComingSoonTab(title: "tab.chats", icon: Image(tk: .chat))
+            ChatsScreen(learning: container.learning, roleplays: container.roleplays,
+                        purchase: container.purchase, router: router)
         case .speak:
             ComingSoonTab(title: "tab.speak", icon: Image(tk: .voice))
         case .progress:

@@ -2,7 +2,7 @@ import Foundation
 import TitanCore
 
 /// One language course: chapters of lessons, each lesson a few phrases said by a tutor.
-/// Loaded from `Resources/Courses/<language>.json` until the backend serves courses.
+/// Loaded from `Resources/Courses/course-<language>.json` until the backend serves courses.
 struct Course: Codable, Equatable, Sendable, Identifiable {
     /// The language taught, e.g. "en", "es"; also the id.
     let language: String
@@ -29,7 +29,7 @@ struct Lesson: Codable, Equatable, Sendable, Identifiable {
     let phrases: [Phrase]
 }
 
-struct Phrase: Codable, Equatable, Sendable {
+struct Phrase: Codable, Hashable, Sendable {
     /// In the language being learned.
     let text: String
     /// What it means, in each app language.
@@ -56,8 +56,7 @@ struct BundledCourseRepository: CourseRepository {
     static let available = ["en", "es"]
 
     func course(language: String) async throws(TitanError) -> Course? {
-        guard let url = bundle.url(forResource: language, withExtension: "json", subdirectory: "Courses")
-            ?? bundle.url(forResource: language, withExtension: "json") else { return nil }
+        guard let url = bundle.url(forResource: "course-\(language)", withExtension: "json") else { return nil }
         do {
             let data = try Data(contentsOf: url)
             return try JSONDecoder().decode(Course.self, from: data)

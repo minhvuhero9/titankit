@@ -1,0 +1,922 @@
+{
+  "language": "en",
+  "roleplays": [
+    {
+      "id": "en.friends",
+      "emoji": "🙋",
+      "title": {
+        "vi": "Gặp gỡ bạn mới",
+        "en": "Meeting New Friends"
+      },
+      "scenario": {
+        "vi": "Bạn đang ở một buổi gặp mặt và có dịp làm quen người mới. Hãy tập nói chuyện xã giao.",
+        "en": "You're at a social event and have the chance to meet new people. Practise small talk and get to know someone new."
+      },
+      "partner": "Anthony",
+      "isPremium": false,
+      "tasks": [
+        {
+          "id": "intro",
+          "text": "Introduce yourself and learn basic information about someone new.",
+          "meaning": {
+            "vi": "Giới thiệu bản thân và biết thông tin cơ bản về người mới.",
+            "en": "Introduce yourself and learn basic information about someone new."
+          }
+        },
+        {
+          "id": "from",
+          "text": "Ask where they are from.",
+          "meaning": {
+            "vi": "Hỏi họ đến từ đâu.",
+            "en": "Ask where they are from."
+          }
+        },
+        {
+          "id": "interests",
+          "text": "Ask about their interests.",
+          "meaning": {
+            "vi": "Hỏi về sở thích của họ.",
+            "en": "Ask about their interests."
+          }
+        },
+        {
+          "id": "share",
+          "text": "Share something about yourself.",
+          "meaning": {
+            "vi": "Kể điều gì đó về bạn.",
+            "en": "Share something about yourself."
+          }
+        }
+      ],
+      "turns": [
+        {
+          "partner": {
+            "text": "Hi! Nice to meet you. I'm Anthony. What's your name?",
+            "meaning": {
+              "vi": "Chào! Rất vui được gặp bạn. Mình là Anthony. Bạn tên gì?",
+              "en": "Hi! Nice to meet you. I'm Anthony. What's your name?"
+            }
+          },
+          "replies": [
+            {
+              "text": "Hi! My name is Alex.",
+              "meaning": {
+                "vi": "Chào! Mình tên là Alex.",
+                "en": "Hi! My name is Alex."
+              },
+              "completes": [
+                "intro"
+              ]
+            },
+            {
+              "text": "Nice to meet you too. I'm Alex.",
+              "meaning": {
+                "vi": "Mình cũng rất vui được gặp bạn. Mình là Alex.",
+                "en": "Nice to meet you too. I'm Alex."
+              },
+              "completes": [
+                "intro"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Nice to meet you, Alex! Where are you from?",
+            "meaning": {
+              "vi": "Rất vui được gặp bạn, Alex! Bạn đến từ đâu?",
+              "en": "Nice to meet you, Alex! Where are you from?"
+            }
+          },
+          "replies": [
+            {
+              "text": "I'm from Vietnam. Where are you from?",
+              "meaning": {
+                "vi": "Mình đến từ Việt Nam. Còn bạn đến từ đâu?",
+                "en": "I'm from Vietnam. Where are you from?"
+              },
+              "completes": [
+                "from"
+              ]
+            },
+            {
+              "text": "I'm from Vietnam.",
+              "meaning": {
+                "vi": "Mình đến từ Việt Nam.",
+                "en": "I'm from Vietnam."
+              },
+              "completes": []
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "I'm from Canada. What do you like to do in your free time?",
+            "meaning": {
+              "vi": "Mình đến từ Canada. Lúc rảnh bạn thích làm gì?",
+              "en": "I'm from Canada. What do you like to do in your free time?"
+            }
+          },
+          "replies": [
+            {
+              "text": "I like reading and music. What about you?",
+              "meaning": {
+                "vi": "Mình thích đọc sách và nghe nhạc. Còn bạn?",
+                "en": "I like reading and music. What about you?"
+              },
+              "completes": [
+                "interests",
+                "share"
+              ]
+            },
+            {
+              "text": "I like playing football.",
+              "meaning": {
+                "vi": "Mình thích đá bóng.",
+                "en": "I like playing football."
+              },
+              "completes": [
+                "share"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Great! It was really nice talking to you, Alex.",
+            "meaning": {
+              "vi": "Tuyệt! Nói chuyện với bạn vui lắm, Alex.",
+              "en": "Great! It was really nice talking to you, Alex."
+            }
+          },
+          "replies": []
+        }
+      ]
+    },
+    {
+      "id": "en.coffee",
+      "emoji": "☕",
+      "title": {
+        "vi": "Ở quán cà phê",
+        "en": "At the Coffee Shop"
+      },
+      "scenario": {
+        "vi": "Bạn gọi đồ uống ở một quán cà phê.",
+        "en": "You're ordering a drink at a coffee shop."
+      },
+      "partner": "Mia",
+      "isPremium": false,
+      "tasks": [
+        {
+          "id": "order",
+          "text": "Order a drink.",
+          "meaning": {
+            "vi": "Gọi một đồ uống.",
+            "en": "Order a drink."
+          }
+        },
+        {
+          "id": "size",
+          "text": "Choose a size.",
+          "meaning": {
+            "vi": "Chọn cỡ ly.",
+            "en": "Choose a size."
+          }
+        },
+        {
+          "id": "extra",
+          "text": "Ask for something extra.",
+          "meaning": {
+            "vi": "Yêu cầu thêm gì đó.",
+            "en": "Ask for something extra."
+          }
+        },
+        {
+          "id": "pay",
+          "text": "Pay for your order.",
+          "meaning": {
+            "vi": "Thanh toán.",
+            "en": "Pay for your order."
+          }
+        }
+      ],
+      "turns": [
+        {
+          "partner": {
+            "text": "Hi there! What can I get for you?",
+            "meaning": {
+              "vi": "Chào bạn! Bạn muốn dùng gì?",
+              "en": "Hi there! What can I get for you?"
+            }
+          },
+          "replies": [
+            {
+              "text": "Can I have a latte, please?",
+              "meaning": {
+                "vi": "Cho mình một ly latte nhé.",
+                "en": "Can I have a latte, please?"
+              },
+              "completes": [
+                "order"
+              ]
+            },
+            {
+              "text": "I'd like a cappuccino, please.",
+              "meaning": {
+                "vi": "Mình muốn một ly cappuccino.",
+                "en": "I'd like a cappuccino, please."
+              },
+              "completes": [
+                "order"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Sure. What size would you like?",
+            "meaning": {
+              "vi": "Được ạ. Bạn muốn cỡ nào?",
+              "en": "Sure. What size would you like?"
+            }
+          },
+          "replies": [
+            {
+              "text": "A large one with extra milk, please.",
+              "meaning": {
+                "vi": "Cỡ lớn, thêm sữa nhé.",
+                "en": "A large one with extra milk, please."
+              },
+              "completes": [
+                "size",
+                "extra"
+              ]
+            },
+            {
+              "text": "A small one, please.",
+              "meaning": {
+                "vi": "Cỡ nhỏ nhé.",
+                "en": "A small one, please."
+              },
+              "completes": [
+                "size"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "That's four dollars, please.",
+            "meaning": {
+              "vi": "Của bạn bốn đô la.",
+              "en": "That's four dollars, please."
+            }
+          },
+          "replies": [
+            {
+              "text": "Here you are. Can I pay by card?",
+              "meaning": {
+                "vi": "Đây ạ. Mình trả bằng thẻ được không?",
+                "en": "Here you are. Can I pay by card?"
+              },
+              "completes": [
+                "pay"
+              ]
+            },
+            {
+              "text": "Here you are.",
+              "meaning": {
+                "vi": "Của bạn đây.",
+                "en": "Here you are."
+              },
+              "completes": [
+                "pay"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Thank you! Your drink will be ready in a minute.",
+            "meaning": {
+              "vi": "Cảm ơn bạn! Đồ uống sẽ có sau một phút.",
+              "en": "Thank you! Your drink will be ready in a minute."
+            }
+          },
+          "replies": []
+        }
+      ]
+    },
+    {
+      "id": "en.weather",
+      "emoji": "🌤️",
+      "title": {
+        "vi": "Nói về thời tiết",
+        "en": "Talking About the Weather"
+      },
+      "scenario": {
+        "vi": "Bạn trò chuyện với hàng xóm về thời tiết.",
+        "en": "You're chatting with your neighbour about the weather."
+      },
+      "partner": "Grace",
+      "isPremium": false,
+      "tasks": [
+        {
+          "id": "today",
+          "text": "Talk about today's weather.",
+          "meaning": {
+            "vi": "Nói về thời tiết hôm nay.",
+            "en": "Talk about today's weather."
+          }
+        },
+        {
+          "id": "tomorrow",
+          "text": "Ask about tomorrow.",
+          "meaning": {
+            "vi": "Hỏi về ngày mai.",
+            "en": "Ask about tomorrow."
+          }
+        },
+        {
+          "id": "favourite",
+          "text": "Say your favourite season.",
+          "meaning": {
+            "vi": "Nói mùa bạn thích.",
+            "en": "Say your favourite season."
+          }
+        },
+        {
+          "id": "plans",
+          "text": "Mention a plan.",
+          "meaning": {
+            "vi": "Kể một dự định.",
+            "en": "Mention a plan."
+          }
+        }
+      ],
+      "turns": [
+        {
+          "partner": {
+            "text": "Good morning! Lovely day, isn't it?",
+            "meaning": {
+              "vi": "Chào buổi sáng! Hôm nay đẹp trời nhỉ?",
+              "en": "Good morning! Lovely day, isn't it?"
+            }
+          },
+          "replies": [
+            {
+              "text": "Yes, it's sunny and warm today.",
+              "meaning": {
+                "vi": "Đúng vậy, hôm nay trời nắng và ấm.",
+                "en": "Yes, it's sunny and warm today."
+              },
+              "completes": [
+                "today"
+              ]
+            },
+            {
+              "text": "Yes, it's a beautiful day.",
+              "meaning": {
+                "vi": "Vâng, hôm nay đẹp trời.",
+                "en": "Yes, it's a beautiful day."
+              },
+              "completes": [
+                "today"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "I hope it stays like this.",
+            "meaning": {
+              "vi": "Mong là trời cứ thế này.",
+              "en": "I hope it stays like this."
+            }
+          },
+          "replies": [
+            {
+              "text": "Me too. Will it rain tomorrow?",
+              "meaning": {
+                "vi": "Mình cũng vậy. Mai trời có mưa không?",
+                "en": "Me too. Will it rain tomorrow?"
+              },
+              "completes": [
+                "tomorrow"
+              ]
+            },
+            {
+              "text": "Me too. I love summer.",
+              "meaning": {
+                "vi": "Mình cũng vậy. Mình thích mùa hè.",
+                "en": "Me too. I love summer."
+              },
+              "completes": [
+                "favourite"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "They say it will rain tomorrow. Summer is my favourite season.",
+            "meaning": {
+              "vi": "Nghe nói mai sẽ mưa. Mùa hè là mùa mình thích nhất.",
+              "en": "They say it will rain tomorrow. Summer is my favourite season."
+            }
+          },
+          "replies": [
+            {
+              "text": "I love summer too. I'm going to the beach this weekend.",
+              "meaning": {
+                "vi": "Mình cũng thích mùa hè. Cuối tuần này mình đi biển.",
+                "en": "I love summer too. I'm going to the beach this weekend."
+              },
+              "completes": [
+                "favourite",
+                "plans"
+              ]
+            },
+            {
+              "text": "I'm going to the park later.",
+              "meaning": {
+                "vi": "Lát nữa mình đi công viên.",
+                "en": "I'm going to the park later."
+              },
+              "completes": [
+                "plans"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Sounds lovely! Have a great day.",
+            "meaning": {
+              "vi": "Nghe hay quá! Chúc bạn một ngày tốt lành.",
+              "en": "Sounds lovely! Have a great day."
+            }
+          },
+          "replies": []
+        }
+      ]
+    },
+    {
+      "id": "en.hobbies",
+      "emoji": "🎨",
+      "title": {
+        "vi": "Nói về sở thích",
+        "en": "Discussing Hobbies"
+      },
+      "scenario": {
+        "vi": "Bạn và một người bạn mới chia sẻ về sở thích.",
+        "en": "You and a new friend talk about your hobbies."
+      },
+      "partner": "Leo",
+      "isPremium": true,
+      "tasks": [
+        {
+          "id": "hobby",
+          "text": "Talk about your hobby.",
+          "meaning": {
+            "vi": "Nói về sở thích của bạn.",
+            "en": "Talk about your hobby."
+          }
+        },
+        {
+          "id": "often",
+          "text": "Say how often you do it.",
+          "meaning": {
+            "vi": "Nói bạn làm việc đó thường xuyên thế nào.",
+            "en": "Say how often you do it."
+          }
+        },
+        {
+          "id": "ask",
+          "text": "Ask about their hobby.",
+          "meaning": {
+            "vi": "Hỏi về sở thích của họ.",
+            "en": "Ask about their hobby."
+          }
+        },
+        {
+          "id": "together",
+          "text": "Suggest doing it together.",
+          "meaning": {
+            "vi": "Rủ làm cùng nhau.",
+            "en": "Suggest doing it together."
+          }
+        }
+      ],
+      "turns": [
+        {
+          "partner": {
+            "text": "So, what do you do for fun?",
+            "meaning": {
+              "vi": "Vậy bạn thường làm gì cho vui?",
+              "en": "So, what do you do for fun?"
+            }
+          },
+          "replies": [
+            {
+              "text": "I love painting.",
+              "meaning": {
+                "vi": "Mình rất thích vẽ tranh.",
+                "en": "I love painting."
+              },
+              "completes": [
+                "hobby"
+              ]
+            },
+            {
+              "text": "I like cooking.",
+              "meaning": {
+                "vi": "Mình thích nấu ăn.",
+                "en": "I like cooking."
+              },
+              "completes": [
+                "hobby"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "That's cool! How often do you do it?",
+            "meaning": {
+              "vi": "Hay đấy! Bạn làm việc đó thường xuyên không?",
+              "en": "That's cool! How often do you do it?"
+            }
+          },
+          "replies": [
+            {
+              "text": "Every weekend. What about you?",
+              "meaning": {
+                "vi": "Cuối tuần nào cũng vậy. Còn bạn?",
+                "en": "Every weekend. What about you?"
+              },
+              "completes": [
+                "often",
+                "ask"
+              ]
+            },
+            {
+              "text": "Twice a week.",
+              "meaning": {
+                "vi": "Mỗi tuần hai lần.",
+                "en": "Twice a week."
+              },
+              "completes": [
+                "often"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "I play the guitar. I practise every evening.",
+            "meaning": {
+              "vi": "Mình chơi guitar. Tối nào mình cũng tập.",
+              "en": "I play the guitar. I practise every evening."
+            }
+          },
+          "replies": [
+            {
+              "text": "We should play music together sometime.",
+              "meaning": {
+                "vi": "Hôm nào mình chơi nhạc cùng nhau nhé.",
+                "en": "We should play music together sometime."
+              },
+              "completes": [
+                "together"
+              ]
+            },
+            {
+              "text": "That's great!",
+              "meaning": {
+                "vi": "Tuyệt quá!",
+                "en": "That's great!"
+              },
+              "completes": []
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Definitely! Let's do it next week.",
+            "meaning": {
+              "vi": "Chắc chắn rồi! Tuần sau nhé.",
+              "en": "Definitely! Let's do it next week."
+            }
+          },
+          "replies": []
+        }
+      ]
+    },
+    {
+      "id": "en.restaurant",
+      "emoji": "🍲",
+      "title": {
+        "vi": "Gọi món ở nhà hàng",
+        "en": "Ordering at a Restaurant"
+      },
+      "scenario": {
+        "vi": "Bạn đi ăn tối ở nhà hàng.",
+        "en": "You're having dinner at a restaurant."
+      },
+      "partner": "Oliver",
+      "isPremium": true,
+      "tasks": [
+        {
+          "id": "table",
+          "text": "Ask for a table.",
+          "meaning": {
+            "vi": "Hỏi bàn.",
+            "en": "Ask for a table."
+          }
+        },
+        {
+          "id": "order",
+          "text": "Order a meal.",
+          "meaning": {
+            "vi": "Gọi món.",
+            "en": "Order a meal."
+          }
+        },
+        {
+          "id": "drink",
+          "text": "Order a drink.",
+          "meaning": {
+            "vi": "Gọi đồ uống.",
+            "en": "Order a drink."
+          }
+        },
+        {
+          "id": "bill",
+          "text": "Ask for the bill.",
+          "meaning": {
+            "vi": "Xin hoá đơn.",
+            "en": "Ask for the bill."
+          }
+        }
+      ],
+      "turns": [
+        {
+          "partner": {
+            "text": "Good evening! Welcome. How many people?",
+            "meaning": {
+              "vi": "Chào buổi tối! Xin mời vào. Mấy người ạ?",
+              "en": "Good evening! Welcome. How many people?"
+            }
+          },
+          "replies": [
+            {
+              "text": "A table for two, please.",
+              "meaning": {
+                "vi": "Cho bàn hai người nhé.",
+                "en": "A table for two, please."
+              },
+              "completes": [
+                "table"
+              ]
+            },
+            {
+              "text": "Just one, please.",
+              "meaning": {
+                "vi": "Một người thôi ạ.",
+                "en": "Just one, please."
+              },
+              "completes": [
+                "table"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Here's the menu. What would you like?",
+            "meaning": {
+              "vi": "Thực đơn đây ạ. Bạn muốn dùng gì?",
+              "en": "Here's the menu. What would you like?"
+            }
+          },
+          "replies": [
+            {
+              "text": "I'll have the chicken soup and a glass of water.",
+              "meaning": {
+                "vi": "Cho mình súp gà và một ly nước.",
+                "en": "I'll have the chicken soup and a glass of water."
+              },
+              "completes": [
+                "order",
+                "drink"
+              ]
+            },
+            {
+              "text": "I'll have the steak, please.",
+              "meaning": {
+                "vi": "Cho mình món bít tết.",
+                "en": "I'll have the steak, please."
+              },
+              "completes": [
+                "order"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Is everything okay with your meal?",
+            "meaning": {
+              "vi": "Món ăn có vừa miệng không ạ?",
+              "en": "Is everything okay with your meal?"
+            }
+          },
+          "replies": [
+            {
+              "text": "Yes, it's delicious. Can I have the bill, please?",
+              "meaning": {
+                "vi": "Ngon lắm. Cho mình xin hoá đơn nhé.",
+                "en": "Yes, it's delicious. Can I have the bill, please?"
+              },
+              "completes": [
+                "bill"
+              ]
+            },
+            {
+              "text": "Yes, thank you.",
+              "meaning": {
+                "vi": "Vâng, cảm ơn.",
+                "en": "Yes, thank you."
+              },
+              "completes": []
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Of course. I'll bring it right away.",
+            "meaning": {
+              "vi": "Vâng. Mình mang ra ngay ạ.",
+              "en": "Of course. I'll bring it right away."
+            }
+          },
+          "replies": []
+        }
+      ]
+    },
+    {
+      "id": "en.directions",
+      "emoji": "🧭",
+      "title": {
+        "vi": "Hỏi đường",
+        "en": "Asking for Directions"
+      },
+      "scenario": {
+        "vi": "Bạn bị lạc và hỏi đường người đi đường.",
+        "en": "You're lost and ask a passer-by for directions."
+      },
+      "partner": "Sam",
+      "isPremium": true,
+      "tasks": [
+        {
+          "id": "ask",
+          "text": "Ask for directions.",
+          "meaning": {
+            "vi": "Hỏi đường.",
+            "en": "Ask for directions."
+          }
+        },
+        {
+          "id": "far",
+          "text": "Ask how far it is.",
+          "meaning": {
+            "vi": "Hỏi bao xa.",
+            "en": "Ask how far it is."
+          }
+        },
+        {
+          "id": "repeat",
+          "text": "Check the way.",
+          "meaning": {
+            "vi": "Xác nhận lại đường đi.",
+            "en": "Check the way."
+          }
+        },
+        {
+          "id": "thanks",
+          "text": "Thank them.",
+          "meaning": {
+            "vi": "Cảm ơn họ.",
+            "en": "Thank them."
+          }
+        }
+      ],
+      "turns": [
+        {
+          "partner": {
+            "text": "Hi! You look lost. Can I help you?",
+            "meaning": {
+              "vi": "Chào bạn! Trông bạn như bị lạc. Mình giúp được gì không?",
+              "en": "Hi! You look lost. Can I help you?"
+            }
+          },
+          "replies": [
+            {
+              "text": "Yes, please. Where is the train station?",
+              "meaning": {
+                "vi": "Vâng. Ga tàu ở đâu ạ?",
+                "en": "Yes, please. Where is the train station?"
+              },
+              "completes": [
+                "ask"
+              ]
+            },
+            {
+              "text": "How do I get to the museum?",
+              "meaning": {
+                "vi": "Đến bảo tàng đi thế nào ạ?",
+                "en": "How do I get to the museum?"
+              },
+              "completes": [
+                "ask"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "Go straight and turn left at the bank.",
+            "meaning": {
+              "vi": "Đi thẳng rồi rẽ trái ở ngân hàng.",
+              "en": "Go straight and turn left at the bank."
+            }
+          },
+          "replies": [
+            {
+              "text": "Is it far from here?",
+              "meaning": {
+                "vi": "Có xa đây không ạ?",
+                "en": "Is it far from here?"
+              },
+              "completes": [
+                "far"
+              ]
+            },
+            {
+              "text": "Turn left at the bank?",
+              "meaning": {
+                "vi": "Rẽ trái ở ngân hàng ạ?",
+                "en": "Turn left at the bank?"
+              },
+              "completes": [
+                "repeat"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "It's about five minutes on foot.",
+            "meaning": {
+              "vi": "Đi bộ khoảng năm phút.",
+              "en": "It's about five minutes on foot."
+            }
+          },
+          "replies": [
+            {
+              "text": "Thank you so much!",
+              "meaning": {
+                "vi": "Cảm ơn bạn nhiều!",
+                "en": "Thank you so much!"
+              },
+              "completes": [
+                "thanks"
+              ]
+            },
+            {
+              "text": "Great, thanks for your help.",
+              "meaning": {
+                "vi": "Tốt quá, cảm ơn đã giúp.",
+                "en": "Great, thanks for your help."
+              },
+              "completes": [
+                "thanks"
+              ]
+            }
+          ]
+        },
+        {
+          "partner": {
+            "text": "You're welcome. Have a nice day!",
+            "meaning": {
+              "vi": "Không có gì. Chúc bạn một ngày vui!",
+              "en": "You're welcome. Have a nice day!"
+            }
+          },
+          "replies": []
+        }
+      ]
+    }
+  ]
+}
