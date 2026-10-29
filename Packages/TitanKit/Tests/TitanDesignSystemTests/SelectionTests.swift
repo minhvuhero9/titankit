@@ -1,3 +1,4 @@
+import CoreGraphics
 import XCTest
 @testable import TitanDesignSystem
 
@@ -43,5 +44,25 @@ final class SelectionTests: XCTestCase {
         XCTAssertEqual(set, [1, 2])
         set = TKSelection.toggling(1, in: set)
         XCTAssertEqual(set, [2])
+    }
+}
+
+final class TKFlowLayoutTests: XCTestCase {
+    private let chip = CGSize(width: 100, height: 40)
+
+    func testWrapsWhenTheLineIsFull() {
+        let result = TKFlowLayout.arrange([chip, chip, chip], width: 250, spacing: 10, lineSpacing: 12)
+        XCTAssertEqual(result.origins, [CGPoint(x: 0, y: 0), CGPoint(x: 110, y: 0), CGPoint(x: 0, y: 52)])
+        XCTAssertEqual(result.size, CGSize(width: 210, height: 92))
+    }
+
+    func testTooWideViewGetsItsOwnLine() {
+        let wide = CGSize(width: 400, height: 40)
+        let result = TKFlowLayout.arrange([wide, chip], width: 300, spacing: 10, lineSpacing: 12)
+        XCTAssertEqual(result.origins, [CGPoint(x: 0, y: 0), CGPoint(x: 0, y: 52)])
+    }
+
+    func testNothingTakesNoSpace() {
+        XCTAssertEqual(TKFlowLayout.arrange([], width: 300, spacing: 10, lineSpacing: 12).size, .zero)
     }
 }

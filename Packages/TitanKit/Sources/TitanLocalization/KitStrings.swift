@@ -16,6 +16,7 @@ public enum KitStrings {
     public static let clear = "kit.common.clear"
     public static let previous = "kit.common.previous"
     public static let next = "kit.common.next"
+    public static let continueAction = "kit.common.continue"
     public static let currentPlan = "kit.purchase.currentPlan"
 
     public enum Onboarding {
@@ -83,6 +84,18 @@ public enum KitStrings {
         public static let confirmTitle = "kit.deleteAccount.confirmTitle"
         public static let action = "kit.deleteAccount.action"
         public static let signInAgain = "kit.deleteAccount.signInAgain"
+    }
+
+    public enum SignUp {
+        public static let nameTitle = "kit.signUp.name.title"
+        public static let nameLabel = "kit.signUp.name.label"
+        /// The name the user just gave.
+        public static let emailTitle = "kit.signUp.email.title %@"
+        public static let passwordTitle = "kit.signUp.password.title"
+        public static let confirmPassword = "kit.signUp.password.confirm"
+        public static let passwordMismatch = "kit.signUp.error.mismatch"
+        public static let submit = "kit.signUp.submit"
+        public static let creating = "kit.signUp.creating"
     }
 
     public enum Paywall {
