@@ -53,57 +53,83 @@ struct ProgressScreen: View {
 
     private var insights: some View {
         VStack(spacing: Spacing.md) {
-            HStack(spacing: Spacing.sm) {
-                StatTile(emoji: "⚡️", value: activity.longestStreak, label: "progress.longestStreak")
-                StatTile(emoji: "🔥", value: activity.currentStreak, label: "progress.currentStreak")
-                StatTile(emoji: "📅", value: activity.learningDays, label: "progress.learningDays")
-            }
-            card(title: "progress.growth") {
-                RadarChart(axes: growthAxes)
-                    .frame(height: 260)
-            }
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Spacing.sm), count: 3), spacing: Spacing.sm) {
-                StatTile(value: activity.stats.lessonsPassed, label: "progress.lessonsPassed")
-                StatTile(value: activity.stats.perfectLessons, label: "progress.perfectLessons")
-                StatTile(value: activity.stats.wordsSpoken, label: "progress.wordsSpoken")
-                StatTile(value: activity.stats.sentencesSpoken, label: "progress.sentencesSpoken")
-                StatTile(value: activity.stats.audioListened, label: "progress.audioListened")
-                StatTile(value: activity.stats.roleplaysFinished, label: "progress.challenges")
-            }
-            card(title: "progress.history") {
-                TKCalendar(selection: $selectedDay) { date in
-                    activity.learned(on: date) ? 1 : nil
-                }
-            }
-            card(title: "progress.timeSpent") {
-                VStack(spacing: Spacing.sm) {
-                    TKPeriodHeader(
-                        title: Text(weekTitle),
-                        onPrevious: previousWeek,
-                        onNext: weekOffset < 0 ? nextWeek : nil
-                    )
-                    Chart(weekDays, id: \.self) { day in
-                        BarMark(
-                            x: .value("day", day, unit: .day),
-                            y: .value("minutes", activity.minutes(on: day))
-                        )
-                        .foregroundStyle(theme.colors.actionPrimary.color)
-                        .cornerRadius(6)
-                    }
-                    .chartXAxis {
-                        AxisMarks(values: .stride(by: .day)) { _ in
-                            AxisValueLabel(format: .dateTime.weekday(.narrow))
-                        }
-                    }
-                    .frame(height: 180)
-                    Text("progress.minutesNote")
-                        .tkTextStyle(.caption)
-                        .foregroundStyle(theme.colors.textSecondary.color)
-                }
-            }
+            streaks
+            growthCard
+            counters
+            historyCard
+            timeCard
         }
         .padding(.horizontal, Spacing.lg)
         .padding(.bottom, Spacing.lg)
+    }
+
+    private var streaks: some View {
+        HStack(spacing: Spacing.sm) {
+            StatTile(emoji: "⚡️", value: activity.longestStreak, label: "progress.longestStreak")
+            StatTile(emoji: "🔥", value: activity.currentStreak, label: "progress.currentStreak")
+            StatTile(emoji: "📅", value: activity.learningDays, label: "progress.learningDays")
+        }
+    }
+
+    private var growthCard: some View {
+        card(title: "progress.growth") {
+            RadarChart(axes: growthAxes)
+                .frame(height: 260)
+        }
+    }
+
+    private var counters: some View {
+        let columns = Array(repeating: GridItem(.flexible(), spacing: Spacing.sm), count: 3)
+        return LazyVGrid(columns: columns, spacing: Spacing.sm) {
+            StatTile(value: activity.stats.lessonsPassed, label: "progress.lessonsPassed")
+            StatTile(value: activity.stats.perfectLessons, label: "progress.perfectLessons")
+            StatTile(value: activity.stats.wordsSpoken, label: "progress.wordsSpoken")
+            StatTile(value: activity.stats.sentencesSpoken, label: "progress.sentencesSpoken")
+            StatTile(value: activity.stats.audioListened, label: "progress.audioListened")
+            StatTile(value: activity.stats.roleplaysFinished, label: "progress.challenges")
+        }
+    }
+
+    private var historyCard: some View {
+        card(title: "progress.history") {
+            TKCalendar(selection: $selectedDay) { date in dayProgress(date) }
+        }
+    }
+
+    /// A full ring on the days with learning.
+    private func dayProgress(_ date: Date) -> Double? {
+        activity.learned(on: date) ? 1.0 : nil
+    }
+
+    private var timeCard: some View {
+        let next: (() -> Void)? = weekOffset < 0 ? { weekOffset += 1 } : nil
+        return card(title: "progress.timeSpent") {
+            VStack(spacing: Spacing.sm) {
+                TKPeriodHeader(title: Text(verbatim: weekTitle), onPrevious: { weekOffset -= 1 }, onNext: next)
+                minutesChart
+                Text("progress.minutesNote")
+                    .tkTextStyle(.caption)
+                    .foregroundStyle(theme.colors.textSecondary.color)
+            }
+        }
+    }
+
+    private var minutesChart: some View {
+        let brand: Color = theme.colors.actionPrimary.color
+        return Chart(weekDays, id: \.self) { (day: Date) in
+            BarMark(
+                x: .value("day", day, unit: .day),
+                y: .value("minutes", activity.minutes(on: day))
+            )
+            .foregroundStyle(brand)
+            .cornerRadius(6)
+        }
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day)) { _ in
+                AxisValueLabel(format: .dateTime.weekday(.narrow))
+            }
+        }
+        .frame(height: 180)
     }
 
     /// Five things the app can measure; the Figma chart's intonation and word stress need a
@@ -128,10 +154,6 @@ struct ProgressScreen: View {
         guard let start = monday.dateInterval(of: .weekOfYear, for: anchor)?.start else { return [] }
         return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: start) }
     }
-
-    private func previousWeek() { weekOffset -= 1 }
-
-    private func nextWeek() { weekOffset += 1 }
 
     private var weekTitle: String {
         guard let first = weekDays.first, let last = weekDays.last else { return "" }
