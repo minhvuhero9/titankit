@@ -30,7 +30,7 @@ final class AppConfigTests: XCTestCase {
     func testPaywallSellsThePremiumProducts() {
         XCTAssertEqual(AppConfig.paywall.productIds, AppConfig.purchase.productIds)
         let highlighted = AppConfig.paywall.highlightedProductId
-        XCTAssertTrue(highlighted.map(AppConfig.purchase.productIds.contains) ?? false)
+        XCTAssertTrue(AppConfig.purchase.productIds.contains(highlighted ?? ""))
         XCTAssertEqual(AppConfig.paywall.termsURL, AppConfig.termsURL)
         XCTAssertEqual(AppConfig.paywall.privacyURL, AppConfig.privacyURL)
     }
