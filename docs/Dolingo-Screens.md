@@ -80,29 +80,29 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 
 | # | Màn hình | Node | Trạng thái |
 | --- | --- | --- | --- |
-| 48 | chats (roleplay & AI chatbot) | `38446:43357` | Chưa làm |
-| 49 | roleplay - meeting new friends | `38449:45077` | Chưa làm |
-| 50 | roleplay chat | `38450:45605` | Chưa làm |
-| 51 | roleplay chat - translate chat | `38456:35372` | Chưa làm |
-| 52 | roleplay chat - hint | `38456:35531` | Chưa làm |
-| 53 | roleplay chat - speak with active hint | `38456:35755` | Chưa làm |
-| 54 | roleplay chat - chat sent | `38456:35923` | Chưa làm |
-| 55 | roleplay chat - tasks & goal | `38456:36146` | Chưa làm |
-| 56 | roleplay chat - settings | `38456:36481` | Chưa làm |
-| 57 | roleplay chat - continue chat & speak | `38456:36945` | Chưa làm |
-| 58 | roleplay chat - tasks & goal achieved | `38456:37136` | Chưa làm |
-| 59 | roleplay chat - tasks & goal achieved modal | `38456:37337` | Chưa làm |
-| 60 | create coleplay free trial modal | `38463:39694` | Chưa làm |
-| 61 | create roleplay blank form | `38457:37773` | Chưa làm |
-| 62 | create roleplay filled form | `38458:37930` | Chưa làm |
-| 63 | create roleplay - generating scenario | `38458:38033` | Chưa làm |
-| 64 | roleplay chat | `38458:38117` | Chưa làm |
-| 65 | my roleplay | `38459:38355` | Chưa làm |
-| 66 | my roleplay - more options menu | `38459:38594` | Chưa làm |
-| 67 | my roleplay - delete my roleplay | `38459:38791` | Chưa làm |
-| 68 | chat with dolingo - type message | `38459:38999` | Chưa làm |
-| 69 | chat with dolingo | `38459:39244` | Chưa làm |
-| 70 | premium content modal | `38459:39897` | Chưa làm |
+| 48 | chats (roleplay & AI chatbot) | `38446:43357` | Đã có (`ChatsScreen`) |
+| 49 | roleplay - meeting new friends | `38449:45077` | Đã có (`RoleplayDetailScreen`) |
+| 50 | roleplay chat | `38450:45605` | Đã có (`RoleplayChatScreen`) |
+| 51 | roleplay chat - translate chat | `38456:35372` | Đã có (`RoleplayChatScreen`) |
+| 52 | roleplay chat - hint | `38456:35531` | Đã có (`RoleplayChatScreen`) |
+| 53 | roleplay chat - speak with active hint | `38456:35755` | Đã có (`RoleplayChatScreen`) |
+| 54 | roleplay chat - chat sent | `38456:35923` | Đã có (`RoleplayChatScreen`) |
+| 55 | roleplay chat - tasks & goal | `38456:36146` | Đã có (`RoleplayChatScreen`) |
+| 56 | roleplay chat - settings | `38456:36481` | Chưa làm (cài đặt trong roleplay) |
+| 57 | roleplay chat - continue chat & speak | `38456:36945` | Đã có (`RoleplayChatScreen`) |
+| 58 | roleplay chat - tasks & goal achieved | `38456:37136` | Đã có (`RoleplayChatScreen`) |
+| 59 | roleplay chat - tasks & goal achieved modal | `38456:37337` | Đã có (`RoleplayChatScreen`) |
+| 60 | create coleplay free trial modal | `38463:39694` | Chưa làm (cần AI backend) |
+| 61 | create roleplay blank form | `38457:37773` | Chưa làm (cần AI backend) |
+| 62 | create roleplay filled form | `38458:37930` | Chưa làm (cần AI backend) |
+| 63 | create roleplay - generating scenario | `38458:38033` | Chưa làm (cần AI backend) |
+| 64 | roleplay chat | `38458:38117` | Chưa làm (cần AI backend) |
+| 65 | my roleplay | `38459:38355` | Chưa làm (cần AI backend) |
+| 66 | my roleplay - more options menu | `38459:38594` | Chưa làm (cần AI backend) |
+| 67 | my roleplay - delete my roleplay | `38459:38791` | Chưa làm (cần AI backend) |
+| 68 | chat with dolingo - type message | `38459:38999` | Chưa làm (cần AI backend) |
+| 69 | chat with dolingo | `38459:39244` | Chưa làm (cần AI backend) |
+| 70 | premium content modal | `38459:39897` | Đã có (`ChatsScreen`) |
 
 ## Speak: sổ tay câu và luyện nói (71–82)
 
@@ -164,7 +164,7 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 ## Ghi chú
 
 - Màn 89–91 và 101–103 (chọn phương thức thanh toán, nhập thẻ) không làm: gói Premium là hàng số, App Store bắt buộc bán qua In-App Purchase. Sheet thanh toán của Apple thay cho các màn này; màn 92 (nâng cấp thành công) vẫn làm.
-- Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/<ngôn ngữ>.json` (tiếng Anh và tiếng Tây Ban Nha, mỗi khoá 3 chương, 15 bài, 60 câu, nghĩa tiếng Việt và tiếng Anh). Ngôn ngữ khác hiện "sắp ra mắt". Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
+- Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/course-<ngôn ngữ>.json` (tiếng Anh và tiếng Tây Ban Nha, mỗi khoá 3 chương, 15 bài, 60 câu, nghĩa tiếng Việt và tiếng Anh). Ngôn ngữ khác hiện "sắp ra mắt". Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
 - Thanh tab có 5 mục như Figma; Chats, Speak và My Progress đang là trang "sắp ra mắt", Account là màn Cài đặt.
 - Luyện nói trong bài học dùng `TitanSpeech` (nhận dạng giọng nói của Apple, chấm theo từng từ). Màn hoàn thành mới có Thời gian và Độ chính xác; sáu vòng điểm (Nghe, Phát âm, Lưu loát, Ngữ điệu, Trọng âm, Ngữ pháp) cần dịch vụ chấm phát âm riêng. Cài đặt trong bài (màn 42) chưa làm.
-- Roleplay và chatbot AI cần backend. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
+- Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-<ngôn ngữ>.json` (6 tình huống cho tiếng Anh và tiếng Tây Ban Nha, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. Tạo roleplay bằng AI, "My Roleplay" và "Chat with Dolingo" (màn 60–69) cần một backend AI: app không gọi thẳng API AI để không lộ khoá. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
