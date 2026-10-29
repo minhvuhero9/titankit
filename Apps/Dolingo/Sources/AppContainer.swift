@@ -8,6 +8,7 @@ import TitanNavigation
 import TitanNetworking
 import TitanPurchase
 import TitanRemoteConfig
+import TitanSpeech
 import TitanStorage
 
 /// Composition Root: the one place that builds services and picks adapters.
@@ -27,6 +28,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let purchase: any PurchaseService
     let flow: AppFlow
     let learning: LearningStore
+    let speech: any SpeechRecognizer
     /// One navigation stack per tab.
     let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -43,7 +45,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         auth: (any AuthService)? = nil,
         remoteConfig: (any RemoteConfigService)? = nil,
         purchase: (any PurchaseService)? = nil,
-        courses: any CourseRepository = BundledCourseRepository()
+        courses: any CourseRepository = BundledCourseRepository(),
+        speech: (any SpeechRecognizer)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -75,6 +78,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
         flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
         learning = LearningStore(repository: courses, preferences: preferences)
+        self.speech = speech ?? AppleSpeechRecognizer()
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -111,7 +115,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         case .myCourses:
             MyCoursesSheet(learning: learning) { [router] in router.dismiss() }
         case let .lesson(id):
-            LessonScreen(learning: learning, lessonId: id) { [router] in router.pop() }
+            LessonScreen(learning: learning, speech: speech, lessonId: id) { [router] in router.dismiss() }
         }
     }
 
@@ -140,7 +144,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             networkMonitor: NetworkMonitor(startMonitoring: false),
             languageDefaults: UserDefaults(suiteName: "preview") ?? .standard,
             remoteConfig: MockRemoteConfig(),
-            purchase: MockPurchaseService()
+            purchase: MockPurchaseService(),
+            speech: MockSpeechRecognizer(transcripts: ["hello"])
         )
     }
 

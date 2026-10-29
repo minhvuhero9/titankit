@@ -3,18 +3,20 @@ import SwiftUI
 import TitanDesignSystem
 import TitanIcons
 import TitanLocalization
+import TitanSpeech
 
-/// Figma "learn a language - learn with tutor": close, progress, the tutor, the phrase with its
-/// meaning, "Listen" and Continue. Leaving early asks first; the end shows "Lesson completed".
-/// Speaking practice with a score comes with the speech recognition step.
+/// Figma "learn a language": the tutor says a phrase, the user taps the microphone and says it
+/// back, and gets "Perfect!", "Almost there!", "Oops.. Try again!" or "We can't hear you!".
+/// Leaving early asks first; the end shows "Lesson completed" with time and accuracy.
 struct LessonScreen: View {
     @ObservedObject var learning: LearningStore
+    let speech: any SpeechRecognizer
     let lessonId: String
     let onClose: () -> Void
 
     var body: some View {
         if case let .loaded(course?) = learning.course, let lesson = course.lessons.first(where: { $0.id == lessonId }) {
-            LessonPlayer(lesson: lesson, language: course.language, onClose: onClose) {
+            LessonPlayer(lesson: lesson, language: course.language, speech: speech, onClose: onClose) {
                 learning.complete(lesson)
                 onClose()
             }
@@ -26,7 +28,6 @@ struct LessonScreen: View {
 }
 
 private struct LessonPlayer: View {
-    let language: String
     let onClose: () -> Void
     let onComplete: () -> Void
 
@@ -36,11 +37,16 @@ private struct LessonPlayer: View {
     @Environment(\.theme) private var theme
     @Environment(\.locale) private var locale
 
-    init(lesson: Lesson, language: String, onClose: @escaping () -> Void, onComplete: @escaping () -> Void) {
-        self.language = language
+    init(
+        lesson: Lesson,
+        language: String,
+        speech: any SpeechRecognizer,
+        onClose: @escaping () -> Void,
+        onComplete: @escaping () -> Void
+    ) {
         self.onClose = onClose
         self.onComplete = onComplete
-        _viewModel = StateObject(wrappedValue: LessonViewModel(lesson: lesson))
+        _viewModel = StateObject(wrappedValue: LessonViewModel(lesson: lesson, language: language, speech: speech))
     }
 
     var body: some View {
@@ -85,9 +91,8 @@ private struct LessonPlayer: View {
                 .foregroundStyle(theme.colors.textSecondary.color)
             if let phrase = viewModel.phrase {
                 VStack(spacing: Spacing.xs) {
-                    Text(verbatim: phrase.text)
+                    phraseText(phrase)
                         .tkTextStyle(.title2)
-                        .foregroundStyle(theme.colors.textPrimary.color)
                     Text(verbatim: phrase.meaning.localized(languageCode))
                         .tkTextStyle(.body)
                         .foregroundStyle(theme.colors.textSecondary.color)
@@ -96,23 +101,122 @@ private struct LessonPlayer: View {
                 .padding(Spacing.lg)
                 .frame(maxWidth: .infinity)
                 .background(theme.colors.surfaceCard.color, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(alignment: .top) { resultBadge.offset(y: -Spacing.lg) }
                 .id(viewModel.index)
                 .transition(.opacity)
                 TKButton("lesson.listen", style: .light, size: .medium, shape: .pill, leadingIcon: Image(tk: .volumeUp)) {
-                    speaker.say(phrase.text, language: language)
+                    say(phrase)
                 }
+                .disabled(viewModel.attempt == .listening)
             }
             Spacer()
-            TKButton(Text.kit(KitStrings.continueAction, locale: locale), shape: .pill) {
-                withAnimation { viewModel.next() }
-            }
+            controls
         }
         .padding(Spacing.lg)
         .onChange(of: viewModel.index) { _ in
-            if let phrase = viewModel.phrase { speaker.say(phrase.text, language: language) }
+            if let phrase = viewModel.phrase { say(phrase) }
         }
         .onAppear {
-            if let phrase = viewModel.phrase { speaker.say(phrase.text, language: language) }
+            if let phrase = viewModel.phrase { say(phrase) }
+        }
+    }
+
+    /// Microphone while practising; Continue once the phrase passed; Skip after a miss.
+    @ViewBuilder
+    private var controls: some View {
+        if viewModel.canContinue {
+            if viewModel.isMicBlocked {
+                Text("lesson.micBlocked")
+                    .tkTextStyle(.caption)
+                    .foregroundStyle(theme.colors.textSecondary.color)
+                    .multilineTextAlignment(.center)
+            }
+            TKButton(Text.kit(KitStrings.continueAction, locale: locale), shape: .pill) {
+                withAnimation { viewModel.next() }
+            }
+        } else {
+            ZStack(alignment: .trailing) {
+                MicrophoneButton(isListening: viewModel.attempt == .listening, ringColor: ringColor) {
+                    if viewModel.attempt == .listening {
+                        viewModel.stopListening()
+                    } else {
+                        speaker.stop()
+                        Task { await viewModel.speak() }
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                if viewModel.score != nil {
+                    Button {
+                        withAnimation { viewModel.next() }
+                    } label: {
+                        Text("lesson.skip")
+                            .tkTextStyle(.headline)
+                            .foregroundStyle(theme.colors.textSecondary.color)
+                    }
+                }
+            }
+        }
+    }
+
+    /// The phrase, with each word green once said or red when missed.
+    private func phraseText(_ phrase: Phrase) -> Text {
+        guard let score = viewModel.score, score.verdict != .notHeard else {
+            return Text(verbatim: phrase.text).foregroundColor(theme.colors.textPrimary.color)
+        }
+        return score.words.enumerated().reduce(Text(verbatim: "")) { text, item in
+            let color = item.element.isMatched ? theme.colors.feedbackSuccess : theme.colors.feedbackError
+            let word = Text(verbatim: (item.offset == 0 ? "" : " ") + item.element.text).foregroundColor(color.color)
+            return text + word
+        }
+    }
+
+    /// Figma result bubble: an emoji over "Perfect! (100%)" and the like.
+    @ViewBuilder
+    private var resultBadge: some View {
+        if let score = viewModel.score {
+            VStack(spacing: Spacing.xxs) {
+                Text(verbatim: Self.emoji(score.verdict))
+                    .font(.system(size: 28))
+                    .accessibilityHidden(true)
+                Self.verdictText(score)
+                    .tkTextStyle(.headline)
+                    .foregroundStyle(theme.colors.textPrimary.color)
+            }
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.xs)
+            .background(theme.colors.surfaceBackground.color, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .shadow(color: .black.opacity(0.08), radius: 8, y: 2)
+            .transition(.scale.combined(with: .opacity))
+        }
+    }
+
+    private var ringColor: Color {
+        switch viewModel.score?.verdict {
+        case .perfect?, .almostThere?: theme.colors.feedbackSuccess.color
+        case .tryAgain?: theme.colors.feedbackError.color
+        case .notHeard?, nil: theme.colors.border.color
+        }
+    }
+
+    private func say(_ phrase: Phrase) {
+        speaker.say(phrase.text, language: viewModel.language)
+    }
+
+    static func emoji(_ verdict: PronunciationScore.Verdict) -> String {
+        switch verdict {
+        case .perfect: "😄"
+        case .almostThere: "🙂"
+        case .tryAgain: "😟"
+        case .notHeard: "😶"
+        }
+    }
+
+    static func verdictText(_ score: PronunciationScore) -> Text {
+        switch score.verdict {
+        case .perfect: Text("lesson.result.perfect \(score.percent)")
+        case .almostThere: Text("lesson.result.almost \(score.percent)")
+        case .tryAgain: Text("lesson.result.tryAgain")
+        case .notHeard: Text("lesson.result.notHeard")
         }
     }
 
@@ -128,8 +232,13 @@ private struct LessonPlayer: View {
             HStack(spacing: Spacing.md) {
                 statCard(title: Text("lesson.completed.time"), value: LessonViewModel.formatted(viewModel.duration),
                          color: theme.colors.feedbackSuccess)
-                statCard(title: Text("lesson.completed.phrases"), value: "\(viewModel.lesson.phrases.count)",
-                         color: theme.colors.actionPrimary)
+                if let accuracy = viewModel.accuracy {
+                    statCard(title: Text("lesson.completed.accuracy"), value: "\(Int((accuracy * 100).rounded()))%",
+                             color: theme.colors.feedbackError)
+                } else {
+                    statCard(title: Text("lesson.completed.phrases"), value: "\(viewModel.lesson.phrases.count)",
+                             color: theme.colors.actionPrimary)
+                }
             }
             Spacer()
             TKButton(Text.kit(KitStrings.continueAction, locale: locale), shape: .pill, action: onComplete)
@@ -166,11 +275,65 @@ private struct LessonPlayer: View {
 final class PhraseSpeaker {
     private let synthesizer = AVSpeechSynthesizer()
 
+    func stop() {
+        synthesizer.stopSpeaking(at: .immediate)
+    }
+
     func say(_ text: String, language: String) {
         synthesizer.stopSpeaking(at: .immediate)
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: language)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9
         synthesizer.speak(utterance)
+    }
+}
+
+/// Figma microphone: a brand circle, a ring around it that turns while listening and takes the
+/// result colour afterwards, and "Tap to speak" / "Listening..." under it.
+private struct MicrophoneButton: View {
+    let isListening: Bool
+    let ringColor: Color
+    let action: () -> Void
+
+    @State private var turn = false
+    @Environment(\.theme) private var theme
+
+    private var label: LocalizedStringKey {
+        isListening ? "lesson.listening" : "lesson.tapToSpeak"
+    }
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: Spacing.xs) {
+                ZStack {
+                    Circle()
+                        .trim(from: 0, to: 0.75)
+                        .stroke(isListening ? theme.colors.actionPrimary.color : ringColor,
+                                style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                        .rotationEffect(.degrees(turn ? 360 : 135))
+                        .frame(width: 104, height: 104)
+                    Circle()
+                        .fill(theme.gradientPrimary.linearGradient)
+                        .frame(width: 80, height: 80)
+                    Image(tk: .voice, style: .bold)
+                        .renderingMode(.template)
+                        .resizable().scaledToFit()
+                        .frame(width: 32, height: 32)
+                        .foregroundStyle(theme.colors.actionOnPrimary.color)
+                }
+                Text(label)
+                    .tkTextStyle(.caption)
+                    .foregroundStyle(theme.colors.textSecondary.color)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(label))
+        .onChange(of: isListening) { listening in
+            if listening {
+                withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) { turn = true }
+            } else {
+                withAnimation(.default) { turn = false }
+            }
+        }
     }
 }

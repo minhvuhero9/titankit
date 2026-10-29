@@ -1,0 +1,40 @@
+{
+  "sourceLanguage": "vi",
+  "version": "1.0",
+  "strings": {
+    "NSMicrophoneUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo listens while you practise speaking so it can score your pronunciation."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo nghe bạn nói khi luyện phát âm để chấm điểm phát âm của bạn."
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo turns your speech into text to check your pronunciation."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo chuyển giọng nói của bạn thành chữ để kiểm tra phát âm."
+          }
+        }
+      }
+    }
+  }
+}

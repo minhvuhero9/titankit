@@ -7,7 +7,7 @@ let bundlePrefix = "com.titanstudio"
 let kitModules = [
     "TitanCore", "TitanNetworking", "TitanStorage",
     "TitanIcons", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig",
-    "TitanPurchase", "TitanFeatures",
+    "TitanPurchase", "TitanSpeech", "TitanFeatures",
 ]
 
 let project = Project(
@@ -37,6 +37,9 @@ let project = Project(
                 "TitanAPIBaseURL": "$(API_BASE_URL)",
                 "CFBundleDevelopmentRegion": "vi",
                 "CFBundleLocalizations": ["vi", "en"],
+                // Speaking practice in lessons (TitanSpeech).
+                "NSMicrophoneUsageDescription": "Dolingo listens while you practise speaking so it can score your pronunciation.",
+                "NSSpeechRecognitionUsageDescription": "Dolingo turns your speech into text to check your pronunciation.",
                 "CFBundleURLTypes": [
                     ["CFBundleURLName": "\(bundlePrefix).dolingo", "CFBundleURLSchemes": ["dolingo"]],
                 ],
@@ -53,7 +56,7 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .default,
             sources: ["Tests/**"],
-            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanPurchase", "TitanFeatures"].map { .external(name: $0) }
+            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanPurchase", "TitanSpeech", "TitanFeatures"].map { .external(name: $0) }
         ),
     ],
     schemes: ["Dev", "Staging", "Prod"].map { env in

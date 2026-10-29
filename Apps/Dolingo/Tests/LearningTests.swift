@@ -1,5 +1,6 @@
 import XCTest
 import TitanCore
+import TitanSpeech
 import TitanStorage
 @testable import Dolingo
 
@@ -83,18 +84,53 @@ final class LessonViewModelTests: XCTestCase {
         Phrase(text: "Good morning.", meaning: ["vi": "Chào buổi sáng."]),
     ])
 
-    func testStepsThroughThePhrasesAndTimesTheLesson() {
+    func testPassingPhrasesTimesTheLessonAndAveragesTheScores() async {
         var clock = Date(timeIntervalSince1970: 0)
-        let viewModel = LessonViewModel(lesson: lesson) { clock }
+        let speech = MockSpeechRecognizer(transcripts: ["hello", "good evening"])
+        let viewModel = LessonViewModel(lesson: lesson, language: "en", speech: speech) { clock }
         XCTAssertEqual(viewModel.phrase?.text, "Hello!")
-        XCTAssertEqual(viewModel.progress, 0)
+        XCTAssertFalse(viewModel.canContinue)
+
+        await viewModel.speak()
+        XCTAssertEqual(viewModel.score?.verdict, .perfect)
+        XCTAssertTrue(viewModel.canContinue)
         viewModel.next()
         XCTAssertEqual(viewModel.progress, 0.5)
+        XCTAssertEqual(viewModel.attempt, .idle)
+
+        await viewModel.speak()
+        XCTAssertEqual(viewModel.score?.verdict, .tryAgain)
+        XCTAssertFalse(viewModel.canContinue)
         clock = Date(timeIntervalSince1970: 145)
         viewModel.next()
         XCTAssertTrue(viewModel.isFinished)
         XCTAssertEqual(viewModel.progress, 1)
         XCTAssertEqual(LessonViewModel.formatted(viewModel.duration), "2:25")
+        XCTAssertEqual(viewModel.accuracy ?? -1, 0.75, accuracy: 0.001)
+        XCTAssertEqual(speech.requestedLanguages, ["en", "en"])
+    }
+
+    func testRetryKeepsTheBestScore() async {
+        let speech = MockSpeechRecognizer(transcripts: ["", "hello"])
+        let viewModel = LessonViewModel(lesson: lesson, language: "en", speech: speech)
+        await viewModel.speak()
+        XCTAssertEqual(viewModel.score?.verdict, .notHeard)
+        await viewModel.speak()
+        XCTAssertEqual(viewModel.score?.verdict, .perfect)
+        viewModel.next()
+        viewModel.next()
+        XCTAssertEqual(viewModel.accuracy ?? -1, 0.5, accuracy: 0.001)
+    }
+
+    func testWithoutMicrophoneTheLessonIsReadOnly() async {
+        let viewModel = LessonViewModel(lesson: lesson, language: "en", speech: MockSpeechRecognizer(isAuthorized: false))
+        await viewModel.speak()
+        XCTAssertTrue(viewModel.isMicBlocked)
+        XCTAssertTrue(viewModel.canContinue)
+        viewModel.next()
+        viewModel.next()
+        XCTAssertTrue(viewModel.isFinished)
+        XCTAssertNil(viewModel.accuracy)
     }
 
     func testMeaningFallsBackToEnglish() {
