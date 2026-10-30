@@ -1,0 +1,30 @@
+import XCTest
+import TitanCore
+@testable import {{ name }}
+
+final class AppConfigTests: XCTestCase {
+    func testReadsTheEnvironmentFromInfoPlist() {
+        let config = AppConfig(infoDictionary: [
+            "TitanAppEnvironment": "staging",
+            "TitanAPIBaseURL": "https://api-staging.example.com",
+            "CFBundleShortVersionString": "1.2.0",
+        ])
+        XCTAssertEqual(config.environment, .staging)
+        XCTAssertEqual(config.apiBaseURL.host, "api-staging.example.com")
+        XCTAssertEqual(config.appVersion, "1.2.0")
+    }
+
+    func testAMisconfiguredBuildFallsBackToDev() {
+        let config = AppConfig(infoDictionary: ["TitanAppEnvironment": "bogus"])
+        XCTAssertEqual(config.environment, .dev)
+        XCTAssertEqual(config.apiBaseURL.host, "api-dev.example.com")
+    }
+
+    @MainActor
+    func testTheContainerStartsInTheDefaultLanguage() {
+        let defaults = UserDefaults(suiteName: "{{ name }}Tests") ?? .standard
+        defaults.removePersistentDomain(forName: "{{ name }}Tests")
+        let container = AppContainer(config: AppConfig(infoDictionary: [:]), languageDefaults: defaults)
+        XCTAssertTrue(AppConfig.languages.contains(container.localization.currentLanguage.code))
+    }
+}

@@ -50,11 +50,14 @@ jobs:
       - name: Build for a free Personal Team
         if: matrix.app == 'Dolingo'
         run: Tools/ci-build-personal-team.sh
+      - name: Make, build and test an app from the NewApp template
+        if: matrix.app == 'Dolingo'
+        run: Tools/ci-test-template.sh
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: ${{ matrix.app }}-log
-          path: build-${{ matrix.app }}*.log
+          path: build-*.log
 
   backend:
     name: dolingo-ai server checks

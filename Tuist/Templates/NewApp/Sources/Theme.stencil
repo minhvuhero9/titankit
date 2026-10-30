@@ -1,0 +1,14 @@
+import TitanDesignSystem
+
+/// {{ name }}'s look. Copy the colours, fonts and radii from the Figma file; anything left
+/// out keeps the kit's base theme.
+enum {{ name }}Theme {
+    static let brand: ThemePatch = {
+        var colors = ColorTokensPatch()
+        colors.actionPrimary = AdaptiveColor(RGBA(hex: 0x5150FF))
+        colors.actionOnPrimary = AdaptiveColor(.white)
+        return ThemePatch(colors: colors)
+    }()
+
+    static let theme = Theme.base.merged(with: brand)
+}

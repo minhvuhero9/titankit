@@ -1,0 +1,32 @@
+import SwiftUI
+import TitanDesignSystem
+import TitanLocalization
+
+@main
+struct {{ name }}App: App {
+    @StateObject private var container = AppContainer(config: .current)
+
+    var body: some Scene {
+        WindowGroup {
+            LocalizedRoot(localization: container.localization) {
+                // Inside LocalizedRoot so the theme picks the font for the chosen language.
+                RootView()
+                    .titanTheme({{ name }}Theme.theme)
+            }
+            .environmentObject(container)
+        }
+    }
+}
+
+/// Redraws everything below when the in-app language changes.
+struct LocalizedRoot<Content: View>: View {
+    @ObservedObject var localization: LocalizationService
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        content
+            .environmentObject(localization)
+            .environment(\.locale, localization.locale)
+            .id(localization.currentLanguage)
+    }
+}

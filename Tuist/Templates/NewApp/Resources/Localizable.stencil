@@ -1,0 +1,38 @@
+{
+  "sourceLanguage": "vi",
+  "strings": {
+    "home.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app runs on TitanKit. Start adding your screens."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ứng dụng đã chạy trên TitanKit. Bắt đầu thêm màn hình của bạn."
+          }
+        }
+      }
+    },
+    "home.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to {{ name }}"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chào mừng tới {{ name }}"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

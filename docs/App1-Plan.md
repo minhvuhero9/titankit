@@ -22,7 +22,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 - [x] Tạo repo `titankit` theo cấu trúc ở [README mục 7](README.md#7-cấu-trúc-repo).
 - [x] Tạo `Packages/TitanKit/Package.swift` với các module.
-- [x] Cấu hình Tuist (`Project.swift`, `Tuist/`). Chưa có `Templates/NewApp` (làm khi bắt đầu App 2).
+- [x] Cấu hình Tuist (`Project.swift`, `Tuist/`) và mẫu `Tuist/Templates/NewApp` (`tuist scaffold NewApp --name App2`).
 - [x] Tạo Dolingo với `Dev`, `Staging`, `Prod` xcconfig và `Secrets.xcconfig` ngoài git.
 - [x] Thêm `.swiftlint.yml`, `CHANGELOG.md`, `.gitignore`.
 - [x] Thiết lập fastlane (`test`, `beta`, `release`) và `fastlane match` ([TestFlight.md](TestFlight.md)).
