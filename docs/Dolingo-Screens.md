@@ -92,14 +92,14 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 57 | roleplay chat - continue chat & speak | `38456:36945` | Đã có (`RoleplayChatScreen`) |
 | 58 | roleplay chat - tasks & goal achieved | `38456:37136` | Đã có (`RoleplayChatScreen`) |
 | 59 | roleplay chat - tasks & goal achieved modal | `38456:37337` | Đã có (`RoleplayChatScreen`) |
-| 60 | create coleplay free trial modal | `38463:39694` | Chưa làm (cần AI backend) |
-| 61 | create roleplay blank form | `38457:37773` | Chưa làm (cần AI backend) |
-| 62 | create roleplay filled form | `38458:37930` | Chưa làm (cần AI backend) |
-| 63 | create roleplay - generating scenario | `38458:38033` | Chưa làm (cần AI backend) |
-| 64 | roleplay chat | `38458:38117` | Chưa làm (cần AI backend) |
-| 65 | my roleplay | `38459:38355` | Chưa làm (cần AI backend) |
-| 66 | my roleplay - more options menu | `38459:38594` | Chưa làm (cần AI backend) |
-| 67 | my roleplay - delete my roleplay | `38459:38791` | Chưa làm (cần AI backend) |
+| 60 | create coleplay free trial modal | `38463:39694` | Đã có (`ChatsScreen`, bảng còn lượt) |
+| 61 | create roleplay blank form | `38457:37773` | Đã có (`CreateRoleplayScreen`) |
+| 62 | create roleplay filled form | `38458:37930` | Đã có (`CreateRoleplayScreen`) |
+| 63 | create roleplay - generating scenario | `38458:38033` | Đã có (`CreateRoleplayScreen`) |
+| 64 | roleplay chat | `38458:38117` | Đã có (`AIRoleplayChatScreen`) |
+| 65 | my roleplay | `38459:38355` | Đã có (`ChatsScreen`, My Roleplay) |
+| 66 | my roleplay - more options menu | `38459:38594` | Đã có (`ChatsScreen`, My Roleplay) |
+| 67 | my roleplay - delete my roleplay | `38459:38791` | Đã có (`ChatsScreen`, My Roleplay) |
 | 68 | chat with dolingo - type message | `38459:38999` | Đã có (`TutorChatScreen`) |
 | 69 | chat with dolingo | `38459:39244` | Đã có (`TutorChatScreen`) |
 | 70 | premium content modal | `38459:39897` | Đã có (`ChatsScreen`) |
@@ -171,4 +171,4 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 - Cài đặt: nhắc học hằng ngày là thông báo đặt ngay trên máy (`ReminderScheduler` trong TitanPush), giờ mặc định lấy từ câu hỏi đăng ký. Email hỗ trợ, trang web trong `AppConfig` đang là chỗ giữ. "Quản lý gói" mở trang đăng ký của App Store; "Khôi phục giao dịch" có cả trong Paywall và Gói & Thanh toán như `Compliance.md` yêu cầu.
 - My Progress: `ActivityStore` đếm trên máy (lưu trong `DolingoKeys.activity`) ngày học, thời gian học, bài học, câu đã nói, số lần nghe, roleplay và 10 huy hiệu. Biểu đồ "Growth Area" dùng 5 trục đo được thật (Bài học, Phát âm, Hội thoại, Sổ tay câu, Đều đặn) thay cho 6 trục của Figma; lịch học chỉ có dạng tháng, thời gian học chỉ có dạng tuần. Hộp chúc mừng chuỗi ngày hiện ở hoạt động đầu tiên trong ngày, hộp huy hiệu hiện khi đạt huy hiệu mới.
 - Speak: sổ tay câu trong `Apps/Dolingo/Resources/Phrasebook/phrasebook-en.json` (7 chủ đề, 56 câu, 3 chủ đề premium). Nghe thường và chậm bằng giọng máy; chấm bằng `PronunciationScore`; câu đã lưu nằm trong `DolingoKeys.savedPhrases`.
-- Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. "Chat with Dolingo" (màn 68–69) chạy qua server AI `Backend/dolingo-ai` (xem [AI.md](modules/AI.md)): app không gọi thẳng API AI để không lộ khoá. Nút robot ở tab Chats mở nó. Tạo roleplay bằng AI và "My Roleplay" (màn 60–67) làm ở đợt sau, cùng server này.
+- Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. "Chat with Dolingo" (màn 68–69) chạy qua server AI `Backend/dolingo-ai` (xem [AI.md](modules/AI.md)): app không gọi thẳng API AI để không lộ khoá. Nút robot ở tab Chats mở nó. Nút "+" mở "Create Roleplay" (màn 60–63): người học điền vai, tình huống, nút ✨ để AI điền từng ô, AI viết nốt phần còn trống và các mục tiêu. Roleplay tạo ra nằm ở "My Roleplay" (65–67, sửa và xoá qua menu ⋮) và chơi với AI (64): AI mở đầu, trả lời theo những gì người học nói, đánh dấu mục tiêu và gợi ý câu tiếp. Người dùng miễn phí được tạo 10 roleplay, đếm trên máy.

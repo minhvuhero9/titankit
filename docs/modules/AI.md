@@ -10,6 +10,7 @@ TitanAI cho app trò chuyện với gia sư AI. App không bao giờ giữ khoá
 - Gửi cả cuộc trò chuyện và thông tin người học (tên, trình độ), nhận câu trả lời chảy về từng đoạn.
 - Đổi lỗi mạng, lỗi server, việc model từ chối trả lời thành `ChatReplyEvent`.
 - `MockChatService` trả lời ngay trên máy, từng từ một, cho preview, test và khi chưa có server.
+- `AIServerClient` gọi các lệnh JSON khác của server (Dolingo dùng cho roleplay tự tạo).
 
 **Không làm:**
 - Không vẽ giao diện và không lưu cuộc trò chuyện (việc của app, Dolingo dùng `TutorChat`).
@@ -47,6 +48,15 @@ Luồng luôn kết thúc bằng `.done`, `.refused` hoặc `.failed`. Thôi đ�
 
 Trả về `text/event-stream`, mỗi dòng `data:` là một JSON: `{"type":"text","text":"..."}`, `{"type":"restart"}`, rồi `{"type":"done"}` hoặc `{"type":"error","code":"refused|busy|unavailable|failed"}`. Mã HTTP 400 khi yêu cầu sai, 401 khi sai khoá.
 
+### Roleplay do người học tạo
+
+Hai lệnh JSON thường (không stream), gọi qua `AIServerClient` trong kit, trả `AIAnswer.answer(value)` hoặc `.refused`:
+
+- `POST /v1/roleplay/draft` với `{ title, myRole, aiRole, scenario, withGoals, learner }`: AI giữ nguyên ô người học đã viết, điền ô trống, chọn emoji, và viết 3–4 mục tiêu (kèm nghĩa tiếng Việt) khi `withGoals` bật. Trả `{ emoji, title, myRole, aiRole, scenario, tasks: [{ text, meaning }] }`.
+- `POST /v1/roleplay/turn` với `{ roleplay: { title, myRole, aiRole, scenario, tasks: [{ id, text }] }, turns, learner }`: `turns` rỗng thì AI mở đầu; sau đó các lượt xen kẽ và kết thúc bằng người học. Trả `{ reply, translation, completedTaskIds, hint, hintTranslation, isFinished }`.
+
+Lỗi: 400 yêu cầu sai, 401 sai khoá, 422 model từ chối, 503 bận, 502 lỗi khác. Server dùng structured outputs (`betaZodOutputFormat`) nên câu trả lời luôn đúng dạng JSON trên.
+
 ## 4. Server `Backend/dolingo-ai`
 
 Cloudflare Worker viết bằng TypeScript, dùng `@anthropic-ai/sdk`:
@@ -79,7 +89,7 @@ AI_CLIENT_KEY = <CLIENT_KEY ở trên>
 ## 5. Giới hạn hiện tại
 
 - `CLIENT_KEY` nằm trong app nên ai bóc app ra cũng lấy được; nó chỉ chặn người gọi ngẫu nhiên. Khi có đăng nhập thật (giai đoạn 4), server sẽ kiểm tra token đăng nhập của người dùng và giới hạn số tin mỗi ngày theo tài khoản.
-- Chưa giới hạn số tin cho người dùng miễn phí. Muốn giới hạn thì thêm đếm theo ngày ở `TutorChat` (trên máy) hoặc ở server (theo tài khoản).
+- Chưa giới hạn số tin chat cho người dùng miễn phí. Lượt tạo roleplay (10 lượt miễn phí) chỉ đếm trên máy, xoá app là đếm lại. Muốn giới hạn thì thêm đếm theo ngày ở `TutorChat` (trên máy) hoặc ở server (theo tài khoản).
 
 ## 6. Test
 
