@@ -134,3 +134,53 @@ final class PasswordResetViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.step, .email)
     }
 }
+
+@MainActor
+final class LinkedAccountsViewModelTests: XCTestCase {
+    private func signedIn() async throws -> MockAuthService {
+        let auth = MockAuthService()
+        _ = try await auth.signIn(.email(email: "demo@titan.app", password: "123456"))
+        return auth
+    }
+
+    func testLinksWithTheProvidersCredential() async throws {
+        let auth = try await signedIn()
+        var asked: [AuthProvider] = []
+        let viewModel = LinkedAccountsViewModel(auth: auth) { provider in
+            asked.append(provider)
+            return .google(idToken: "id", accessToken: "token")
+        }
+        await viewModel.load()
+        XCTAssertEqual(viewModel.linked, [.email])
+        XCTAssertFalse(viewModel.canUnlink(.email))
+        await viewModel.link(.google)
+        XCTAssertEqual(asked, [.google])
+        XCTAssertEqual(viewModel.linked, [.email, .google])
+        XCTAssertEqual(viewModel.lastChange?.provider, .google)
+        XCTAssertTrue(viewModel.canUnlink(.google))
+        await viewModel.unlink(.google)
+        XCTAssertEqual(viewModel.linked, [.email])
+        XCTAssertEqual(viewModel.lastChange?.isLinked, false)
+    }
+
+    func testExplainsWhyLinkingFailed() async throws {
+        let auth = try await signedIn()
+        await auth.markTaken(.apple)
+        let viewModel = LinkedAccountsViewModel(auth: auth) { _ in .apple(idToken: "id", rawNonce: "n", fullName: nil) }
+        await viewModel.load()
+        await viewModel.link(.apple)
+        XCTAssertEqual(viewModel.errorKey, KitStrings.LinkedAccounts.inUse)
+        await viewModel.unlink(.email)
+        XCTAssertEqual(viewModel.errorKey, KitStrings.LinkedAccounts.lastProvider)
+    }
+
+    func testClosingTheSheetIsQuiet() async throws {
+        let auth = try await signedIn()
+        let viewModel = LinkedAccountsViewModel(auth: auth) { (_: AuthProvider) async throws(TitanError) -> SignInMethod in
+            throw .cancelled
+        }
+        await viewModel.link(.google)
+        XCTAssertNil(viewModel.errorKey)
+        XCTAssertNil(viewModel.busy)
+    }
+}

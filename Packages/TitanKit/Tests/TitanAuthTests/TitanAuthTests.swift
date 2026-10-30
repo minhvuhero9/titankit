@@ -129,4 +129,45 @@ final class MockAuthServiceTests: XCTestCase {
         XCTAssertEqual(AppleSignInHelper.sha256("abc"),
                        "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
     }
+
+    func testLinkingAddsAWayToSignIn() async throws {
+        let auth = MockAuthService()
+        _ = try await auth.signIn(.email(email: "demo@titan.app", password: "123456"))
+        var providers = await auth.linkedProviders()
+        XCTAssertEqual(providers, [.email])
+        _ = try await auth.link(.google(idToken: "id", accessToken: "token"))
+        providers = await auth.linkedProviders()
+        XCTAssertEqual(providers, [.email, .google])
+        do {
+            _ = try await auth.link(.google(idToken: "id", accessToken: "token"))
+            XCTFail("already linked")
+        } catch {
+            XCTAssertEqual(error, AuthFailure.alreadyLinked)
+        }
+        _ = try await auth.unlink(.email)
+        do {
+            _ = try await auth.unlink(.google)
+            XCTFail("the last way to sign in stays")
+        } catch {
+            XCTAssertEqual(error, AuthFailure.lastProvider)
+        }
+    }
+
+    func testAGuestKeepsTheirAccountByLinking() async throws {
+        let auth = MockAuthService()
+        await auth.markTaken(.apple)
+        let guest = try await auth.signIn(.anonymous)
+        let providers = await auth.linkedProviders()
+        XCTAssertEqual(providers, [])
+        do {
+            _ = try await auth.link(.apple(idToken: "id", rawNonce: "n", fullName: nil))
+            XCTFail("taken")
+        } catch {
+            XCTAssertEqual(error, AuthFailure.credentialInUse)
+        }
+        let user = try await auth.link(.google(idToken: "id", accessToken: "token"))
+        XCTAssertEqual(user.id, guest.id)
+        XCTAssertFalse(user.isAnonymous)
+        XCTAssertEqual(user.provider, .google)
+    }
 }

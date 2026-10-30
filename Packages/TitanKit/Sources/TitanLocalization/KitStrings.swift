@@ -128,6 +128,21 @@ public enum KitStrings {
         public static let backToSignIn = "kit.passwordReset.link.back"
     }
 
+    public enum LinkedAccounts {
+        public static let title = "kit.linked.title"
+        public static let link = "kit.linked.link"
+        public static let linked = "kit.linked.linked"
+        public static let unlink = "kit.linked.unlink"
+        /// The provider's name.
+        public static let unlinkTitle = "kit.linked.unlink.title %@"
+        public static let unlinkMessage = "kit.linked.unlink.message %@"
+        public static let didLink = "kit.linked.done %@"
+        public static let didUnlink = "kit.linked.removed %@"
+        public static let inUse = "kit.linked.error.inUse"
+        public static let lastProvider = "kit.linked.error.last"
+        public static let signInAgain = "kit.linked.error.signInAgain"
+    }
+
     public enum Paywall {
         public static let title = "kit.paywall.title"
         public static let message = "kit.paywall.message"

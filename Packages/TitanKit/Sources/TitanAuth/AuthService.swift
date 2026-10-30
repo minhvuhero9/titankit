@@ -18,6 +18,14 @@ public protocol AuthService: Sendable {
     /// Changes the signed-in user's name and returns the updated user.
     func updateProfile(displayName: String) async throws(TitanError) -> AuthUser
     func signOut() async throws(TitanError)
+    /// How the signed-in account can sign in: `.email`, `.apple`, `.google`...; empty for a guest
+    /// or when signed out.
+    func linkedProviders() async -> [AuthProvider]
+    /// Adds a way to sign in to the current account, e.g. Google; a guest becomes a lasting
+    /// account. Throws `AuthFailure.credentialInUse` when another account already uses it.
+    func link(_ method: SignInMethod) async throws(TitanError) -> AuthUser
+    /// Removes a way to sign in. Throws `AuthFailure.lastProvider` for the only one left.
+    func unlink(_ provider: AuthProvider) async throws(TitanError) -> AuthUser
     /// A token the app's own servers can check to know who is calling, refreshed when it is
     /// about to expire or when `forceRefresh` is set. Throws `.unauthorized` when signed out.
     func idToken(forceRefresh: Bool) async throws(TitanError) -> String
