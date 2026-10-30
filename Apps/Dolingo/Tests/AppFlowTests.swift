@@ -120,6 +120,18 @@ final class AppFlowTests: XCTestCase {
         XCTAssertEqual(update.value(for: .minimumVersion), "999.0.0")
     }
 
+    func testForgotPasswordOpensTheResetAndComesBack() {
+        let flow = AppFlow(auth: MockAuthService(), preferences: makePreferences())
+        flow.finishOnboarding()
+        flow.forgotPassword()
+        XCTAssertEqual(flow.stage, .resetPassword)
+        flow.leaveResetPassword()
+        XCTAssertEqual(flow.stage, .login)
+        flow.forgotPassword()
+        flow.didSignIn()
+        XCTAssertEqual(flow.stage, .home)
+    }
+
     func testDeletedAccountGoesBackToSignIn() async {
         let user = AuthUser(id: "1", email: "a@b.co", provider: .email)
         let flow = AppFlow(auth: MockAuthService(signedIn: user), preferences: makePreferences())

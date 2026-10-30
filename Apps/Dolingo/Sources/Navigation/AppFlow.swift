@@ -31,6 +31,8 @@ final class AppFlow: ObservableObject {
         case splash, onboarding, login, home
         /// Sign-up: the questionnaire, the plan being prepared, the plan ready, the account form.
         case survey, preparingPlan, planReady, signUp
+        /// "Forgot password?" on the sign-in screen: email, code, new password, done.
+        case resetPassword
         case maintenance(message: String)
         case forceUpdate(storeURL: URL)
     }
@@ -135,6 +137,16 @@ final class AppFlow: ObservableObject {
     /// Back on the first sign-up field.
     func leaveSignUp() {
         stage = .planReady
+    }
+
+    /// "Forgot password?" on the sign-in screen.
+    func forgotPassword() {
+        stage = .resetPassword
+    }
+
+    /// Back on the first reset step, or the new password must be typed on the sign-in screen.
+    func leaveResetPassword() {
+        stage = .login
     }
 
     func didSignIn() {

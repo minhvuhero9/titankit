@@ -68,8 +68,13 @@ private struct FlowView: View {
                     auth: container.auth,
                     onSuccess: { _ in flow.didSignIn() },
                     onSocial: { provider in Task { await flow.signInWithSocial(provider) } },
+                    onForgotPassword: { flow.forgotPassword() },
                     onSignUp: { flow.startSignUp() }
                 )
+            case .resetPassword:
+                PasswordResetScreen(auth: container.auth, onExit: { flow.leaveResetPassword() }) { _ in
+                    flow.didSignIn()
+                }
             case let .maintenance(message):
                 MaintenanceScreen(message: message) { await flow.retryLaunch() }
             case let .forceUpdate(storeURL):

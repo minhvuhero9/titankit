@@ -158,14 +158,14 @@ struct PreferencesScreen: View {
 
 // MARK: - Account & Security (Figma 97)
 
-/// Change password by email, and delete the account.
+/// Change password with a code sent by email, and delete the account.
 struct SecurityScreen: View {
     let auth: any AuthService
     let onBack: () -> Void
+    let onChangePassword: (_ email: String) -> Void
     let onDeleteAccount: () -> Void
 
     @State private var email: String?
-    @State private var toast: TKToast?
     @Environment(\.locale) private var locale
 
     var body: some View {
@@ -173,27 +173,16 @@ struct SecurityScreen: View {
             SettingsCard {
                 if let email {
                     TKSettingsRow("settings.changePassword", accessory: .chevron) {
-                        Task { await sendReset(to: email) }
+                        onChangePassword(email)
                     }
                 }
                 TKSettingsRow(title: Text.kit(KitStrings.DeleteAccount.title, locale: locale), role: .destructive,
                               action: onDeleteAccount)
             }
         }
-        .tkToast($toast)
         .task {
             let user = await auth.currentUser()
             email = user?.provider == .email ? user?.email : nil
-        }
-    }
-
-    private func sendReset(to email: String) async {
-        do {
-            try await auth.sendPasswordReset(email: email)
-            toast = TKToast(String(format: KitStrings.string("settings.changePassword.sent %@", locale: locale), email),
-                            style: .success)
-        } catch {
-            toast = TKToast(KitStrings.string(error.messageKey, locale: locale), style: .error)
         }
     }
 }

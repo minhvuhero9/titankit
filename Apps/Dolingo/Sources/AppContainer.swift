@@ -143,7 +143,12 @@ final class AppContainer: ObservableObject, DependencyContainer {
             NotificationSettingsScreen(reminder: reminder) { [router] in router.pop() }
         case .security:
             SecurityScreen(auth: auth, onBack: { [router] in router.pop() },
+                           onChangePassword: { [router] in router.push(.changePassword(email: $0)) },
                            onDeleteAccount: { [router] in router.push(.deleteAccount) })
+        case let .changePassword(email):
+            PasswordResetScreen(auth: auth, email: email, onExit: { [router] in router.pop() }) { [router] _ in
+                router.pop()
+            }
         case .billing:
             BillingScreen(purchase: purchase, onBack: { [router] in router.pop() },
                           onUpgrade: { [router] in router.present(.paywall) })

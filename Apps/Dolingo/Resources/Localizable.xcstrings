@@ -1,6 +1,5 @@
 {
   "sourceLanguage": "vi",
-  "version": "1.0",
   "strings": {
     "badge.conversationChampion.detail": {
       "extractionState": "manual",
@@ -943,13 +942,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Go to Account & Security > Change Password and Dolingo emails you a reset link."
+            "value": "Tap \"Forgot Password?\" on the sign-in screen, or go to Account & Security > Change Password. Dolingo emails you a one-time code to set a new password."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vào Tài khoản & Bảo mật > Đổi mật khẩu, Dolingo sẽ gửi email đặt lại mật khẩu."
+            "value": "Bấm \"Quên mật khẩu?\" ở màn đăng nhập, hoặc vào Tài khoản & Bảo mật > Đổi mật khẩu. Dolingo sẽ gửi email một mã dùng một lần để bạn đặt mật khẩu mới."
           }
         }
       }
@@ -2633,23 +2632,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đổi mật khẩu"
-          }
-        }
-      }
-    },
-    "settings.changePassword.sent %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "We sent a password reset email to %@"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đã gửi email đặt lại mật khẩu tới %@"
           }
         }
       }
@@ -4745,5 +4727,6 @@
         }
       }
     }
-  }
+  },
+  "version": "1.0"
 }
