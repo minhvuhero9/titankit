@@ -44,7 +44,9 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "[Kit] Record component snapshots"
+          # [skip ci]: a bot's push only starts runs that wait for approval; the next push
+          # from a person runs CI with these images.
+          git commit -m "[Kit] Record component snapshots [skip ci]"
           git push
       - uses: actions/upload-artifact@v4
         if: always()
