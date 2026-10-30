@@ -1,8 +1,13 @@
 import SwiftUI
 import TitanAI
+import TitanAnalytics
 import TitanAuth
 import TitanCore
 import TitanDesignSystem
+import TitanFirebaseAnalytics
+import TitanFirebaseAuth
+import TitanFirebaseCore
+import TitanFirebaseRemoteConfig
 import TitanFeatures
 import TitanLocalization
 import TitanNavigation
@@ -18,6 +23,12 @@ import TitanStorage
 final class AppContainer: ObservableObject, DependencyContainer {
     let config: AppConfig
     let logger: any Logging
+    /// True when Resources/Firebase/GoogleService-Info-<Env>.plist is in the build: auth,
+    /// remote config, analytics and crash reports then use Firebase instead of the mocks.
+    let usesFirebase: Bool
+    let analytics: any AnalyticsService
+    let crash: any CrashService
+    let dataSharing: DataSharingStore
     let api: any APIClient
     let secureStore: any SecureStore
     let dataCache: any DataCache
@@ -64,6 +75,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         reminders: any ReminderScheduler = UserNotificationReminderScheduler(),
         speech: (any SpeechRecognizer)? = nil,
         chat: (any ChatService)? = nil,
+        analytics: (any AnalyticsService)? = nil,
         roleplayAI: (any RoleplayAI)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
@@ -86,15 +98,28 @@ final class AppContainer: ObservableObject, DependencyContainer {
             defaultLanguage: AppConfig.defaultLanguage,
             defaults: languageDefaults
         )
-        // Firebase adapter replaces the mock in phase 4.
-        let auth = auth ?? MockAuthService(delay: .milliseconds(600))
+        let usesFirebase = FirebaseBootstrap.configure(plistName: Self.firebasePlistName(config.environment))
+        self.usesFirebase = usesFirebase
+        let auth = auth ?? (usesFirebase ? FirebaseAuthService() : MockAuthService(delay: .milliseconds(600)))
         self.auth = auth
-        // Firebase Remote Config replaces the mock in phase 4.
-        let remoteConfig = remoteConfig ?? AppContainer.launchArgumentConfig(ProcessInfo.processInfo.arguments)
+        let arguments = ProcessInfo.processInfo.arguments
+        let remoteConfig = remoteConfig ?? (usesFirebase && !Self.forcesBlockingScreen(arguments)
+            ? FirebaseRemoteConfigService(minimumFetchInterval: config.environment == .dev ? 0 : 3600)
+            : AppContainer.launchArgumentConfig(arguments))
         self.remoteConfig = remoteConfig
+        var trackers: [any AnalyticsService] = []
+        if usesFirebase { trackers.append(FirebaseAnalyticsService()) }
+        if !config.environment.isProduction { trackers.append(ConsoleAnalyticsService(logger: logger)) }
+        let analytics = analytics ?? CompositeAnalyticsService(trackers)
+        self.analytics = analytics
+        let crash: any CrashService = usesFirebase ? CrashlyticsService() : NoOpAnalyticsService()
+        self.crash = crash
+        dataSharing = DataSharingStore(preferences: preferences, analytics: analytics, crash: crash)
         self.purchase = purchase ?? StoreKitPurchaseService(config: AppConfig.purchase, logger: logger)
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
-        let flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
+        let socialSignIn: SocialSignIn? = usesFirebase ? AppContainer.socialSignIn : nil
+        let flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker,
+                           appVersion: config.appVersion, analytics: analytics, socialSignIn: socialSignIn)
         self.flow = flow
         let learning = LearningStore(repository: courses, preferences: preferences)
         self.learning = learning
@@ -166,8 +191,11 @@ final class AppContainer: ObservableObject, DependencyContainer {
             SecurityScreen(auth: auth, onBack: { [router] in router.pop() },
                            onChangePassword: { [router] in router.push(.changePassword(email: $0)) },
                            onDeleteAccount: { [router] in router.push(.deleteAccount) })
+        case .dataAnalytics:
+            DataAnalyticsScreen(store: dataSharing) { [router] in router.pop() }
         case let .changePassword(email):
-            PasswordResetScreen(auth: auth, email: email, onExit: { [router] in router.pop() }) { [router] _ in
+            PasswordResetScreen(auth: auth, email: email, sendsLink: usesFirebase,
+                                onExit: { [router] in router.pop() }) { [router] _ in
                 router.pop()
             }
         case .billing:
@@ -230,6 +258,29 @@ final class AppContainer: ObservableObject, DependencyContainer {
             return RemoteRoleplayAI(client: AIServerClient(baseURL: url, clientKey: config.aiClientKey))
         }
         return MockRoleplayAI(delay: .milliseconds(800))
+    }
+
+    /// One Firebase project per environment: GoogleService-Info-Dev, -Staging, -Prod.
+    nonisolated static func firebasePlistName(_ environment: AppEnvironment) -> String {
+        "GoogleService-Info-\(environment.rawValue.prefix(1).uppercased())\(environment.rawValue.dropFirst())"
+    }
+
+    /// The social buttons of the sign-in screen: Apple and Google with Firebase. Facebook needs
+    /// its own SDK and app, so it only appears without Firebase, where every button is a guest.
+    var socialProviders: [AuthProvider] {
+        usesFirebase ? [.google, .apple] : [.google, .apple, .facebook]
+    }
+
+    private static func socialSignIn(_ provider: AuthProvider) async throws(TitanError) -> SignInMethod {
+        switch provider {
+        case .apple: try await AppleSignInHelper().request()
+        case .google: try await GoogleSignInHelper.request()
+        default: throw .unknown("\(provider.rawValue) sign-in is not set up")
+        }
+    }
+
+    nonisolated static func forcesBlockingScreen(_ arguments: [String]) -> Bool {
+        arguments.contains("-maintenance") || arguments.contains("-forceUpdate")
     }
 
     /// Until the real remote config exists, the blocking screens can be tried from Xcode:

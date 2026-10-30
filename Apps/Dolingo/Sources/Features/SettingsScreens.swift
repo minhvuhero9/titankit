@@ -14,6 +14,7 @@ enum DolingoSettings {
     static let notification = "notification"
     static let security = "security"
     static let billing = "billing"
+    static let data = "data"
     static let appearance = "appearance"
     static let help = "help"
     static let invite = "invite"
@@ -27,6 +28,7 @@ enum DolingoSettings {
         case notification: .notifications
         case security: .security
         case billing: .billing
+        case data: .dataAnalytics
         case appearance: .appearance
         case help: .help
         case catalog: .catalog
@@ -56,6 +58,7 @@ struct DolingoSettingsScreen: View {
                     SettingsItem(DolingoSettings.notification, title: Text("settings.notification"), icon: Image(tk: .notification)),
                     SettingsItem(DolingoSettings.security, title: Text("settings.security"), icon: Image(tk: .shieldDone)),
                     SettingsItem(DolingoSettings.billing, title: Text("settings.billing"), icon: Image(tk: .wallet)),
+                    SettingsItem(DolingoSettings.data, title: Text("settings.data"), icon: Image(tk: .chart)),
                     SettingsItem(DolingoSettings.appearance, title: kit(KitStrings.Settings.appearance), icon: Image(tk: .show)),
                     SettingsItem(DolingoSettings.help, title: Text("settings.help"), icon: Image(tk: .document)),
                     SettingsItem(DolingoSettings.invite, title: Text("settings.invite"), icon: Image(tk: .addUser)),

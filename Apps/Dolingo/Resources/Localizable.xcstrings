@@ -2143,6 +2143,23 @@
         }
       }
     },
+    "login.social.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't sign in. Please try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa đăng nhập được. Hãy thử lại."
+          }
+        }
+      }
+    },
     "onboarding.welcome.message": {
       "extractionState": "manual",
       "localizations": {
@@ -3363,6 +3380,108 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đã xoá bộ nhớ đệm"
+          }
+        }
+      }
+    },
+    "settings.data": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data & Analytics"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu & Phân tích"
+          }
+        }
+      }
+    },
+    "settings.data.analytics": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share usage statistics"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chia sẻ thống kê sử dụng"
+          }
+        }
+      }
+    },
+    "settings.data.analytics.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which screens you open and which lessons you finish, without your name or what you say. It helps us decide what to improve."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn mở màn nào, học xong bài nào, không kèm tên hay nội dung bạn nói. Giúp chúng tôi biết nên cải thiện gì."
+          }
+        }
+      }
+    },
+    "settings.data.crashes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send crash reports"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi báo cáo lỗi"
+          }
+        }
+      }
+    },
+    "settings.data.crashes.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When Dolingo closes unexpectedly, a report of what the app was doing is sent so the bug can be fixed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khi Dolingo bị tắt đột ngột, một báo cáo về việc app đang làm sẽ được gửi để sửa lỗi."
+          }
+        }
+      }
+    },
+    "settings.data.privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your recordings never leave your phone: speech is recognised on the device. Turning these off takes effect right away."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giọng nói của bạn không rời điện thoại: việc nhận dạng diễn ra ngay trên máy. Tắt các mục này có hiệu lực ngay."
           }
         }
       }

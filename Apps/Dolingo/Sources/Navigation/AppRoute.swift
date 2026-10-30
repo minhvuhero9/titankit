@@ -27,6 +27,8 @@ enum AppRoute: Routable {
     case preferences, notifications, security, billing, help, faq, contactSupport
     /// "Change password" in Account & Security: the forgot password steps with the email filled in.
     case changePassword(email: String)
+    /// Figma "settings - data & analytics".
+    case dataAnalytics
 }
 
 /// The five tabs of the Figma "Menu Bar".

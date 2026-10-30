@@ -7,7 +7,13 @@ let bundlePrefix = "com.titanstudio"
 let kitModules = [
     "TitanCore", "TitanNetworking", "TitanStorage",
     "TitanIcons", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig",
-    "TitanPurchase", "TitanSpeech", "TitanPush", "TitanAI", "TitanFeatures",
+    "TitanPurchase", "TitanSpeech", "TitanPush", "TitanAI", "TitanAnalytics", "TitanFeatures",
+]
+
+// Used when Config/Secrets.xcconfig and Resources/Firebase/GoogleService-Info-<Env>.plist exist;
+// otherwise the app runs on the kit's mocks.
+let firebaseModules = [
+    "TitanFirebaseCore", "TitanFirebaseAuth", "TitanFirebaseAnalytics", "TitanFirebaseRemoteConfig",
 ]
 
 let project = Project(
@@ -16,6 +22,8 @@ let project = Project(
         base: [
             "SWIFT_VERSION": "6.0",
             "DEVELOPMENT_TEAM": "",
+            // Firebase's static libraries register their Objective-C categories only with -ObjC.
+            "OTHER_LDFLAGS": "$(inherited) -ObjC",
         ],
         configurations: [
             .debug(name: "Dev", xcconfig: "Config/Dev.xcconfig"),
@@ -44,11 +52,14 @@ let project = Project(
                 "NSSpeechRecognitionUsageDescription": "Dolingo turns your speech into text to check your pronunciation.",
                 "CFBundleURLTypes": [
                     ["CFBundleURLName": "\(bundlePrefix).dolingo", "CFBundleURLSchemes": ["dolingo"]],
+                    // Google Sign-In returns here; REVERSED_CLIENT_ID from GoogleService-Info.
+                    ["CFBundleURLName": "google", "CFBundleURLSchemes": ["$(GOOGLE_REVERSED_CLIENT_ID)"]],
                 ],
             ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: kitModules.map { .external(name: $0) }
+            entitlements: .file(path: "Dolingo.entitlements"),
+            dependencies: (kitModules + firebaseModules).map { .external(name: $0) }
         ),
         .target(
             name: "\(appName)Tests",
@@ -58,7 +69,7 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .default,
             sources: ["Tests/**"],
-            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanPurchase", "TitanSpeech", "TitanPush", "TitanAI", "TitanFeatures"].map { .external(name: $0) }
+            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanPurchase", "TitanSpeech", "TitanPush", "TitanAI", "TitanAnalytics", "TitanFeatures"].map { .external(name: $0) }
         ),
     ],
     schemes: ["Dev", "Staging", "Prod"].map { env in

@@ -1,6 +1,7 @@
 import SwiftUI
 import TitanCore
 import TitanDesignSystem
+import TitanFirebaseAuth
 import TitanLocalization
 import TitanStorage
 
@@ -21,7 +22,11 @@ struct DolingoApp: App {
             .environment(\.logger, container.logger)
             .environment(\.imageCache, container.imageCache)
             .tkAppearance(appearance)
-            .onOpenURL { _ = container.deepLinks.handle($0) }
+            .onOpenURL { url in
+                // Google Sign-In comes back through its own URL scheme.
+                if GoogleSignInHelper.handle(url) { return }
+                _ = container.deepLinks.handle(url)
+            }
             // Reads what the user owns and listens for renewals and refunds.
             .task { container.purchase.start() }
         }

@@ -187,6 +187,38 @@ struct SecurityScreen: View {
     }
 }
 
+// MARK: - Data & Analytics (Figma 100)
+
+/// Whether usage statistics and crash reports are sent, each with what it means.
+struct DataAnalyticsScreen: View {
+    @ObservedObject var store: DataSharingStore
+    let onBack: () -> Void
+
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        SettingsPage(title: "settings.data", onBack: onBack) {
+            SettingsCard {
+                TKSettingsRow("settings.data.analytics", accessory: .toggle($store.settings.analytics))
+            }
+            note("settings.data.analytics.note")
+            SettingsCard {
+                TKSettingsRow("settings.data.crashes", accessory: .toggle($store.settings.crashReports))
+            }
+            note("settings.data.crashes.note")
+            note("settings.data.privacy")
+        }
+    }
+
+    private func note(_ key: LocalizedStringKey) -> some View {
+        Text(key)
+            .tkTextStyle(.caption)
+            .foregroundStyle(theme.colors.textSecondary.color)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, Spacing.xs)
+    }
+}
+
 // MARK: - Billing & Subscriptions (Figma 98)
 
 /// The plan the learner has, how to manage or restore it, or an upgrade button.
