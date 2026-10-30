@@ -138,6 +138,8 @@ public enum KitStrings {
         public static let restore = "kit.paywall.restore"
         public static let nothingToRestore = "kit.paywall.restore.nothing"
         public static let pending = "kit.paywall.pending"
+        public static let welcomeTitle = "kit.paywall.welcome.title"
+        public static let benefitsUnlocked = "kit.paywall.welcome.benefits"
     }
 
     /// Looks the key up for `locale`: app bundle (Localizable) first, then the kit (TitanKit),

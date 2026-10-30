@@ -1446,6 +1446,40 @@
         }
       }
     },
+    "kit.paywall.welcome.benefits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benefits Unlocked:"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quyền lợi đã mở khoá:"
+          }
+        }
+      }
+    },
+    "kit.paywall.welcome.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Congratulations!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúc mừng bạn!"
+          }
+        }
+      }
+    },
     "kit.profile.email": {
       "extractionState": "manual",
       "localizations": {
