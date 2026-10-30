@@ -3,6 +3,21 @@ main = "src/index.ts"
 compatibility_date = "2026-10-01"
 compatibility_flags = ["nodejs_compat"]
 
+[vars]
+# The Firebase project whose sign-ins are accepted (Project settings > Project ID).
+# One Worker per environment: deploy with --env staging / --env prod, or change this value.
+FIREBASE_PROJECT_ID = ""
+# Requests a signed-in user may make per day (UTC).
+DAILY_LIMIT = "100"
+# Set to "true" once every build signs in with Firebase, to stop accepting CLIENT_KEY.
+REQUIRE_SIGN_IN = "false"
+
+# Daily counts per user. Create it once with `npx wrangler kv namespace create USAGE`
+# and paste the id it prints; without it there is no daily limit.
+# [[kv_namespaces]]
+# binding = "USAGE"
+# id = "<id>"
+
 # Secrets, set once per environment (never in this file):
 #   npx wrangler secret put ANTHROPIC_API_KEY
-#   npx wrangler secret put CLIENT_KEY
+#   npx wrangler secret put CLIENT_KEY      (only while builds without Firebase are allowed)

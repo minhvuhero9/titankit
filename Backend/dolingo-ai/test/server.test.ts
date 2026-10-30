@@ -37,8 +37,10 @@ class FakeRoleplay implements RoleplayAI {
   }
 }
 
+const noKeys = { keys: async () => [] };
+
 function services(chat: ReplySource = new FakeSource([]), roleplay: RoleplayAI = new FakeRoleplay()): Services {
-  return { chat, roleplay };
+  return { chat, roleplay, keys: noKeys };
 }
 
 function post(path: string, body: unknown, key = "secret"): Request {
