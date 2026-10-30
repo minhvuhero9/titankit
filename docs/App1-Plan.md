@@ -92,7 +92,8 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] TitanPurchase: `PurchaseService`, adapter StoreKit 2 và Mock (chưa có RevenueCat, chưa có file `.storekit`).
 - [ ] TitanAds (AdMob + UMP), TitanPush nếu cần.
 - [x] `AppContainer` dùng Firebase khi có `GoogleService-Info-<Env>.plist`, không có thì chạy Mock.
-- [ ] Server AI kiểm tra token Firebase thay cho khoá chung; liên kết tài khoản (màn 99); đăng nhập Facebook.
+- [x] Server AI kiểm tra token Firebase và giới hạn lượt mỗi ngày theo tài khoản.
+- [ ] Liên kết tài khoản (màn 99); đăng nhập Facebook.
 
 **Xong khi:** App1-Staging đăng nhập thật, đọc Remote Config thật, sự kiện analytics hiện trên console.
 

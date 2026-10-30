@@ -86,13 +86,23 @@ AI_CLIENT_KEY = <CLIENT_KEY ở trên>
 
 Để trống thì app dùng `MockChatService` và gia sư báo là chưa được kết nối.
 
-## 5. Giới hạn hiện tại
+## 5. Ai được gọi server
 
-- `CLIENT_KEY` nằm trong app nên ai bóc app ra cũng lấy được; nó chỉ chặn người gọi ngẫu nhiên. Khi có đăng nhập thật (giai đoạn 4), server sẽ kiểm tra token đăng nhập của người dùng và giới hạn số tin mỗi ngày theo tài khoản.
-- Chưa giới hạn số tin chat cho người dùng miễn phí. Lượt tạo roleplay (10 lượt miễn phí) chỉ đếm trên máy, xoá app là đếm lại. Muốn giới hạn thì thêm đếm theo ngày ở `TutorChat` (trên máy) hoặc ở server (theo tài khoản).
+- **Có Firebase:** app gửi `Authorization: Bearer <ID token>` (`AITokenProvider`, lấy từ `AuthService.idToken`). Server kiểm tra token bằng khoá công khai của Google (`src/auth.ts`): chữ ký RS256, `aud` và `iss` đúng `FIREBASE_PROJECT_ID`, chưa hết hạn. Token hết hạn thì server trả 401, app lấy token mới và gửi lại một lần.
+- **Giới hạn mỗi ngày:** với người đã đăng nhập, server đếm số lần gọi theo `uid` trong KV `USAGE` và trả 429 khi vượt `DAILY_LIMIT` (mặc định 100 lần/ngày, tính theo giờ UTC). App báo "Bạn đã dùng hết lượt luyện với AI hôm nay".
+- **Không có Firebase:** app vẫn gửi `X-Dolingo-Key` (`CLIENT_KEY`), không có giới hạn theo người dùng. Khi mọi bản build đã dùng Firebase, đặt `REQUIRE_SIGN_IN = "true"` để tắt đường này.
+- Server chưa biết ai là Premium (gói mua qua App Store nằm trên máy): mọi người dùng chung một giới hạn. Muốn giới hạn khác cho Premium thì cần server kiểm tra giao dịch App Store.
+
+Triển khai thêm cho phần này:
+
+```bash
+npx wrangler kv namespace create USAGE      # dán id vào [[kv_namespaces]] trong wrangler.toml
+# điền FIREBASE_PROJECT_ID trong [vars] của wrangler.toml, rồi
+npm run deploy
+```
 
 ## 6. Test
 
 - Kit: `TitanAITests` kiểm tra request gửi đi, cách đọc từng dòng sự kiện, mã lỗi HTTP và `MockChatService`.
 - App: `TutorChatTests` kiểm tra gửi tin, nhận câu trả lời chảy về, lưu lại, trả câu hỏi về ô nhập khi lỗi, `restart`, xoá cuộc trò chuyện.
-- Server: `npm test` (`node:test`) kiểm tra kiểm tra đầu vào, khoá, định dạng luồng sự kiện với nguồn trả lời giả.
+- Server: `npm test` (`node:test`) kiểm tra đầu vào, khoá, định dạng luồng sự kiện, token Firebase (ký bằng cặp khoá RSA tạo trong test: đúng, sai project, hết hạn, giả mạo) và giới hạn mỗi ngày.

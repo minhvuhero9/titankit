@@ -29,8 +29,11 @@ Code đã sẵn (`Adapters/TitanFirebase`, xem [Backend.md](modules/Backend.md))
 3. Nút Apple và Google ở màn đăng nhập mở trang đăng nhập thật (không còn đăng nhập khách).
 4. Analytics → DebugView: thêm `-FIRDebugEnabled` vào launch arguments, sẽ thấy `login_completed`, `sign_up_completed`.
 
+## 4. Server AI
+
+Điền Project ID vào `FIREBASE_PROJECT_ID` trong `Backend/dolingo-ai/wrangler.toml` (mỗi môi trường một Worker), tạo KV `USAGE` để giới hạn lượt mỗi ngày, rồi `npm run deploy`. Chi tiết: [AI.md](modules/AI.md#5-ai-được-gọi-server).
+
 ## Chưa làm
 
-- Server AI (`Backend/dolingo-ai`) vẫn dùng khoá chung `CLIENT_KEY`; bước sau là gửi `idToken` của Firebase và cho server kiểm tra, rồi giới hạn lượt theo tài khoản.
 - Liên kết tài khoản (màn 99), đăng nhập Facebook (cần Facebook SDK và app Facebook).
 - Mã OTP qua email như Figma (cần dịch vụ gửi mail riêng); hiện dùng link của Firebase.
