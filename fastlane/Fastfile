@@ -1,0 +1,82 @@
+# Lanes for every app in Apps/. Run from the repo root:
+#   bundle exec fastlane test app:Dolingo
+#   bundle exec fastlane beta app:Dolingo                 # Staging build to TestFlight
+#   bundle exec fastlane release app:Dolingo              # Prod build to App Store Connect
+#
+# beta and release need an Apple Developer account and these environment variables
+# (GitHub Secrets on CI, see docs/TestFlight.md):
+#   DEVELOPMENT_TEAM          Team ID
+#   ASC_KEY_ID, ASC_ISSUER_ID App Store Connect API key
+#   ASC_KEY_CONTENT           the .p8 file, base64
+#   MATCH_GIT_URL             private repo holding the encrypted certificates and profiles
+#   MATCH_PASSWORD            its passphrase
+
+default_platform(:ios)
+
+APPS = {
+  "Dolingo" => { bundle_id: "com.titanstudio.dolingo" }
+}.freeze
+
+ENVIRONMENTS = {
+  "Staging" => ".staging",
+  "Prod" => ""
+}.freeze
+
+platform :ios do
+  desc "Kit and app tests, as on CI"
+  lane :test do |options|
+    app = app_name(options)
+    sh("cd .. && Tools/ci-test-kit.sh")
+    sh("cd .. && Tools/ci-test-app.sh #{app}")
+  end
+
+  desc "Staging build to TestFlight for the internal testers"
+  lane :beta do |options|
+    upload(app_name(options), "Staging") do |ipa|
+      upload_to_testflight(ipa: ipa, skip_waiting_for_build_processing: true)
+    end
+  end
+
+  desc "Prod build to App Store Connect, ready to submit for review"
+  lane :release do |options|
+    upload(app_name(options), "Prod") do |ipa|
+      upload_to_testflight(ipa: ipa, skip_waiting_for_build_processing: true)
+    end
+  end
+
+  def app_name(options)
+    app = options[:app] || "Dolingo"
+    UI.user_error!("Unknown app #{app}; add it to APPS in the Fastfile") unless APPS.key?(app)
+    app
+  end
+
+  # Signs and builds `app` in `environment` with the next build number, then hands the .ipa over.
+  def upload(app, environment)
+    %w[DEVELOPMENT_TEAM ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_CONTENT MATCH_GIT_URL MATCH_PASSWORD].each do |name|
+      UI.user_error!("#{name} is not set; see docs/TestFlight.md") if ENV[name].to_s.empty?
+    end
+    bundle_id = APPS[app][:bundle_id] + ENVIRONMENTS.fetch(environment)
+
+    setup_ci if is_ci
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+    match(type: "appstore", app_identifier: bundle_id, git_url: ENV["MATCH_GIT_URL"], readonly: is_ci, api_key: api_key)
+
+    build_number = latest_testflight_build_number(app_identifier: bundle_id, api_key: api_key, initial_build_number: 0) + 1
+    sh("cd .. && tuist install && tuist generate --no-open")
+    ipa = build_app(
+      workspace: "TitanKit.xcworkspace",
+      scheme: "#{app}-#{environment}",
+      configuration: environment,
+      export_method: "app-store",
+      output_directory: "build",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['DEVELOPMENT_TEAM']} CURRENT_PROJECT_VERSION=#{build_number} " \
+              "CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='match AppStore #{bundle_id}'"
+    )
+    yield ipa
+  end
+end
