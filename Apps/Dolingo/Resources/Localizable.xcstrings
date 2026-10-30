@@ -1,6 +1,23 @@
 {
   "sourceLanguage": "vi",
   "strings": {
+    "ai.error.limit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You've used today's AI practice. Come back tomorrow!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã dùng hết lượt luyện với AI hôm nay. Hẹn bạn ngày mai nhé!"
+          }
+        }
+      }
+    },
     "badge.conversationChampion.detail": {
       "extractionState": "manual",
       "localizations": {

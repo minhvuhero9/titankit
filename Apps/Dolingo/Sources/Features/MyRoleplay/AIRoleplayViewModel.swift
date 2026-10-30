@@ -135,7 +135,8 @@ final class AIRoleplayViewModel: ObservableObject {
             }
         } catch {
             if error != .cancelled {
-                errorKey = error == .network(.offline) ? "tutor.error.offline.short" : "createRoleplay.error.failed"
+                errorKey = error == .network(.server(statusCode: 429)) ? "ai.error.limit"
+                    : error == .network(.offline) ? "tutor.error.offline.short" : "createRoleplay.error.failed"
             }
         }
         return false

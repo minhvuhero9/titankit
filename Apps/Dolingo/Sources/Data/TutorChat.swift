@@ -102,7 +102,7 @@ final class TutorChat: ObservableObject {
             case let .failed(error):
                 if error == .cancelled { return }
                 takeBackQuestion(replyIndex: replyIndex,
-                                 errorKey: error == .network(.offline) ? "tutor.error.offline" : "tutor.error.failed")
+                                 errorKey: Self.errorKey(for: error))
                 return
             }
         }
@@ -118,6 +118,14 @@ final class TutorChat: ObservableObject {
         }
         self.errorKey = errorKey
         save()
+    }
+
+    static func errorKey(for error: TitanError) -> String {
+        switch error {
+        case .network(.offline): "tutor.error.offline"
+        case .network(.server(statusCode: 429)): "ai.error.limit"
+        default: "tutor.error.failed"
+        }
     }
 
     private func save() {

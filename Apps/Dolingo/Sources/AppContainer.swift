@@ -137,9 +137,13 @@ final class AppContainer: ObservableObject, DependencyContainer {
                                level: flow.surveyAnswers[DolingoSurvey.Step.level]?.optionIds.first)
         }
         self.learner = learner
-        tutorChat = TutorChat(service: chat ?? AppContainer.chatService(config: config), preferences: preferences,
-                              learner: learner)
-        self.roleplayAI = roleplayAI ?? AppContainer.roleplayAI(config: config)
+        // With Firebase the AI server knows who is calling from the sign-in token.
+        let aiToken: AITokenProvider? = usesFirebase ? { [auth] forceRefresh in
+            try? await auth.idToken(forceRefresh: forceRefresh)
+        } : nil
+        tutorChat = TutorChat(service: chat ?? AppContainer.chatService(config: config, token: aiToken),
+                              preferences: preferences, learner: learner)
+        self.roleplayAI = roleplayAI ?? AppContainer.roleplayAI(config: config, token: aiToken)
         myRoleplays = MyRoleplays(preferences: preferences)
         practice = PracticeSettingsStore(preferences: preferences)
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
@@ -242,9 +246,9 @@ final class AppContainer: ObservableObject, DependencyContainer {
     }
 
     /// The AI server when it is configured, otherwise local answers that say so.
-    static func chatService(config: AppConfig) -> any ChatService {
-        if let url = config.aiBaseURL, !config.aiClientKey.isEmpty {
-            return RemoteChatService(baseURL: url, clientKey: config.aiClientKey)
+    static func chatService(config: AppConfig, token: AITokenProvider? = nil) -> any ChatService {
+        if let url = config.aiBaseURL, token != nil || !config.aiClientKey.isEmpty {
+            return RemoteChatService(baseURL: url, clientKey: config.aiClientKey, token: token)
         }
         return MockChatService { _ in
             "I'm not connected yet: the Dolingo AI server isn't set up in this build. "
@@ -253,9 +257,9 @@ final class AppContainer: ObservableObject, DependencyContainer {
     }
 
     /// The AI server's roleplay calls when it is configured, otherwise a canned pizza order.
-    static func roleplayAI(config: AppConfig) -> any RoleplayAI {
-        if let url = config.aiBaseURL, !config.aiClientKey.isEmpty {
-            return RemoteRoleplayAI(client: AIServerClient(baseURL: url, clientKey: config.aiClientKey))
+    static func roleplayAI(config: AppConfig, token: AITokenProvider? = nil) -> any RoleplayAI {
+        if let url = config.aiBaseURL, token != nil || !config.aiClientKey.isEmpty {
+            return RemoteRoleplayAI(client: AIServerClient(baseURL: url, clientKey: config.aiClientKey, token: token))
         }
         return MockRoleplayAI(delay: .milliseconds(800))
     }

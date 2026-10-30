@@ -41,6 +41,16 @@ final class TutorChatTests: XCTestCase {
         XCTAssertEqual(chat.errorKey, "tutor.error.offline")
     }
 
+    func testTheDailyLimitIsExplained() async {
+        let chat = TutorChat(service: MockChatService(wordDelay: .zero, failure: .failed(.network(.server(statusCode: 429)))),
+                             preferences: makePreferences())
+        chat.draft = "Hi"
+        chat.send()
+        await chat.waitForReply()
+        XCTAssertEqual(chat.errorKey, "ai.error.limit")
+        XCTAssertEqual(chat.draft, "Hi")
+    }
+
     func testARefusalIsExplained() async {
         let chat = TutorChat(service: MockChatService(wordDelay: .zero, failure: .refused), preferences: makePreferences())
         chat.draft = "Hi"
