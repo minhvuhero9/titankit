@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Runs the kit's snapshot tests (Packages/TitanKit/Tests/TitanSnapshotTests).
 # Usage: Tools/snapshots.sh          compare with the images in __Snapshots__
+#        Tools/snapshots.sh missing  record only images that don't exist yet, then compare
 #        Tools/snapshots.sh record   rewrite every image, then compare again
 set -euo pipefail
 cd "$(dirname "$0")/../Packages/TitanKit"
@@ -17,8 +18,9 @@ run() {
   return "$status"
 }
 
-if [ "${1:-}" = "record" ]; then
-  # Recording reports every image as a failure ("Record mode is on"); that run's result is ignored.
-  TEST_RUNNER_SNAPSHOT_RECORD=1 run || true
-fi
+# Recording reports each image it writes as a failure; that run's result is ignored.
+case "${1:-}" in
+  record) TEST_RUNNER_SNAPSHOT_RECORD=1 run || true ;;
+  missing) run || true ;;
+esac
 run

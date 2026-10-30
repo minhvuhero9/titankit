@@ -1,11 +1,20 @@
-# Records the reference images of the kit's snapshot tests on CI, so nobody needs a Mac for it.
-# Actions > Snapshots > Run workflow on a branch: rewrites __Snapshots__, checks the tests pass
-# with the new images, and commits them to that branch. Look at the images in the commit before
-# merging: they become what every later build is compared with.
+# Records the reference images of the kit's snapshot tests on CI, so nobody needs a Mac for it,
+# checks the tests pass with them and commits them to the branch. Look at the images in that
+# commit before merging: they become what every later build is compared with.
+#   - pull request touching the snapshot tests or the design system: records only images that
+#     don't exist yet; a changed image still fails the TitanKit tests job.
+#   - Actions > Snapshots > Run workflow on a branch: rewrites every image (after an intended
+#     change to how a component looks).
 name: Snapshots
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - Packages/TitanKit/Tests/TitanSnapshotTests/**
+      - Packages/TitanKit/Sources/TitanDesignSystem/**
+      - Tools/snapshots.sh
+      - .github/workflows/snapshots.yml
 
 permissions:
   contents: write
@@ -21,8 +30,11 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The PR's branch rather than the merge commit, so the images can be pushed to it.
+          ref: ${{ github.head_ref || github.ref }}
       - name: Record and verify
-        run: Tools/snapshots.sh record
+        run: Tools/snapshots.sh ${{ github.event_name == 'workflow_dispatch' && 'record' || 'missing' }}
       - name: Commit the images
         run: |
           git add Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__
