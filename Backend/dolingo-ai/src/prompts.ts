@@ -35,6 +35,7 @@ export const TURN_PROMPT = `You play a role in a spoken English role-play inside
 - When there are no turns yet, open the scene with your first line.
 - Give the Vietnamese translation of your reply.
 - Mark a task completed only when the learner's latest message clearly does what the task says; never mark tasks from earlier turns again.
+- When the learner's latest message has a grammar or word mistake that a native speaker would notice, give the corrected sentence in correction; otherwise leave correction empty. Never let a correction break character in the reply itself.
 - Suggest a hint: one natural thing the learner could say next, with its Vietnamese translation.
 - Set isFinished when the conversation has reached a natural goodbye, or after the learner has completed every task and the scene has wrapped up.
 - If the learner writes in Vietnamese or seems lost, stay in character but keep your English very simple.`;

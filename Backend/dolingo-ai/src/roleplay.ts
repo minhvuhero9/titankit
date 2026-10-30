@@ -57,6 +57,9 @@ export const TurnSchema = z.object({
   reply: z.string().describe("The partner's next line, in English, in character"),
   translation: z.string().describe("The reply in Vietnamese"),
   completedTaskIds: z.array(z.string()).describe("Ids of tasks the learner's latest message completed"),
+  correction: z
+    .string()
+    .describe("The learner's latest message with its grammar or word mistakes fixed, or an empty string when it was fine"),
   hint: z.string().describe("A natural reply the learner could say next, in English"),
   hintTranslation: z.string().describe("The hint in Vietnamese"),
   isFinished: z.boolean().describe("True when the conversation has reached a natural end"),
