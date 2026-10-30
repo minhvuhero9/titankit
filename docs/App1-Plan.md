@@ -94,7 +94,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] `AppContainer` dùng Firebase khi có `GoogleService-Info-<Env>.plist`, không có thì chạy Mock.
 - [x] Server AI kiểm tra token Firebase và giới hạn lượt mỗi ngày theo tài khoản.
 - [x] Liên kết tài khoản (màn 99): Google, Apple; tài khoản khách liên kết để giữ tiến độ.
-- [ ] Đăng nhập Facebook.
+- [ ] Đăng nhập Facebook, Twitter và các cách khác: tạm hoãn, chỉ dùng email, Apple, Google.
 
 **Xong khi:** App1-Staging đăng nhập thật, đọc Remote Config thật, sự kiện analytics hiện trên console.
 

@@ -35,5 +35,5 @@ Code đã sẵn (`Adapters/TitanFirebase`, xem [Backend.md](modules/Backend.md))
 
 ## Chưa làm
 
-- Liên kết tài khoản (màn 99), đăng nhập Facebook (cần Facebook SDK và app Facebook).
+- Đăng nhập Facebook, Twitter: tạm hoãn (cần SDK và app riêng của từng bên).
 - Mã OTP qua email như Figma (cần dịch vụ gửi mail riêng); hiện dùng link của Firebase.
