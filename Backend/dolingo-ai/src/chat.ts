@@ -59,7 +59,7 @@ export function parseChatRequest(body: unknown): ChatRequest | string {
   return { turns: recent, learner: parseLearner(learner) };
 }
 
-function parseLearner(value: unknown): Learner {
+export function parseLearner(value: unknown): Learner {
   if (typeof value !== "object" || value === null) return {};
   const { name, level } = value as { name?: unknown; level?: unknown };
   const learner: Learner = {};

@@ -19,3 +19,32 @@ export function learnerContext(learner: Learner): string | null {
   if (learner.level) parts.push(`Their English level, from the sign-up questions, is ${learner.level}.`);
   return parts.length > 0 ? parts.join(" ") : null;
 }
+
+export const DRAFT_PROMPT = `You help Vietnamese speakers who are learning English set up a role-play they will practise by speaking with an AI partner in the Dolingo app.
+
+You get the form as the learner left it: a title, the learner's role, the AI partner's role and a scenario, any of which may be empty. Fill in the empty ones so everything fits together, and keep every field the learner wrote exactly as they wrote it. When the whole form is empty, invent an everyday situation worth practising.
+
+- The title is two to four words in Title Case, the scenario two or three sentences in simple English that speak to the learner as "you".
+- Pick one emoji that pictures the situation.
+- When goals are asked for, write three or four short goals in English that the learner can reach by speaking in this situation (for example "Ask about the price"), each with its Vietnamese meaning. When goals are not asked for, return no goals.
+- Keep everything suitable for a language-learning app.`;
+
+export const TURN_PROMPT = `You play a role in a spoken English role-play inside the Dolingo app. The learner is a Vietnamese speaker practising English; what they say reaches you through speech recognition, so ignore small transcription slips.
+
+- Stay in character as the partner described below and keep the scene going: one or two short, natural sentences per turn, in English that suits the learner's level, usually ending with something for the learner to answer.
+- When there are no turns yet, open the scene with your first line.
+- Give the Vietnamese translation of your reply.
+- Mark a task completed only when the learner's latest message clearly does what the task says; never mark tasks from earlier turns again.
+- Suggest a hint: one natural thing the learner could say next, with its Vietnamese translation.
+- Set isFinished when the conversation has reached a natural goodbye, or after the learner has completed every task and the scene has wrapped up.
+- If the learner writes in Vietnamese or seems lost, stay in character but keep your English very simple.`;
+
+export function roleplayContext(setup: { title: string; myRole: string; aiRole: string; scenario: string; tasks: { id: string; text: string }[] }): string {
+  const tasks = setup.tasks.length > 0 ? setup.tasks.map((task) => `- ${task.id}: ${task.text}`).join("\n") : "(none)";
+  return `Role-play: ${setup.title}
+Your role: ${setup.aiRole}
+The learner's role: ${setup.myRole}
+Scenario: ${setup.scenario}
+The learner's tasks (id: task):
+${tasks}`;
+}

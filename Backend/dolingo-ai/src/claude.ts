@@ -1,6 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+import type * as z from "zod/v4";
 import type { ChatRequest } from "./chat.ts";
-import { learnerContext, TUTOR_PROMPT } from "./prompts.ts";
+import { DRAFT_PROMPT, learnerContext, roleplayContext, TURN_PROMPT, TUTOR_PROMPT } from "./prompts.ts";
+import { type Draft, type DraftRequest, DraftSchema, type Turn, type TurnRequest, TurnSchema } from "./roleplay.ts";
 
 export const MODEL = "claude-opus-5-5";
 
@@ -25,7 +28,16 @@ export interface ReplySource {
   reply(request: ChatRequest, signal?: AbortSignal): AsyncGenerator<ReplyEvent>;
 }
 
-export class ClaudeReplySource implements ReplySource {
+/** A JSON answer, or why there is none. */
+export type AIResult<T> = { ok: true; value: T } | { ok: false; code: ReplyErrorCode };
+
+/** Roleplays written by the learner; tests swap in a fake. */
+export interface RoleplayAI {
+  draft(request: DraftRequest, signal?: AbortSignal): Promise<AIResult<Draft>>;
+  turn(request: TurnRequest, signal?: AbortSignal): Promise<AIResult<Turn>>;
+}
+
+export class ClaudeReplySource implements ReplySource, RoleplayAI {
   private readonly client: Anthropic;
 
   constructor(apiKey: string) {
@@ -67,6 +79,61 @@ export class ClaudeReplySource implements ReplySource {
       yield message.stop_reason === "refusal" ? { type: "error", code: "refused" } : { type: "done" };
     } catch (error) {
       yield { type: "error", code: errorCode(error) };
+    }
+  }
+
+  draft(request: DraftRequest, signal?: AbortSignal): Promise<AIResult<Draft>> {
+    const form = {
+      title: request.title,
+      myRole: request.myRole,
+      aiRole: request.aiRole,
+      scenario: request.scenario,
+      goalsWanted: request.withGoals,
+    };
+    return this.structured(DraftSchema, [DRAFT_PROMPT], [{ role: "user", content: JSON.stringify(form) }], signal);
+  }
+
+  turn(request: TurnRequest, signal?: AbortSignal): Promise<AIResult<Turn>> {
+    const system = [TURN_PROMPT, roleplayContext(request.roleplay)];
+    const context = learnerContext(request.learner);
+    if (context) system.push(context);
+    // The Messages API starts with a user turn; the AI's opening line follows this cue.
+    const messages: Anthropic.Beta.BetaMessageParam[] = [{ role: "user", content: "(The learner is ready. Start the role-play.)" }];
+    for (const turn of request.turns) {
+      if (turn.role === "user" && messages.at(-1)?.role === "user") {
+        // The learner spoke first: their line replaces the cue.
+        messages[messages.length - 1] = { role: "user", content: turn.text };
+      } else {
+        messages.push({ role: turn.role, content: turn.text });
+      }
+    }
+    return this.structured(TurnSchema, system, messages, signal);
+  }
+
+  private async structured<Schema extends z.ZodType>(
+    schema: Schema,
+    system: string[],
+    messages: Anthropic.Beta.BetaMessageParam[],
+    signal?: AbortSignal,
+  ): Promise<AIResult<z.infer<Schema>>> {
+    try {
+      const message = await this.client.beta.messages.parse(
+        {
+          model: MODEL,
+          max_tokens: 16000,
+          output_config: { effort: "low", format: betaZodOutputFormat(schema) },
+          betas: ["server-side-fallback-2026-07-01"],
+          fallbacks: "default",
+          system: system.map((text) => ({ type: "text" as const, text })),
+          messages,
+        },
+        { signal },
+      );
+      if (message.stop_reason === "refusal") return { ok: false, code: "refused" };
+      if (message.parsed_output === null) return { ok: false, code: "failed" };
+      return { ok: true, value: message.parsed_output as z.infer<Schema> };
+    } catch (error) {
+      return { ok: false, code: errorCode(error) };
     }
   }
 }
