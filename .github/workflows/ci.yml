@@ -24,6 +24,16 @@ jobs:
           name: kit-log
           path: build-kit.log
 
+  lint:
+    name: SwiftLint
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - name: Lint
+        run: swiftlint lint --strict --reporter github-actions-logging
+
   app:
     name: ${{ matrix.app }} build and tests
     runs-on: macos-15

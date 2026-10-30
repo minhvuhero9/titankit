@@ -338,6 +338,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     /// Container for tests and previews: no network, no Keychain, nothing written to disk.
     static func preview(environment: AppEnvironment = .dev) -> AppContainer {
         AppContainer(
+            // swiftlint:disable:next force_unwrapping
             config: AppConfig(environment: environment, apiBaseURL: URL(string: "https://api-dev.example.com")!),
             api: MockAPIClient(),
             secureStore: InMemorySecureStore(),

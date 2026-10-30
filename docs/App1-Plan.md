@@ -20,14 +20,14 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** có repo build được một app trống trên CI.
 
-- [ ] Tạo repo `titankit` theo cấu trúc ở [README mục 7](README.md#7-cấu-trúc-repo).
-- [ ] Tạo `Packages/TitanKit/Package.swift` với các module rỗng.
-- [ ] Cấu hình Tuist (`Project.swift`, `Tuist/`) và `Templates/NewApp`.
-- [ ] Tạo App1 từ mẫu, với `Dev`, `Staging`, `Prod` xcconfig và `Secrets.xcconfig` ngoài git.
-- [ ] Thêm `.swiftlint.yml`, `CHANGELOG.md`, `.gitignore`.
-- [ ] Thiết lập fastlane (`test`, `beta`) và `fastlane match`.
-- [ ] Thêm GitHub Actions chạy lint + test cho mỗi PR.
-- [ ] Đăng ký bundle id và app trên App Store Connect.
+- [x] Tạo repo `titankit` theo cấu trúc ở [README mục 7](README.md#7-cấu-trúc-repo).
+- [x] Tạo `Packages/TitanKit/Package.swift` với các module.
+- [x] Cấu hình Tuist (`Project.swift`, `Tuist/`). Chưa có `Templates/NewApp` (làm khi bắt đầu App 2).
+- [x] Tạo Dolingo với `Dev`, `Staging`, `Prod` xcconfig và `Secrets.xcconfig` ngoài git.
+- [x] Thêm `.swiftlint.yml`, `CHANGELOG.md`, `.gitignore`.
+- [x] Thiết lập fastlane (`test`, `beta`, `release`) và `fastlane match` ([TestFlight.md](TestFlight.md)).
+- [x] GitHub Actions chạy SwiftLint, test kit, build và test app, kiểm tra server cho mỗi PR.
+- [ ] Đăng ký bundle id và app trên App Store Connect (cần tài khoản Apple Developer).
 
 **Xong khi:** PR đầu tiên chạy CI xanh; `tuist generate App1` mở được app trống trên simulator.
 
@@ -106,11 +106,11 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 - [x] Liệt kê màn hình riêng từ Figma ([Dolingo-Screens.md](Dolingo-Screens.md)).
 - [x] Đăng ký: 10 câu hỏi, chuẩn bị lộ trình, tạo tài khoản (màn 5–20).
-- [ ] Định nghĩa model và Repository của App 1 (ví dụ `UserRepository`).
-- [ ] Viết View + ViewModel cho từng màn trong `Apps/App1/Sources/Features/`.
-- [ ] Unit test ViewModel với Repository Mock.
-- [ ] Xử lý loading, lỗi, rỗng, mất mạng bằng `StateView`.
-- [ ] Component nào dùng lại được cho app khác thì chuyển vào kit (PR `kit/...`).
+- [x] Model và Repository của Dolingo (`CourseRepository`, `RoleplayRepository`, `PhrasebookRepository`, các store trong `Sources/Data`).
+- [x] View và ViewModel cho từng màn trong `Apps/Dolingo/Sources/Features/`; mọi màn Figma đã có ([Dolingo-Screens.md](Dolingo-Screens.md)).
+- [x] Unit test với Repository và dịch vụ Mock (`Apps/Dolingo/Tests`).
+- [x] Loading, lỗi, rỗng, mất mạng bằng `TKAsyncContent` và `TKEmptyState`.
+- [x] Component dùng lại được đã nằm trong kit (paywall, quên mật khẩu, liên kết tài khoản, `TKCodeField`...).
 
 **Xong khi:** mọi màn hình trong Figma có trên App1-Staging, khớp design, test xanh.
 

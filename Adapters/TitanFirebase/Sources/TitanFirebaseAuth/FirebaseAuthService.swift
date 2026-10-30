@@ -25,6 +25,8 @@ public struct FirebaseAuthService: AuthService {
             case let .email(email, password):
                 result = try await auth.signIn(withEmail: email, password: password)
             case let .apple(_, _, fullName):
+                // Apple and Google always have a credential; only a guest has none.
+                // swiftlint:disable:next force_unwrapping
                 result = try await auth.signIn(with: Self.credential(for: method)!)
                 // Apple gives the name only the first time; keep it on the Firebase user.
                 if result.user.displayName == nil, let name = fullName.flatMap(Self.displayName) {
@@ -33,6 +35,8 @@ public struct FirebaseAuthService: AuthService {
                     try? await change.commitChanges()
                 }
             case .google:
+                // Apple and Google always have a credential; only a guest has none.
+                // swiftlint:disable:next force_unwrapping
                 result = try await auth.signIn(with: Self.credential(for: method)!)
             case .anonymous:
                 result = try await auth.signInAnonymously()
