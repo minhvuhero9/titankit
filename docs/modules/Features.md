@@ -259,6 +259,54 @@ PaywallScreen(
 - Figma Dolingo chưa đọc được màn paywall (hết lượt gọi Figma), bố cục đang theo "Subscriptions Card" và các màn khác của kit.
 - Dolingo: Cài đặt có băng rôn "Nâng cấp ngay!" mở paywall trong sheet; deep link `dolingo://premium` cũng mở paywall. Sản phẩm vẫn là id giữ chỗ, nên trên simulator sẽ thấy lỗi "không tìm thấy" cho tới khi có file `.storekit` hoặc sản phẩm thật. Dùng `MockPurchaseService` trong preview để xem đủ giao diện.
 
+## 8h. Đã làm (giai đoạn 5, Đăng ký)
+
+Theo các màn 3–20 của Figma Dolingo (xem [Dolingo-Screens.md](../Dolingo-Screens.md)).
+
+```swift
+SurveyScreen(steps: [
+    SurveyStep("level", kind: .single([
+        SurveyOption("beginner", title: Text("survey.level.beginner"), detail: Text("..."), icon: Image(tk: TKColorIcon.signalLow)),
+    ])) { answers in Text("survey.level.title \(languageName(answers))") },   // tiêu đề theo câu trả lời trước
+    SurveyStep("topics", title: Text("survey.topics.title"), kind: .chips(topics)),
+    SurveyStep("reminder", title: Text("survey.reminder.title"), kind: .time(hour: 20, minute: 0)),
+], onExit: { flow.leaveSurvey() }) { answers in flow.finishSurvey(answers) }
+
+PreparingScreen(title: Text("plan.preparing.title"), message: Text("plan.preparing.message")) { flow.planIsReady() }
+SuccessScreen(title: Text("plan.ready.title"), actionTitle: Text("plan.ready.action")) { flow.createAccount() }
+SignUpScreen(auth: container.auth, onExit: { flow.leaveSignUp() }) { user in flow.didSignIn() }
+```
+
+- `SurveyScreen`: mỗi trang một câu hỏi, trên cùng có thanh tiến độ và "3 / 12", nút Tiếp tục ghim dưới đáy, chỉ bật khi đã chọn. Bốn kiểu câu: `.single` (thẻ, một đáp án), `.multiple` (thẻ, nhiều đáp án), `.chips` (chip tự xuống dòng bằng `TKFlowLayout`), `.time` (vòng quay chọn giờ). Đáp án trả về dạng `[id bước: SurveyAnswer]`, `Codable` để app lưu.
+- `PreparingScreen`: vòng tròn đếm tới 100 % trong `duration` (mặc định 3 giây) trong lúc chạy `work`; chỉ hiện 100 % khi cả hai xong.
+- `SuccessScreen`: hình thành công, tiêu đề, mô tả, một nút. Dùng lại cho "Đặt lại mật khẩu thành công" và "Nâng cấp thành công".
+- `SignUpScreen`: tên, rồi email ("Cảm ơn An! Email của bạn là gì?"), rồi mật khẩu hai lần; hộp "Đang tạo tài khoản..." khi gọi `AuthService.signUp`. Kiểm tra email, độ dài và khớp mật khẩu khi bấm Tiếp tục.
+- Dolingo: "Bắt đầu" ở màn chào và "Đăng ký" ở màn đăng nhập mở bộ 10 câu hỏi (Dolingo chỉ dạy tiếng Anh cho người Việt nên bỏ hai câu chọn ngôn ngữ của Figma). Đáp án lưu trong `DolingoKeys.surveyAnswers` để các màn học sau dùng (trình độ, mục tiêu mỗi ngày, giờ nhắc). Icon trình độ, lý do và thời gian dùng `TKColorIcon` có sẵn.
+- Giờ nhắc mới được lưu, chưa đặt thông báo: phần này đi cùng TitanPush.
+
+## 8h2. Đã làm (giai đoạn 5, Nâng cấp thành công)
+
+`PremiumWelcomeScreen(message:benefits:footnote:actionTitle:action:)` theo màn 92 của Figma: vương miện dưới mưa giấy màu (tắt khi bật Giảm chuyển động), "Chúc mừng bạn!", danh sách quyền lợi đã mở khoá, ghi chú gia hạn và một nút. Dolingo hiện nó ngay trong sheet paywall sau khi mua hoặc khôi phục được Premium.
+
+## 8i. Đã làm (giai đoạn 5, Quên mật khẩu)
+
+Theo các màn 24–27 của Figma Dolingo.
+
+```swift
+PasswordResetScreen(auth: container.auth, email: "", codeLength: 4,
+                    onExit: { flow.leaveResetPassword() }) { user in flow.didSignIn() }
+```
+
+- Bốn bước: nhập email ("Gửi mã OTP"), nhập mã gửi qua email, mật khẩu mới hai lần, rồi "Xong rồi!". Nút "Tiếp tục hành trình" đăng nhập luôn bằng mật khẩu mới; nếu không được thì quay về màn đăng nhập.
+- Mã nhập bằng `TKCodeField` (TitanDesignSystem): mỗi ô một chữ số, bàn phím số, tự điền mã từ Mail/Tin nhắn, ô đang nhập được tô như ô có focus, viền đỏ khi mã sai. Đủ số chữ số là tự kiểm tra, không cần nút.
+- "Gửi lại mã" bật sau 60 giây (`resendDelay`), có đếm ngược. Mã sai hoặc hết hạn: xóa mã, báo lỗi, viền đỏ tới khi gõ lại. Mã hết hạn lúc lưu mật khẩu: quay về bước nhập mã.
+- Cần ba hàm của `AuthService`: `sendPasswordReset(email:)`, `verifyPasswordResetCode(email:code:)` trả token, `resetPassword(token:newPassword:)`. `MockAuthService` nhận mã cố định `resetCode` (mặc định "1234"). Backend thật phải gửi mã OTP; Firebase Auth chỉ gửi link, nên adapter Firebase cần một Cloud Function cho hai hàm sau.
+- Dolingo: "Quên mật khẩu?" ở màn đăng nhập mở luồng này (`AppFlow.Stage.resetPassword`); "Đổi mật khẩu" trong Tài khoản & Bảo mật đẩy cùng màn với email đã điền sẵn.
+
+## 8j. Đã làm (giai đoạn 4, Liên kết tài khoản)
+
+`LinkedAccountsScreen(auth:options:credential:onBack:)` theo màn 99: mỗi nhà cung cấp một thẻ với "Đã liên kết" hoặc "Liên kết". App đưa logo (`LinkedAccountOption`) và cách lấy credential (`CredentialRequest`, ví dụ `AppleSignInHelper` hay `GoogleSignInHelper`). Huỷ liên kết có hỏi lại và không cho bỏ cách đăng nhập cuối cùng. Tài khoản khách liên kết Google hoặc Apple thì thành tài khoản thật mà vẫn giữ tiến độ. Dolingo mở nó từ Tài khoản & Bảo mật.
+
 ## 9. Checklist cho App 1
 
 - [ ] Chọn màn hình App 1 dùng: Splash, Onboarding, Login, Paywall, Settings, Profile, Delete account...

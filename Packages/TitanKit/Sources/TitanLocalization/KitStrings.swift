@@ -16,6 +16,7 @@ public enum KitStrings {
     public static let clear = "kit.common.clear"
     public static let previous = "kit.common.previous"
     public static let next = "kit.common.next"
+    public static let continueAction = "kit.common.continue"
     public static let currentPlan = "kit.purchase.currentPlan"
 
     public enum Onboarding {
@@ -85,6 +86,63 @@ public enum KitStrings {
         public static let signInAgain = "kit.deleteAccount.signInAgain"
     }
 
+    public enum SignUp {
+        public static let nameTitle = "kit.signUp.name.title"
+        public static let nameLabel = "kit.signUp.name.label"
+        /// The name the user just gave.
+        public static let emailTitle = "kit.signUp.email.title %@"
+        public static let passwordTitle = "kit.signUp.password.title"
+        public static let confirmPassword = "kit.signUp.password.confirm"
+        public static let passwordMismatch = "kit.signUp.error.mismatch"
+        public static let submit = "kit.signUp.submit"
+        public static let creating = "kit.signUp.creating"
+    }
+
+    public enum PasswordReset {
+        public static let emailTitle = "kit.passwordReset.email.title"
+        public static let emailMessage = "kit.passwordReset.email.message"
+        public static let emailSubmit = "kit.passwordReset.email.submit"
+        public static let codeTitle = "kit.passwordReset.code.title"
+        /// The email the code was sent to.
+        public static let codeMessage = "kit.passwordReset.code.message %@"
+        public static let codeLabel = "kit.passwordReset.code.label"
+        /// Seconds left before the code can be sent again.
+        public static let resendIn = "kit.passwordReset.code.resendIn %lld"
+        public static let resend = "kit.passwordReset.code.resend"
+        public static let codeSent = "kit.passwordReset.code.sent"
+        public static let wrongCode = "kit.passwordReset.code.wrong"
+        public static let passwordTitle = "kit.passwordReset.password.title"
+        public static let passwordMessage = "kit.passwordReset.password.message"
+        public static let newPassword = "kit.passwordReset.password.new"
+        public static let confirmPassword = "kit.passwordReset.password.confirm"
+        public static let passwordSubmit = "kit.passwordReset.password.submit"
+        public static let doneTitle = "kit.passwordReset.done.title"
+        public static let doneMessage = "kit.passwordReset.done.message"
+        public static let doneAction = "kit.passwordReset.done.action"
+        /// For backends that email a reset link instead of a code.
+        public static let emailMessageLink = "kit.passwordReset.email.messageLink"
+        public static let linkSubmit = "kit.passwordReset.link.submit"
+        public static let linkTitle = "kit.passwordReset.link.title"
+        /// The email the link was sent to.
+        public static let linkMessage = "kit.passwordReset.link.message %@"
+        public static let backToSignIn = "kit.passwordReset.link.back"
+    }
+
+    public enum LinkedAccounts {
+        public static let title = "kit.linked.title"
+        public static let link = "kit.linked.link"
+        public static let linked = "kit.linked.linked"
+        public static let unlink = "kit.linked.unlink"
+        /// The provider's name.
+        public static let unlinkTitle = "kit.linked.unlink.title %@"
+        public static let unlinkMessage = "kit.linked.unlink.message %@"
+        public static let didLink = "kit.linked.done %@"
+        public static let didUnlink = "kit.linked.removed %@"
+        public static let inUse = "kit.linked.error.inUse"
+        public static let lastProvider = "kit.linked.error.last"
+        public static let signInAgain = "kit.linked.error.signInAgain"
+    }
+
     public enum Paywall {
         public static let title = "kit.paywall.title"
         public static let message = "kit.paywall.message"
@@ -102,6 +160,8 @@ public enum KitStrings {
         public static let restore = "kit.paywall.restore"
         public static let nothingToRestore = "kit.paywall.restore.nothing"
         public static let pending = "kit.paywall.pending"
+        public static let welcomeTitle = "kit.paywall.welcome.title"
+        public static let benefitsUnlocked = "kit.paywall.welcome.benefits"
     }
 
     /// Looks the key up for `locale`: app bundle (Localizable) first, then the kit (TitanKit),

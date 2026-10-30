@@ -1,2 +1,5 @@
 // Values shared by every environment. Secrets live in Secrets.xcconfig (git-ignored).
 APP_DISPLAY_NAME = Dolingo
+// Where /privacy and /terms are served: the AI server (Backend/dolingo-ai) unless set otherwise.
+// Empty uses the example.com placeholders. Write URLs as https:/$()/host so // isn't read as a comment.
+LEGAL_BASE_URL = $(AI_BASE_URL)

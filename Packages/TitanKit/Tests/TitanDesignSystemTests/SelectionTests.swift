@@ -1,3 +1,4 @@
+import CoreGraphics
 import XCTest
 @testable import TitanDesignSystem
 
@@ -43,5 +44,44 @@ final class SelectionTests: XCTestCase {
         XCTAssertEqual(set, [1, 2])
         set = TKSelection.toggling(1, in: set)
         XCTAssertEqual(set, [2])
+    }
+}
+
+final class TKFlowLayoutTests: XCTestCase {
+    private let chip = CGSize(width: 100, height: 40)
+
+    func testWrapsWhenTheLineIsFull() {
+        let result = TKFlowLayout.arrange([chip, chip, chip], width: 250, spacing: 10, lineSpacing: 12)
+        XCTAssertEqual(result.origins, [CGPoint(x: 0, y: 0), CGPoint(x: 110, y: 0), CGPoint(x: 0, y: 52)])
+        XCTAssertEqual(result.size, CGSize(width: 210, height: 92))
+    }
+
+    func testTooWideViewGetsItsOwnLine() {
+        let wide = CGSize(width: 400, height: 40)
+        let result = TKFlowLayout.arrange([wide, chip], width: 300, spacing: 10, lineSpacing: 12)
+        XCTAssertEqual(result.origins, [CGPoint(x: 0, y: 0), CGPoint(x: 0, y: 52)])
+    }
+
+    func testNothingTakesNoSpace() {
+        XCTAssertEqual(TKFlowLayout.arrange([], width: 300, spacing: 10, lineSpacing: 12).size, .zero)
+    }
+}
+
+final class TKCodeFieldTests: XCTestCase {
+    func testKeepsDigitsUpToTheLength() {
+        XCTAssertEqual(TKCodeField.sanitize("Code: 12 34 5", length: 4), "1234")
+        XCTAssertEqual(TKCodeField.sanitize("7a4", length: 4), "74")
+        XCTAssertEqual(TKCodeField.sanitize("٣٤", length: 4), "")
+    }
+
+    func testHighlightsTheNextBoxThenTheLast() {
+        XCTAssertEqual(TKCodeField.activeIndex(count: 0, length: 4), 0)
+        XCTAssertEqual(TKCodeField.activeIndex(count: 2, length: 4), 2)
+        XCTAssertEqual(TKCodeField.activeIndex(count: 4, length: 4), 3)
+    }
+
+    func testDigitPerBox() {
+        XCTAssertEqual(TKCodeField.digit(in: "749", at: 2), "9")
+        XCTAssertEqual(TKCodeField.digit(in: "749", at: 3), "")
     }
 }

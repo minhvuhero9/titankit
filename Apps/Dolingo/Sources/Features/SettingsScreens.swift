@@ -1,28 +1,36 @@
 import SwiftUI
+import TitanAuth
 import TitanDesignSystem
 import TitanFeatures
 import TitanIcons
 import TitanLocalization
+import TitanNavigation
 import TitanPurchase
 import TitanStorage
 
-/// Dolingo's rows on the kit's settings screen. More rows arrive with their screens
-/// (notifications, subscription...).
+/// Dolingo's rows on the kit's settings screen (Figma "account & settings").
 enum DolingoSettings {
-    static let profile = "profile"
+    static let preferences = "preferences"
+    static let notification = "notification"
+    static let security = "security"
+    static let billing = "billing"
+    static let data = "data"
     static let appearance = "appearance"
+    static let help = "help"
+    static let invite = "invite"
     static let rateApp = "rateApp"
-    static let privacy = "privacy"
-    static let terms = "terms"
     static let catalog = "catalog"
 
-    /// Where each row leads.
+    /// Where each row leads; nil for rows that do something else (rate, invite).
     static func route(for id: String) -> AppRoute? {
         switch id {
-        case profile: .profile
+        case preferences: .preferences
+        case notification: .notifications
+        case security: .security
+        case billing: .billing
+        case data: .dataAnalytics
         case appearance: .appearance
-        case privacy: .webPage(.privacy)
-        case terms: .webPage(.terms)
+        case help: .help
         case catalog: .catalog
         default: nil
         }
@@ -31,8 +39,14 @@ enum DolingoSettings {
 
 struct DolingoSettingsScreen: View {
     let container: AppContainer
+    /// The stack the screen is in: the Account tab's, or Home's when opened from a link.
+    let router: Router<AppRoute>
+    /// nil when Settings is the root of the Account tab.
+    var onBack: (() -> Void)?
     /// Hides the upgrade banner once the user has premium.
     @State private var isPremium = false
+    @State private var user: AuthUser?
+    @State private var invites = false
     @Environment(\.locale) private var locale
     @Environment(\.openURL) private var openURL
 
@@ -40,37 +54,63 @@ struct DolingoSettingsScreen: View {
         SettingsScreen(
             sections: [
                 SettingsSection("app", items: [
-                    SettingsItem(DolingoSettings.profile, title: kit(KitStrings.Profile.title), icon: Image(tk: .profile)),
+                    SettingsItem(DolingoSettings.preferences, title: Text("settings.preferences"), icon: Image(tk: .setting)),
+                    SettingsItem(DolingoSettings.notification, title: Text("settings.notification"), icon: Image(tk: .notification)),
+                    SettingsItem(DolingoSettings.security, title: Text("settings.security"), icon: Image(tk: .shieldDone)),
+                    SettingsItem(DolingoSettings.billing, title: Text("settings.billing"), icon: Image(tk: .wallet)),
+                    SettingsItem(DolingoSettings.data, title: Text("settings.data"), icon: Image(tk: .chart)),
                     SettingsItem(DolingoSettings.appearance, title: kit(KitStrings.Settings.appearance), icon: Image(tk: .show)),
+                    SettingsItem(DolingoSettings.help, title: Text("settings.help"), icon: Image(tk: .document)),
+                    SettingsItem(DolingoSettings.invite, title: Text("settings.invite"), icon: Image(tk: .addUser)),
                     SettingsItem(DolingoSettings.rateApp, title: kit(KitStrings.Settings.rateApp), icon: Image(tk: .star)),
-                    SettingsItem(DolingoSettings.catalog, title: Text("root.catalog"), icon: Image(tk: .category)),
-                ]),
-                SettingsSection("legal", items: [
-                    SettingsItem(DolingoSettings.privacy, title: kit(KitStrings.Settings.privacy), icon: Image(tk: .shieldDone)),
-                    SettingsItem(DolingoSettings.terms, title: kit(KitStrings.Settings.terms), icon: Image(tk: .document)),
-                ]),
+                ] + developerItems),
             ],
-            onBack: { container.router.pop() },
+            onBack: onBack,
             onSelect: { id in
                 if id == DolingoSettings.rateApp { openURL(AppConfig.writeReviewURL) }
-                if let route = DolingoSettings.route(for: id) { container.router.push(route) }
+                if id == DolingoSettings.invite { invites = true }
+                if let route = DolingoSettings.route(for: id) { router.push(route) }
             },
             onLogout: {
                 await container.flow.signOut()
-                container.router.popToRoot()
+                router.popToRoot()
             }
         ) {
-            if !isPremium {
-                TKUpgradeBanner(title: Text("settings.upgrade.title"), message: Text("settings.upgrade.message")) {
-                    container.router.present(.paywall)
+            VStack(spacing: Spacing.md) {
+                if !isPremium {
+                    TKUpgradeBanner(title: Text("settings.upgrade.title"), message: Text("settings.upgrade.message")) {
+                        router.present(.paywall)
+                    }
+                }
+                TKOptionCard(
+                    title: Text(verbatim: user?.displayName ?? KitStrings.string(KitStrings.Profile.title, locale: locale)),
+                    detail: user?.email.map { Text(verbatim: $0) }
+                ) {
+                    TKAvatar(name: user?.displayName ?? user?.email, size: 48)
+                } trailing: {
+                    Image(tk: .arrowRight)
+                        .resizable().scaledToFit()
+                        .frame(width: 20, height: 20)
+                } action: {
+                    router.push(.profile)
                 }
             }
         }
+        .sheet(isPresented: $invites) {
+            InviteSheet { invites = false }
+        }
+        .task { user = await container.auth.currentUser() }
         .task {
             for await entitlements in container.purchase.entitlementStream {
                 isPremium = entitlements.isPremium
             }
         }
+    }
+
+    /// The component catalog, for the team only.
+    private var developerItems: [SettingsItem] {
+        guard !container.config.environment.isProduction else { return [] }
+        return [SettingsItem(DolingoSettings.catalog, title: Text("root.catalog"), icon: Image(tk: .category))]
     }
 
     private func kit(_ key: String) -> Text {

@@ -10,6 +10,32 @@ enum AppRoute: Routable {
     case deleteAccount
     case paywall
     case webPage(WebPage)
+    case lesson(id: String)
+    /// Figma "roleplay - meeting new friends": scenario, goal and tasks before starting.
+    case roleplay(Roleplay)
+    case roleplayChat(Roleplay)
+    /// Figma "speaking practice": one Speak topic, phrase by phrase, full screen.
+    case phrasePractice(PhraseCategory)
+    case savedPhrases
+    /// Figma "chat with dolingo": free conversation with the AI tutor, full screen.
+    case tutorChat
+    /// Figma "create roleplay"; with a roleplay, its "Edit Roleplay".
+    case createRoleplay(editing: CustomRoleplay?)
+    /// A roleplay from My Roleplay, played with the AI.
+    case aiRoleplayChat(CustomRoleplay)
+    /// Settings sub-screens (Figma 94, 96, 97, 98, 107–109).
+    case preferences, notifications, security, billing, help, faq, contactSupport
+    /// "Change password" in Account & Security: the forgot password steps with the email filled in.
+    case changePassword(email: String)
+    /// Figma "settings - data & analytics".
+    case dataAnalytics
+    /// Figma "settings - linked accounts".
+    case linkedAccounts
+}
+
+/// The five tabs of the Figma "Menu Bar".
+enum AppTab: String, CaseIterable, Sendable {
+    case home, chats, speak, progress, account
 }
 
 /// Pages Dolingo shows in a web view.

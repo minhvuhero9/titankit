@@ -162,6 +162,15 @@ public extension View {
     ) -> some View {
         modifier(TKNavBarModifier(bar: TKNavBar(progress: progress, onBack: onBack, trailing: trailing)))
     }
+
+    /// A ready Text title with a trailing button, e.g. a roleplay's name and its settings gear.
+    func tkNavigationBar<Trailing: View>(
+        title: Text,
+        onBack: (() -> Void)? = nil,
+        @ViewBuilder trailing: () -> Trailing
+    ) -> some View {
+        modifier(TKNavBarModifier(bar: TKNavBar(title: title, onBack: onBack, trailing: trailing)))
+    }
 }
 
 public extension View {

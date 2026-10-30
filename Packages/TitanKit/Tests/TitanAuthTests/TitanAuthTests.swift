@@ -77,4 +77,97 @@ final class MockAuthServiceTests: XCTestCase {
         let current = await auth.currentUser()
         XCTAssertNil(current)
     }
+
+    func testPasswordResetWithTheEmailedCode() async throws {
+        let auth = MockAuthService(resetCode: "4321")
+        try await auth.sendPasswordReset(email: "Demo@titan.app")
+        do {
+            _ = try await auth.verifyPasswordResetCode(email: "demo@titan.app", code: "0000")
+            XCTFail("wrong code")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+        let token = try await auth.verifyPasswordResetCode(email: "demo@titan.app", code: "4321")
+        try await auth.resetPassword(token: token, newPassword: "newpass")
+        let user = try await auth.signIn(.email(email: "demo@titan.app", password: "newpass"))
+        XCTAssertEqual(user.email, "demo@titan.app")
+        do {
+            try await auth.resetPassword(token: token, newPassword: "again1")
+            XCTFail("a token works once")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+    }
+
+    func testResetCodeNeedsARequestFirst() async {
+        let auth = MockAuthService()
+        do {
+            _ = try await auth.verifyPasswordResetCode(email: "demo@titan.app", code: "1234")
+            XCTFail("no email was sent")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+    }
+
+    func testMockTokenNeedsASignedInUser() async throws {
+        let auth = MockAuthService()
+        do {
+            _ = try await auth.idToken(forceRefresh: false)
+            XCTFail("signed out")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+        let user = try await auth.signIn(.anonymous)
+        let token = try await auth.idToken(forceRefresh: true)
+        XCTAssertEqual(token, "mock-token-\(user.id)")
+    }
+
+    func testAppleNonceIsRandomAndHashed() {
+        let first = AppleSignInHelper.randomNonce()
+        XCTAssertEqual(first.count, 32)
+        XCTAssertNotEqual(first, AppleSignInHelper.randomNonce())
+        XCTAssertEqual(AppleSignInHelper.sha256("abc"),
+                       "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+    }
+
+    func testLinkingAddsAWayToSignIn() async throws {
+        let auth = MockAuthService()
+        _ = try await auth.signIn(.email(email: "demo@titan.app", password: "123456"))
+        var providers = await auth.linkedProviders()
+        XCTAssertEqual(providers, [.email])
+        _ = try await auth.link(.google(idToken: "id", accessToken: "token"))
+        providers = await auth.linkedProviders()
+        XCTAssertEqual(providers, [.email, .google])
+        do {
+            _ = try await auth.link(.google(idToken: "id", accessToken: "token"))
+            XCTFail("already linked")
+        } catch {
+            XCTAssertEqual(error, AuthFailure.alreadyLinked)
+        }
+        _ = try await auth.unlink(.email)
+        do {
+            _ = try await auth.unlink(.google)
+            XCTFail("the last way to sign in stays")
+        } catch {
+            XCTAssertEqual(error, AuthFailure.lastProvider)
+        }
+    }
+
+    func testAGuestKeepsTheirAccountByLinking() async throws {
+        let auth = MockAuthService()
+        await auth.markTaken(.apple)
+        let guest = try await auth.signIn(.anonymous)
+        let providers = await auth.linkedProviders()
+        XCTAssertEqual(providers, [])
+        do {
+            _ = try await auth.link(.apple(idToken: "id", rawNonce: "n", fullName: nil))
+            XCTFail("taken")
+        } catch {
+            XCTAssertEqual(error, AuthFailure.credentialInUse)
+        }
+        let user = try await auth.link(.google(idToken: "id", accessToken: "token"))
+        XCTAssertEqual(user.id, guest.id)
+        XCTAssertFalse(user.isAnonymous)
+        XCTAssertEqual(user.provider, .google)
+    }
 }

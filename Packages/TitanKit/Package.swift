@@ -23,6 +23,8 @@ let package = Package(
         .library(name: "TitanPush", targets: ["TitanPush"]),
         .library(name: "TitanRemoteConfig", targets: ["TitanRemoteConfig"]),
         .library(name: "TitanLocalization", targets: ["TitanLocalization"]),
+        .library(name: "TitanSpeech", targets: ["TitanSpeech"]),
+        .library(name: "TitanAI", targets: ["TitanAI"]),
         .library(name: "TitanFeatures", targets: ["TitanFeatures"]),
     ],
     targets: [
@@ -48,6 +50,8 @@ let package = Package(
         .target(name: "TitanPush", dependencies: foundation + ["TitanNavigation"]),
         .target(name: "TitanRemoteConfig", dependencies: foundation),
         .target(name: "TitanLocalization", dependencies: foundation, resources: [.process("Resources")]),
+        .target(name: "TitanSpeech", dependencies: foundation),
+        .target(name: "TitanAI", dependencies: foundation),
 
         // Ready-made screens
         .target(
@@ -68,6 +72,9 @@ let package = Package(
         .testTarget(name: "TitanAuthTests", dependencies: ["TitanCore", "TitanAuth"]),
         .testTarget(name: "TitanRemoteConfigTests", dependencies: ["TitanCore", "TitanRemoteConfig"]),
         .testTarget(name: "TitanPurchaseTests", dependencies: ["TitanCore", "TitanPurchase"]),
+        .testTarget(name: "TitanSpeechTests", dependencies: ["TitanCore", "TitanSpeech"]),
+        .testTarget(name: "TitanAITests", dependencies: ["TitanCore", "TitanAI"]),
+        .testTarget(name: "TitanAnalyticsTests", dependencies: ["TitanCore", "TitanAnalytics"]),
         .testTarget(name: "TitanFeaturesTests", dependencies: ["TitanCore", "TitanAuth", "TitanDesignSystem", "TitanLocalization", "TitanPurchase", "TitanFeatures"]),
 
         .testTarget(
@@ -76,7 +83,7 @@ let package = Package(
                 "TitanCore", "TitanNetworking", "TitanStorage", "TitanIcons", "TitanDesignSystem",
                 "TitanNavigation", "TitanAuth", "TitanPurchase", "TitanAds",
                 "TitanAnalytics", "TitanPush", "TitanRemoteConfig", "TitanLocalization",
-                "TitanFeatures",
+                "TitanSpeech", "TitanAI", "TitanFeatures",
             ]
         ),
     ]

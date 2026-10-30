@@ -4,6 +4,8 @@
 
 TitanAnalytics ghi sự kiện, thuộc tính người dùng và lỗi crash, rồi gửi tới một hoặc nhiều nhà cung cấp cùng lúc.
 
+> Trạng thái: kit đã có `AnalyticsEvent`, `AnalyticsValue`, `AnalyticsService`, `CrashService`, `CompositeAnalyticsService`, `ConsoleAnalyticsService`, `NoOpAnalyticsService`, `SpyAnalyticsService`; adapter `FirebaseAnalyticsService` và `CrashlyticsService` trong `Adapters/TitanFirebase`. Dolingo bật/tắt thu thập ở Cài đặt → Dữ liệu & Phân tích.
+
 ## 1. Trách nhiệm
 
 **Làm:**

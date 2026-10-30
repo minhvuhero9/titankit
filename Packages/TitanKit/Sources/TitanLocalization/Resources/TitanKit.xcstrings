@@ -1,6 +1,5 @@
 {
   "sourceLanguage": "vi",
-  "version": "1.0",
   "strings": {
     "kit.common.back": {
       "extractionState": "manual",
@@ -49,6 +48,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xoá"
+          }
+        }
+      }
+    },
+    "kit.common.continue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục"
           }
         }
       }
@@ -614,6 +630,193 @@
         }
       }
     },
+    "kit.linked.done %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is linked"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã liên kết %@"
+          }
+        }
+      }
+    },
+    "kit.linked.error.inUse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This account is already linked to another profile."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản này đã được liên kết với một hồ sơ khác."
+          }
+        }
+      }
+    },
+    "kit.linked.error.last": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep at least one way to sign in."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cần giữ ít nhất một cách đăng nhập."
+          }
+        }
+      }
+    },
+    "kit.linked.error.signInAgain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For your safety, sign out and sign in again before changing this."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để an toàn, hãy đăng xuất rồi đăng nhập lại trước khi thay đổi."
+          }
+        }
+      }
+    },
+    "kit.linked.link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liên kết"
+          }
+        }
+      }
+    },
+    "kit.linked.linked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linked"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã liên kết"
+          }
+        }
+      }
+    },
+    "kit.linked.removed %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is unlinked"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã huỷ liên kết %@"
+          }
+        }
+      }
+    },
+    "kit.linked.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linked Accounts"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản liên kết"
+          }
+        }
+      }
+    },
+    "kit.linked.unlink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlink"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Huỷ liên kết"
+          }
+        }
+      }
+    },
+    "kit.linked.unlink.message %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You won't be able to sign in with %@ anymore. You can link it again later."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn sẽ không đăng nhập bằng %@ được nữa. Bạn có thể liên kết lại sau."
+          }
+        }
+      }
+    },
+    "kit.linked.unlink.title %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlink %@?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Huỷ liên kết %@?"
+          }
+        }
+      }
+    },
     "kit.login.email": {
       "extractionState": "manual",
       "localizations": {
@@ -869,6 +1072,397 @@
         }
       }
     },
+    "kit.passwordReset.code.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One-time code"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mã dùng một lần"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.code.message %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We've sent a one-time code (OTP) to %@. Please enter the code below to proceed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúng tôi đã gửi mã dùng một lần (OTP) đến %@. Hãy nhập mã bên dưới để tiếp tục."
+          }
+        }
+      }
+    },
+    "kit.passwordReset.code.resend": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resend code"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi lại mã"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.code.resendIn %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can resend the code in %lld seconds"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn có thể gửi lại mã sau %lld giây"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.code.sent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A new code is on its way"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã gửi mã mới"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.code.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter OTP Code 🔐"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập mã OTP 🔐"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.code.wrong": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The code is wrong or has expired"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mã không đúng hoặc đã hết hạn"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.done.action": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue My Journey"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục hành trình"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.done.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your password has been successfully updated."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mật khẩu của bạn đã được cập nhật."
+          }
+        }
+      }
+    },
+    "kit.passwordReset.done.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're All Set!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xong rồi!"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.email.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the email address of your account and we'll send you a one-time code (OTP) to reset your password."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập email của tài khoản, chúng tôi sẽ gửi cho bạn một mã dùng một lần (OTP) để đặt lại mật khẩu."
+          }
+        }
+      }
+    },
+    "kit.passwordReset.email.messageLink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the email address of your account and we'll send you a link to reset your password."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập email của tài khoản, chúng tôi sẽ gửi cho bạn một đường link để đặt lại mật khẩu."
+          }
+        }
+      }
+    },
+    "kit.passwordReset.email.submit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send OTP Code"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi mã OTP"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.email.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forgot Your Password? 🔑"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quên mật khẩu? 🔑"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to Sign In"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại đăng nhập"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.message %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We've sent a link to reset your password to %@. Open it, choose a new password, then sign in again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúng tôi đã gửi link đặt lại mật khẩu tới %@. Mở link, chọn mật khẩu mới rồi đăng nhập lại."
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.submit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send Reset Link"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi link đặt lại"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check Your Email 📬"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiểm tra email 📬"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.password.confirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm New Password"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập lại mật khẩu mới"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.password.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a new password for your account. Make sure it's secure and easy for you to remember."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đặt mật khẩu mới cho tài khoản. Hãy chọn mật khẩu an toàn và dễ nhớ với bạn."
+          }
+        }
+      }
+    },
+    "kit.passwordReset.password.new": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Password"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mật khẩu mới"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.password.submit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save New Password"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu mật khẩu mới"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.password.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secure Your Account 🔒"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bảo vệ tài khoản 🔒"
+          }
+        }
+      }
+    },
     "kit.paywall.autoRenew": {
       "extractionState": "manual",
       "localizations": {
@@ -1120,6 +1714,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Miễn phí %1$lld ngày đầu, sau đó %2$@"
+          }
+        }
+      }
+    },
+    "kit.paywall.welcome.benefits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benefits Unlocked:"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quyền lợi đã mở khoá:"
+          }
+        }
+      }
+    },
+    "kit.paywall.welcome.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Congratulations!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúc mừng bạn!"
           }
         }
       }
@@ -1497,6 +2125,143 @@
           }
         }
       }
+    },
+    "kit.signUp.creating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating an account..."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tạo tài khoản..."
+          }
+        }
+      }
+    },
+    "kit.signUp.email.title %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thanks, %@! What's your email address?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cảm ơn %@! Email của bạn là gì?"
+          }
+        }
+      }
+    },
+    "kit.signUp.error.mismatch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwords don't match"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mật khẩu nhập lại không khớp"
+          }
+        }
+      }
+    },
+    "kit.signUp.name.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your name"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên của bạn"
+          }
+        }
+      }
+    },
+    "kit.signUp.name.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First, what should we call you?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trước tiên, chúng tôi nên gọi bạn là gì?"
+          }
+        }
+      }
+    },
+    "kit.signUp.password.confirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm password"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập lại mật khẩu"
+          }
+        }
+      }
+    },
+    "kit.signUp.password.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One last step! Create a password to keep your account safe and secure."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bước cuối! Tạo mật khẩu để giữ tài khoản của bạn an toàn."
+          }
+        }
+      }
+    },
+    "kit.signUp.submit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tạo tài khoản"
+          }
+        }
+      }
     }
-  }
+  },
+  "version": "1.0"
 }

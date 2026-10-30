@@ -72,5 +72,12 @@ enum DolingoTheme {
         )
     }()
 
+    /// Chapter banners on Home, in turn: orange, blue, purple (Figma "Chapter" cards).
+    static let chapterColors = [
+        AdaptiveColor(RGBA(hex: 0xFF981F)),
+        AdaptiveColor(RGBA(hex: 0x1A96F0)),
+        AdaptiveColor(RGBA(hex: 0x9D28AC)),
+    ]
+
     static let theme = Theme.base.merged(with: brand)
 }

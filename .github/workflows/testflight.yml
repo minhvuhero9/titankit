@@ -1,0 +1,61 @@
+name: TestFlight
+
+# Run by hand from the Actions tab once the Apple Developer account and the secrets below
+# exist (docs/TestFlight.md). Without them the job says so and stops.
+on:
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: "beta: Staging to TestFlight. release: Prod to App Store Connect."
+        required: true
+        default: beta
+        type: choice
+        options: [beta, release]
+
+jobs:
+  upload:
+    name: Dolingo ${{ inputs.lane }}
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+      MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+    steps:
+      - name: Check the signing secrets
+        id: secrets
+        run: |
+          if [ -z "$DEVELOPMENT_TEAM" ] || [ -z "$ASC_KEY_ID" ] || [ -z "$MATCH_GIT_URL" ]; then
+            echo "::notice::No Apple Developer secrets yet; nothing to upload. See docs/TestFlight.md."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.secrets.outputs.ready == 'true'
+      - uses: jdx/mise-action@v2
+        if: steps.secrets.outputs.ready == 'true'
+      - uses: ruby/setup-ruby@v1
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - name: Write the git-ignored config files
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          SECRETS_XCCONFIG: ${{ secrets.DOLINGO_SECRETS_XCCONFIG }}
+          FIREBASE_STAGING: ${{ secrets.DOLINGO_FIREBASE_PLIST_STAGING }}
+          FIREBASE_PROD: ${{ secrets.DOLINGO_FIREBASE_PLIST_PROD }}
+        run: |
+          mkdir -p Apps/Dolingo/Resources/Firebase
+          [ -n "$SECRETS_XCCONFIG" ] && echo "$SECRETS_XCCONFIG" | base64 --decode > Apps/Dolingo/Config/Secrets.xcconfig
+          [ -n "$FIREBASE_STAGING" ] && echo "$FIREBASE_STAGING" | base64 --decode > Apps/Dolingo/Resources/Firebase/GoogleService-Info-Staging.plist
+          [ -n "$FIREBASE_PROD" ] && echo "$FIREBASE_PROD" | base64 --decode > Apps/Dolingo/Resources/Firebase/GoogleService-Info-Prod.plist
+          true
+      - name: Build, sign and upload
+        if: steps.secrets.outputs.ready == 'true'
+        run: bundle exec fastlane ${{ inputs.lane }} app:Dolingo

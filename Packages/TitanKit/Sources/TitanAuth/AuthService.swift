@@ -7,10 +7,28 @@ public protocol AuthService: Sendable {
     func currentUser() async -> AuthUser?
     func signIn(_ method: SignInMethod) async throws(TitanError) -> AuthUser
     func signUp(email: String, password: String, displayName: String?) async throws(TitanError) -> AuthUser
+    /// Emails a one-time code for resetting the password. Succeeds even when no account uses
+    /// the address, so the form can't be used to find out who has an account.
     func sendPasswordReset(email: String) async throws(TitanError)
+    /// Checks the emailed code. Returns a token for `resetPassword`; throws `.unauthorized`
+    /// when the code is wrong or has expired.
+    func verifyPasswordResetCode(email: String, code: String) async throws(TitanError) -> String
+    /// Sets a new password with the token from `verifyPasswordResetCode`.
+    func resetPassword(token: String, newPassword: String) async throws(TitanError)
     /// Changes the signed-in user's name and returns the updated user.
     func updateProfile(displayName: String) async throws(TitanError) -> AuthUser
     func signOut() async throws(TitanError)
+    /// How the signed-in account can sign in: `.email`, `.apple`, `.google`...; empty for a guest
+    /// or when signed out.
+    func linkedProviders() async -> [AuthProvider]
+    /// Adds a way to sign in to the current account, e.g. Google; a guest becomes a lasting
+    /// account. Throws `AuthFailure.credentialInUse` when another account already uses it.
+    func link(_ method: SignInMethod) async throws(TitanError) -> AuthUser
+    /// Removes a way to sign in. Throws `AuthFailure.lastProvider` for the only one left.
+    func unlink(_ provider: AuthProvider) async throws(TitanError) -> AuthUser
+    /// A token the app's own servers can check to know who is calling, refreshed when it is
+    /// about to expire or when `forceRefresh` is set. Throws `.unauthorized` when signed out.
+    func idToken(forceRefresh: Bool) async throws(TitanError) -> String
     /// Throws `.unauthorized` when the backend wants a fresh sign-in first.
     func deleteAccount() async throws(TitanError)
 }

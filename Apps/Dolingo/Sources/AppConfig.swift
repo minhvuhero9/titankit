@@ -7,18 +7,32 @@ import TitanPurchase
 struct AppConfig: Equatable, Sendable {
     let environment: AppEnvironment
     let apiBaseURL: URL
+    /// The AI tutor's server; nil until it is deployed and set in Secrets.xcconfig.
+    var aiBaseURL: URL?
+    var aiClientKey = ""
     /// CFBundleShortVersionString, compared with `minimum_version` at launch.
     var appVersion = "0.0.0"
 
     static let current = AppConfig(infoDictionary: Bundle.main.infoDictionary ?? [:])
 
     static let languages = ["vi", "en"]
+    /// The language Dolingo teaches; Vietnamese speakers learning English.
+    static let learningLanguage = "en"
     static let defaultLanguage = "vi"
     /// Custom URL scheme for deep links, registered in Project.swift.
     static let urlScheme = "dolingo"
-    /// Placeholders until the real Privacy Policy and Terms pages are published.
-    static let privacyURL = URL(string: "https://www.example.com/privacy")!
-    static let termsURL = URL(string: "https://www.example.com/terms")!
+    /// The Privacy Policy and Terms, served by the AI server (Backend/dolingo-ai) at /privacy and
+    /// /terms once its URL is set (LEGAL_BASE_URL in Config/Shared.xcconfig); placeholders until then.
+    static let privacyURL = legalURL("privacy", base: Bundle.main.infoDictionary?["DolingoLegalBaseURL"] as? String)
+    static let termsURL = legalURL("terms", base: Bundle.main.infoDictionary?["DolingoLegalBaseURL"] as? String)
+
+    static func legalURL(_ page: String, base: String?) -> URL {
+        let base = (base ?? "").trimmingCharacters(in: .whitespaces)
+        if base.hasPrefix("https://"), let url = URL(string: base) {
+            return url.appendingPathComponent(page)
+        }
+        return URL(string: "https://www.example.com")!.appendingPathComponent(page)
+    }
     /// Premium subscriptions. Placeholders until the products exist on App Store Connect.
     static let purchase = PurchaseConfig(premiumProductIds: [
         "com.titanstudio.dolingo.premium.monthly",
@@ -31,6 +45,11 @@ struct AppConfig: Equatable, Sendable {
         termsURL: termsURL,
         privacyURL: privacyURL
     )
+    /// Placeholders until the support inbox and website exist.
+    static let supportEmail = "support@example.com"
+    static let websiteURL = URL(string: "https://www.example.com")!
+    /// Where "Manage subscription" leads: the App Store's subscription list.
+    static let manageSubscriptionsURL = URL(string: "https://apps.apple.com/account/subscriptions")!
     /// Placeholder until the app is registered on App Store Connect.
     static let appStoreID = "0000000000"
     /// Opened by the force update screen.
@@ -52,5 +71,8 @@ struct AppConfig: Equatable, Sendable {
             apiBaseURL: URL(string: rawURL) ?? fallbackURL
         )
         appVersion = infoDictionary["CFBundleShortVersionString"] as? String ?? "0.0.0"
+        let aiURL = (infoDictionary["DolingoAIBaseURL"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+        aiBaseURL = aiURL.hasPrefix("https://") ? URL(string: aiURL) : nil
+        aiClientKey = infoDictionary["DolingoAIClientKey"] as? String ?? ""
     }
 }

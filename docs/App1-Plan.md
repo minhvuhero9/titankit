@@ -84,14 +84,17 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** thay Mock bằng dịch vụ thật cho những gì App 1 cần (xem câu hỏi 4).
 
-- [ ] Tạo project Firebase cho Dev, Staging, Prod.
-- [ ] `Adapters/TitanFirebase`: Auth, Firestore/Backend, Remote Config, Analytics, Messaging.
-- [ ] TitanAuth: Apple, Google, email; xóa tài khoản.
-- [ ] TitanRemoteConfig: `LaunchChecker` cho bảo trì và bắt buộc cập nhật (kit và Mock đã xong; còn adapter Firebase).
-- [ ] TitanAnalytics: sự kiện chung của kit + sự kiện riêng App 1.
+- [ ] Tạo project Firebase cho Dev, Staging, Prod (việc của chủ tài khoản, xem [Firebase-Setup.md](Firebase-Setup.md)).
+- [x] `Adapters/TitanFirebase`: Core, Auth (email, Apple, Google, khách), Remote Config, Analytics + Crashlytics. Firestore và Messaging chưa cần.
+- [x] TitanAuth: `AppleSignInHelper`, `idToken`, xóa tài khoản; `GoogleSignInHelper` nằm trong adapter vì cần SDK Google.
+- [x] TitanRemoteConfig: adapter Firebase cho `LaunchChecker`.
+- [x] TitanAnalytics: `AnalyticsService`, `CrashService`, sự kiện chung, Composite, Console, NoOp, Spy; màn Dữ liệu & Phân tích.
 - [x] TitanPurchase: `PurchaseService`, adapter StoreKit 2 và Mock (chưa có RevenueCat, chưa có file `.storekit`).
 - [ ] TitanAds (AdMob + UMP), TitanPush nếu cần.
-- [ ] `AppContainer` chọn adapter theo môi trường.
+- [x] `AppContainer` dùng Firebase khi có `GoogleService-Info-<Env>.plist`, không có thì chạy Mock.
+- [x] Server AI kiểm tra token Firebase và giới hạn lượt mỗi ngày theo tài khoản.
+- [x] Liên kết tài khoản (màn 99): Google, Apple; tài khoản khách liên kết để giữ tiến độ.
+- [ ] Đăng nhập Facebook, Twitter và các cách khác: tạm hoãn, chỉ dùng email, Apple, Google.
 
 **Xong khi:** App1-Staging đăng nhập thật, đọc Remote Config thật, sự kiện analytics hiện trên console.
 
@@ -101,7 +104,8 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** làm phần nghiệp vụ riêng theo Figma của App 1.
 
-- [ ] Liệt kê màn hình riêng từ Figma, ước lượng từng màn.
+- [x] Liệt kê màn hình riêng từ Figma ([Dolingo-Screens.md](Dolingo-Screens.md)).
+- [x] Đăng ký: 10 câu hỏi, chuẩn bị lộ trình, tạo tài khoản (màn 5–20).
 - [ ] Định nghĩa model và Repository của App 1 (ví dụ `UserRepository`).
 - [ ] Viết View + ViewModel cho từng màn trong `Apps/App1/Sources/Features/`.
 - [ ] Unit test ViewModel với Repository Mock.
@@ -116,12 +120,13 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** bản App 1 đủ điều kiện review, có trên TestFlight.
 
-- [ ] Hoàn thiện `PrivacyInfo.xcprivacy` và nhãn App Privacy.
-- [ ] ATT, UMP, xóa tài khoản, Sign in with Apple, Restore purchases.
-- [ ] Privacy Policy và Terms có URL thật.
-- [ ] Icon, launch screen, ảnh chụp App Store, mô tả.
-- [ ] Lane `beta` đẩy bản Staging lên TestFlight cho nhóm nội bộ.
-- [ ] Đi hết checklist trong Compliance.md.
+- [x] `PrivacyInfo.xcprivacy` của Dolingo và câu trả lời nhãn App Privacy ([AppStore-Dolingo.md](AppStore-Dolingo.md)). Còn kiểm tra Privacy Report trên bản archive.
+- [x] Không cần ATT và UMP (không quảng cáo, không theo dõi). Có xóa tài khoản, Sign in with Apple, Restore purchases.
+- [ ] Thu hồi token Apple khi xóa tài khoản đăng nhập bằng Apple (cần tài khoản Apple Developer để thử).
+- [x] Privacy Policy và Terms (tiếng Việt, tiếng Anh) do server AI phục vụ ở `/privacy`, `/terms`; app lấy từ cùng server với `AI_BASE_URL`. Server có môi trường staging/prod và workflow deploy ([AI-Deploy.md](AI-Deploy.md)). Còn: tài khoản Cloudflare và khoá Anthropic, điền URL, nhờ người có chuyên môn đọc lại.
+- [ ] Ảnh chụp App Store. Icon và mô tả đã có (mô tả ở [AppStore-Dolingo.md](AppStore-Dolingo.md)).
+- [x] Lane `beta`, `release` (fastlane, match, App Store Connect API key) và workflow TestFlight chạy tay. Còn: tài khoản Apple Developer và secrets ([TestFlight.md](TestFlight.md)).
+- [ ] Đi hết checklist trong Compliance.md: còn email hỗ trợ, trang web, App Store id, tài khoản demo.
 - [ ] Tag `kit/v0.1.0` và `app1/v1.0.0`.
 
 **Xong khi:** bản Prod có trên TestFlight, checklist Compliance đã tick hết, sẵn sàng gửi review.

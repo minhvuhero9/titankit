@@ -1,5 +1,7 @@
 import XCTest
+import TitanAnalytics
 import TitanAuth
+import TitanCore
 import TitanFeatures
 import TitanRemoteConfig
 import TitanStorage
@@ -35,6 +37,37 @@ final class AppFlowTests: XCTestCase {
         XCTAssertEqual(relaunch.stage, .login)
     }
 
+    func testSignUpGoesThroughTheQuestionsThePlanAndTheAccount() async {
+        let preferences = makePreferences()
+        let flow = AppFlow(auth: MockAuthService(), preferences: preferences)
+        flow.startSignUp()
+        XCTAssertEqual(flow.stage, .survey)
+        flow.leaveSurvey()
+        XCTAssertEqual(flow.stage, .onboarding)
+
+        flow.startSignUp()
+        let answers: [String: SurveyAnswer] = [DolingoSurvey.Step.level: .options(["beginner"])]
+        flow.finishSurvey(answers)
+        XCTAssertEqual(flow.stage, .preparingPlan)
+        XCTAssertEqual(flow.surveyAnswers, answers)
+        flow.planIsReady()
+        XCTAssertEqual(flow.stage, .planReady)
+        flow.createAccount()
+        XCTAssertEqual(flow.stage, .signUp)
+        flow.leaveSignUp()
+        XCTAssertEqual(flow.stage, .planReady)
+        flow.createAccount()
+        flow.didSignIn()
+        XCTAssertEqual(flow.stage, .home)
+
+        // Someone who started signing up lands on sign-in next time, with the answers kept.
+        let relaunch = AppFlow(auth: MockAuthService(), preferences: preferences)
+        await relaunch.prepareLaunch()
+        relaunch.finishSplash()
+        XCTAssertEqual(relaunch.stage, .login)
+        XCTAssertEqual(relaunch.surveyAnswers, answers)
+    }
+
     func testSignedInUserSkipsToHome() async {
         let preferences = makePreferences()
         let user = AuthUser(id: "1", email: "a@b.co", provider: .email)
@@ -53,6 +86,73 @@ final class AppFlowTests: XCTestCase {
         XCTAssertEqual(flow.stage, .home)
         let user = await auth.currentUser()
         XCTAssertEqual(user?.isAnonymous, true)
+    }
+
+    func testSocialButtonsUseTheProvidersCredential() async {
+        let auth = MockAuthService()
+        let analytics = SpyAnalyticsService()
+        var asked: [AuthProvider] = []
+        let flow = AppFlow(auth: auth, preferences: makePreferences(), analytics: analytics) { provider in
+            asked.append(provider)
+            return .google(idToken: "id", accessToken: "access")
+        }
+        await flow.signInWithSocial(.google)
+        XCTAssertEqual(asked, [.google])
+        XCTAssertEqual(flow.stage, .home)
+        let user = await auth.currentUser()
+        XCTAssertEqual(user?.provider, .google)
+        XCTAssertEqual(analytics.events, [.login(method: "google")])
+        XCTAssertEqual(analytics.userId, user?.id)
+    }
+
+    func testClosingTheSocialSheetStaysQuietly() async {
+        let flow = AppFlow(auth: MockAuthService(), preferences: makePreferences()) { (_: AuthProvider) async throws(TitanError) -> SignInMethod in
+            throw .cancelled
+        }
+        flow.finishOnboarding()
+        await flow.signInWithSocial(.apple)
+        XCTAssertEqual(flow.stage, .login)
+        XCTAssertNil(flow.errorKey)
+    }
+
+    func testAFailedSocialSignInIsShown() async {
+        let flow = AppFlow(auth: MockAuthService(), preferences: makePreferences()) { (_: AuthProvider) async throws(TitanError) -> SignInMethod in
+            throw .network(.offline)
+        }
+        flow.finishOnboarding()
+        await flow.signInWithSocial(.apple)
+        XCTAssertEqual(flow.stage, .login)
+        XCTAssertEqual(flow.errorKey, "login.social.failed")
+    }
+
+    func testSignUpIsTrackedAsNew() {
+        let analytics = SpyAnalyticsService()
+        let flow = AppFlow(auth: MockAuthService(), preferences: makePreferences(), analytics: analytics)
+        flow.didSignIn(AuthUser(id: "7", email: "a@b.co", provider: .email), isNew: true)
+        XCTAssertEqual(flow.stage, .home)
+        XCTAssertEqual(analytics.events, [.signUp(method: "email")])
+    }
+
+    func testFirebaseFilePerEnvironment() {
+        XCTAssertEqual(AppContainer.firebasePlistName(.dev), "GoogleService-Info-Dev")
+        XCTAssertEqual(AppContainer.firebasePlistName(.staging), "GoogleService-Info-Staging")
+        XCTAssertEqual(AppContainer.firebasePlistName(.prod), "GoogleService-Info-Prod")
+        XCTAssertTrue(AppContainer.forcesBlockingScreen(["app", "-maintenance"]))
+        XCTAssertFalse(AppContainer.forcesBlockingScreen(["app"]))
+    }
+
+    func testDataSharingChoicesReachTheServices() {
+        let preferences = makePreferences()
+        let analytics = SpyAnalyticsService()
+        let crash = SpyAnalyticsService()
+        let store = DataSharingStore(preferences: preferences, analytics: analytics, crash: crash)
+        XCTAssertTrue(analytics.isCollectionEnabled)
+        store.settings.analytics = false
+        XCTAssertFalse(analytics.isCollectionEnabled)
+        XCTAssertTrue(crash.isCollectionEnabled)
+        let reopened = DataSharingStore(preferences: preferences, analytics: SpyAnalyticsService(), crash: SpyAnalyticsService())
+        XCTAssertFalse(reopened.settings.analytics)
+        XCTAssertTrue(reopened.settings.crashReports)
     }
 
     func testMaintenanceBlocksTheAppUntilItEnds() async {
@@ -87,6 +187,18 @@ final class AppFlowTests: XCTestCase {
         XCTAssertTrue(maintenance.value(for: .maintenanceEnabled))
         let update = AppContainer.launchArgumentConfig(["-forceUpdate"])
         XCTAssertEqual(update.value(for: .minimumVersion), "999.0.0")
+    }
+
+    func testForgotPasswordOpensTheResetAndComesBack() {
+        let flow = AppFlow(auth: MockAuthService(), preferences: makePreferences())
+        flow.finishOnboarding()
+        flow.forgotPassword()
+        XCTAssertEqual(flow.stage, .resetPassword)
+        flow.leaveResetPassword()
+        XCTAssertEqual(flow.stage, .login)
+        flow.forgotPassword()
+        flow.didSignIn()
+        XCTAssertEqual(flow.stage, .home)
     }
 
     func testDeletedAccountGoesBackToSignIn() async {

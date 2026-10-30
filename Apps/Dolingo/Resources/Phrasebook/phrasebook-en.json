@@ -1,0 +1,474 @@
+{
+  "language": "en",
+  "categories": [
+    {
+      "id": "en.greetings",
+      "emoji": "👋",
+      "title": {
+        "vi": "Chào hỏi & Giới thiệu",
+        "en": "Greetings & Introductions"
+      },
+      "isPremium": false,
+      "phrases": [
+        {
+          "text": "Hello, how are you?",
+          "meaning": {
+            "vi": "Xin chào, bạn khoẻ không?",
+            "en": "Hello, how are you?"
+          }
+        },
+        {
+          "text": "I'm fine, thank you.",
+          "meaning": {
+            "vi": "Tôi khoẻ, cảm ơn bạn.",
+            "en": "I'm fine, thank you."
+          }
+        },
+        {
+          "text": "What's your name?",
+          "meaning": {
+            "vi": "Bạn tên là gì?",
+            "en": "What's your name?"
+          }
+        },
+        {
+          "text": "My name is Minh.",
+          "meaning": {
+            "vi": "Tôi tên là Minh.",
+            "en": "My name is Minh."
+          }
+        },
+        {
+          "text": "Nice to meet you.",
+          "meaning": {
+            "vi": "Rất vui được gặp bạn.",
+            "en": "Nice to meet you."
+          }
+        },
+        {
+          "text": "Where are you from?",
+          "meaning": {
+            "vi": "Bạn đến từ đâu?",
+            "en": "Where are you from?"
+          }
+        },
+        {
+          "text": "I'm from Vietnam.",
+          "meaning": {
+            "vi": "Tôi đến từ Việt Nam.",
+            "en": "I'm from Vietnam."
+          }
+        },
+        {
+          "text": "See you later!",
+          "meaning": {
+            "vi": "Hẹn gặp lại!",
+            "en": "See you later!"
+          }
+        }
+      ]
+    },
+    {
+      "id": "en.travel",
+      "emoji": "✈️",
+      "title": {
+        "vi": "Hỏi đường & Du lịch",
+        "en": "Directions & Travel"
+      },
+      "isPremium": false,
+      "phrases": [
+        {
+          "text": "Where is the bus stop?",
+          "meaning": {
+            "vi": "Trạm xe buýt ở đâu?",
+            "en": "Where is the bus stop?"
+          }
+        },
+        {
+          "text": "How do I get to the airport?",
+          "meaning": {
+            "vi": "Đi đến sân bay thế nào?",
+            "en": "How do I get to the airport?"
+          }
+        },
+        {
+          "text": "Is it far from here?",
+          "meaning": {
+            "vi": "Có xa đây không?",
+            "en": "Is it far from here?"
+          }
+        },
+        {
+          "text": "Turn left at the corner.",
+          "meaning": {
+            "vi": "Rẽ trái ở góc đường.",
+            "en": "Turn left at the corner."
+          }
+        },
+        {
+          "text": "Can you show me on the map?",
+          "meaning": {
+            "vi": "Bạn chỉ giúp tôi trên bản đồ được không?",
+            "en": "Can you show me on the map?"
+          }
+        },
+        {
+          "text": "I'd like a ticket to London.",
+          "meaning": {
+            "vi": "Tôi muốn mua một vé đi London.",
+            "en": "I'd like a ticket to London."
+          }
+        },
+        {
+          "text": "What time does the train leave?",
+          "meaning": {
+            "vi": "Mấy giờ tàu chạy?",
+            "en": "What time does the train leave?"
+          }
+        },
+        {
+          "text": "I'm lost.",
+          "meaning": {
+            "vi": "Tôi bị lạc đường.",
+            "en": "I'm lost."
+          }
+        }
+      ]
+    },
+    {
+      "id": "en.smalltalk",
+      "emoji": "🗣️",
+      "title": {
+        "vi": "Giao tiếp & Trò chuyện",
+        "en": "Socializing & Small Talk"
+      },
+      "isPremium": false,
+      "phrases": [
+        {
+          "text": "What do you do?",
+          "meaning": {
+            "vi": "Bạn làm nghề gì?",
+            "en": "What do you do?"
+          }
+        },
+        {
+          "text": "What do you do for fun?",
+          "meaning": {
+            "vi": "Bạn thường làm gì để giải trí?",
+            "en": "What do you do for fun?"
+          }
+        },
+        {
+          "text": "Have you been here before?",
+          "meaning": {
+            "vi": "Bạn đến đây lần nào chưa?",
+            "en": "Have you been here before?"
+          }
+        },
+        {
+          "text": "How was your weekend?",
+          "meaning": {
+            "vi": "Cuối tuần của bạn thế nào?",
+            "en": "How was your weekend?"
+          }
+        },
+        {
+          "text": "That sounds great!",
+          "meaning": {
+            "vi": "Nghe hay quá!",
+            "en": "That sounds great!"
+          }
+        },
+        {
+          "text": "I totally agree.",
+          "meaning": {
+            "vi": "Tôi hoàn toàn đồng ý.",
+            "en": "I totally agree."
+          }
+        },
+        {
+          "text": "Let's keep in touch.",
+          "meaning": {
+            "vi": "Mình giữ liên lạc nhé.",
+            "en": "Let's keep in touch."
+          }
+        },
+        {
+          "text": "It was nice talking to you.",
+          "meaning": {
+            "vi": "Nói chuyện với bạn vui lắm.",
+            "en": "It was nice talking to you."
+          }
+        }
+      ]
+    },
+    {
+      "id": "en.shopping",
+      "emoji": "🛍️",
+      "title": {
+        "vi": "Mua sắm & Thanh toán",
+        "en": "Shopping & Transactions"
+      },
+      "isPremium": false,
+      "phrases": [
+        {
+          "text": "How much is this?",
+          "meaning": {
+            "vi": "Cái này bao nhiêu tiền?",
+            "en": "How much is this?"
+          }
+        },
+        {
+          "text": "Can I try it on?",
+          "meaning": {
+            "vi": "Tôi mặc thử được không?",
+            "en": "Can I try it on?"
+          }
+        },
+        {
+          "text": "Do you have a smaller size?",
+          "meaning": {
+            "vi": "Có cỡ nhỏ hơn không?",
+            "en": "Do you have a smaller size?"
+          }
+        },
+        {
+          "text": "Can I pay by card?",
+          "meaning": {
+            "vi": "Tôi trả bằng thẻ được không?",
+            "en": "Can I pay by card?"
+          }
+        },
+        {
+          "text": "I'm just looking, thanks.",
+          "meaning": {
+            "vi": "Tôi chỉ xem thôi, cảm ơn.",
+            "en": "I'm just looking, thanks."
+          }
+        },
+        {
+          "text": "Is there a discount?",
+          "meaning": {
+            "vi": "Có giảm giá không?",
+            "en": "Is there a discount?"
+          }
+        },
+        {
+          "text": "I'll take it.",
+          "meaning": {
+            "vi": "Tôi lấy cái này.",
+            "en": "I'll take it."
+          }
+        },
+        {
+          "text": "Can I have a receipt, please?",
+          "meaning": {
+            "vi": "Cho tôi xin hoá đơn nhé.",
+            "en": "Can I have a receipt, please?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "en.food",
+      "emoji": "🍔",
+      "title": {
+        "vi": "Ăn uống",
+        "en": "Dining & Food"
+      },
+      "isPremium": true,
+      "phrases": [
+        {
+          "text": "A table for two, please.",
+          "meaning": {
+            "vi": "Cho bàn hai người nhé.",
+            "en": "A table for two, please."
+          }
+        },
+        {
+          "text": "Can I see the menu?",
+          "meaning": {
+            "vi": "Cho tôi xem thực đơn nhé.",
+            "en": "Can I see the menu?"
+          }
+        },
+        {
+          "text": "What do you recommend?",
+          "meaning": {
+            "vi": "Bạn gợi ý món gì?",
+            "en": "What do you recommend?"
+          }
+        },
+        {
+          "text": "I'm allergic to peanuts.",
+          "meaning": {
+            "vi": "Tôi bị dị ứng đậu phộng.",
+            "en": "I'm allergic to peanuts."
+          }
+        },
+        {
+          "text": "Not too spicy, please.",
+          "meaning": {
+            "vi": "Đừng cay quá nhé.",
+            "en": "Not too spicy, please."
+          }
+        },
+        {
+          "text": "This is delicious!",
+          "meaning": {
+            "vi": "Món này ngon quá!",
+            "en": "This is delicious!"
+          }
+        },
+        {
+          "text": "Could we have the bill, please?",
+          "meaning": {
+            "vi": "Cho chúng tôi xin hoá đơn.",
+            "en": "Could we have the bill, please?"
+          }
+        },
+        {
+          "text": "Keep the change.",
+          "meaning": {
+            "vi": "Không cần thối lại đâu.",
+            "en": "Keep the change."
+          }
+        }
+      ]
+    },
+    {
+      "id": "en.health",
+      "emoji": "🚑",
+      "title": {
+        "vi": "Sức khoẻ & Khẩn cấp",
+        "en": "Health & Emergencies"
+      },
+      "isPremium": true,
+      "phrases": [
+        {
+          "text": "I need a doctor.",
+          "meaning": {
+            "vi": "Tôi cần gặp bác sĩ.",
+            "en": "I need a doctor."
+          }
+        },
+        {
+          "text": "Call an ambulance!",
+          "meaning": {
+            "vi": "Gọi xe cấp cứu!",
+            "en": "Call an ambulance!"
+          }
+        },
+        {
+          "text": "I have a headache.",
+          "meaning": {
+            "vi": "Tôi bị đau đầu.",
+            "en": "I have a headache."
+          }
+        },
+        {
+          "text": "I don't feel well.",
+          "meaning": {
+            "vi": "Tôi thấy không khoẻ.",
+            "en": "I don't feel well."
+          }
+        },
+        {
+          "text": "Where is the nearest pharmacy?",
+          "meaning": {
+            "vi": "Hiệu thuốc gần nhất ở đâu?",
+            "en": "Where is the nearest pharmacy?"
+          }
+        },
+        {
+          "text": "I lost my passport.",
+          "meaning": {
+            "vi": "Tôi bị mất hộ chiếu.",
+            "en": "I lost my passport."
+          }
+        },
+        {
+          "text": "Please help me.",
+          "meaning": {
+            "vi": "Làm ơn giúp tôi.",
+            "en": "Please help me."
+          }
+        },
+        {
+          "text": "Is there a hospital nearby?",
+          "meaning": {
+            "vi": "Gần đây có bệnh viện không?",
+            "en": "Is there a hospital nearby?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "en.weather",
+      "emoji": "☀️",
+      "title": {
+        "vi": "Thời tiết & Mùa",
+        "en": "Weather & Seasons"
+      },
+      "isPremium": true,
+      "phrases": [
+        {
+          "text": "It's a beautiful day.",
+          "meaning": {
+            "vi": "Hôm nay trời đẹp quá.",
+            "en": "It's a beautiful day."
+          }
+        },
+        {
+          "text": "It's raining heavily.",
+          "meaning": {
+            "vi": "Trời đang mưa to.",
+            "en": "It's raining heavily."
+          }
+        },
+        {
+          "text": "It's very cold today.",
+          "meaning": {
+            "vi": "Hôm nay trời rất lạnh.",
+            "en": "It's very cold today."
+          }
+        },
+        {
+          "text": "What's the weather like tomorrow?",
+          "meaning": {
+            "vi": "Thời tiết ngày mai thế nào?",
+            "en": "What's the weather like tomorrow?"
+          }
+        },
+        {
+          "text": "I love the spring.",
+          "meaning": {
+            "vi": "Tôi thích mùa xuân.",
+            "en": "I love the spring."
+          }
+        },
+        {
+          "text": "Don't forget your umbrella.",
+          "meaning": {
+            "vi": "Đừng quên ô nhé.",
+            "en": "Don't forget your umbrella."
+          }
+        },
+        {
+          "text": "It's getting warmer.",
+          "meaning": {
+            "vi": "Trời đang ấm dần lên.",
+            "en": "It's getting warmer."
+          }
+        },
+        {
+          "text": "There's a storm coming.",
+          "meaning": {
+            "vi": "Sắp có bão.",
+            "en": "There's a storm coming."
+          }
+        }
+      ]
+    }
+  ]
+}

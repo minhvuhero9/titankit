@@ -5,7 +5,6 @@ import TitanDesignSystem
 import TitanFeatures
 import TitanLocalization
 import TitanNavigation
-import TitanNetworking
 
 /// Switches between splash, onboarding, sign-in and the signed-in app.
 struct RootView: View {
@@ -19,6 +18,8 @@ struct RootView: View {
 private struct FlowView: View {
     let container: AppContainer
     @ObservedObject var flow: AppFlow
+    @State private var toast: TKToast?
+    @Environment(\.locale) private var locale
 
     var body: some View {
         ZStack {
@@ -38,71 +39,64 @@ private struct FlowView: View {
                             message: "onboarding.welcome.message"
                         ),
                     ]),
-                    onGetStarted: { flow.finishOnboarding() },
+                    onGetStarted: { flow.startSignUp() },
                     onSignIn: { flow.finishOnboarding() }
                 )
+            case .survey:
+                SurveyScreen(steps: DolingoSurvey.steps(), answers: flow.surveyAnswers,
+                             onExit: { flow.leaveSurvey() }) { answers in
+                    flow.finishSurvey(answers)
+                }
+            case .preparingPlan:
+                PreparingScreen(title: Text("plan.preparing.title"), message: Text("plan.preparing.message")) {
+                    flow.planIsReady()
+                }
+            case .planReady:
+                SuccessScreen(title: Text("plan.ready.title"), message: Text("plan.ready.message"),
+                              actionTitle: Text("plan.ready.action")) {
+                    flow.createAccount()
+                }
+            case .signUp:
+                SignUpScreen(auth: container.auth, onExit: { flow.leaveSignUp() }) { user in
+                    flow.didSignIn(user, isNew: true)
+                }
             case .login:
                 LoginScreen(
-                    config: LoginConfig(socialOptions: [
-                        SocialLoginOption(.google, icon: Image("SocialGoogle"), accessibilityLabel: "Google"),
-                        SocialLoginOption(.apple, icon: Image("SocialApple"), accessibilityLabel: "Apple"),
-                        SocialLoginOption(.facebook, icon: Image("SocialFacebook"), accessibilityLabel: "Facebook"),
-                    ]),
+                    config: LoginConfig(socialOptions: container.socialProviders.map(Self.socialOption)),
                     auth: container.auth,
-                    onSuccess: { _ in flow.didSignIn() },
-                    onSocial: { provider in Task { await flow.signInWithSocial(provider) } }
+                    onSuccess: { user in flow.didSignIn(user, isNew: false) },
+                    onSocial: { provider in Task { await flow.signInWithSocial(provider) } },
+                    onForgotPassword: { flow.forgotPassword() },
+                    onSignUp: { flow.startSignUp() }
                 )
+            case .resetPassword:
+                PasswordResetScreen(auth: container.auth, sendsLink: container.usesFirebase,
+                                    onExit: { flow.leaveResetPassword() }) { user in
+                    flow.didSignIn(user, isNew: false)
+                }
             case let .maintenance(message):
                 MaintenanceScreen(message: message) { await flow.retryLaunch() }
             case let .forceUpdate(storeURL):
                 ForceUpdateScreen(storeURL: storeURL)
             case .home:
-                RouterView(router: container.router) {
-                    StatusList(container: container, network: container.networkMonitor)
-                        .tkRequestReview(when: flow.shouldAskForReview) { flow.didAskForReview() }
-                } destination: { route in
-                    container.makeView(for: route)
-                }
+                MainTabView(container: container, tabs: container.tabs, flow: flow, activity: container.activity)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: flow.stage)
-    }
-}
-
-/// Temporary home screen until the real Home is built.
-private struct StatusList: View {
-    let container: AppContainer
-    @ObservedObject var network: NetworkMonitor
-    @EnvironmentObject private var router: Router<AppRoute>
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        VStack(spacing: Spacing.sm) {
-            Text("Dolingo")
-                .tkTextStyle(.display)
-                .foregroundStyle(theme.colors.actionPrimary.color)
-            Text("TitanKit \(container.kitVersion)")
-                .tkTextStyle(.body)
-                .foregroundStyle(theme.colors.textSecondary.color)
-            Text("root.environment \(container.config.environment.rawValue)")
-                .tkTextStyle(.callout)
-                .foregroundStyle(theme.colors.textSecondary.color)
-            Label(network.isOnline ? "root.network.online" : "root.network.offline",
-                  systemImage: network.isOnline ? "wifi" : "wifi.slash")
-                .tkTextStyle(.callout)
-                .foregroundStyle(network.isOnline ? theme.colors.feedbackSuccess.color : theme.colors.feedbackError.color)
-
-            TKButton("root.settings", style: .light, size: .medium) {
-                router.push(.settings)
-            }
-            .padding(.top, Spacing.lg)
-            TKButton("root.catalog", style: .outline, size: .medium) {
-                router.push(.catalog)
-            }
+        .tkToast($toast)
+        .onChange(of: flow.errorKey) { key in
+            guard let key else { return }
+            toast = TKToast(KitStrings.string(key, locale: locale), style: .error)
+            flow.dismissError()
         }
-        .padding(Spacing.md)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(theme.colors.surfaceBackground.color)
+    }
+
+    static func socialOption(_ provider: AuthProvider) -> SocialLoginOption {
+        switch provider {
+        case .apple: SocialLoginOption(.apple, icon: Image("SocialApple"), accessibilityLabel: "Apple")
+        case .facebook: SocialLoginOption(.facebook, icon: Image("SocialFacebook"), accessibilityLabel: "Facebook")
+        default: SocialLoginOption(.google, icon: Image("SocialGoogle"), accessibilityLabel: "Google")
+        }
     }
 }
 

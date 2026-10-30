@@ -19,5 +19,7 @@ let package = Package(
     name: "TitanKitDependencies",
     dependencies: [
         .package(path: "../Packages/TitanKit"),
+        // Firebase behind the kit's protocols; only AppContainer imports it.
+        .package(path: "../Adapters/TitanFirebase"),
     ]
 )

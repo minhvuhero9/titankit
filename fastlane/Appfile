@@ -1,0 +1,2 @@
+# Filled from the environment so the repo holds no account details (see docs/TestFlight.md).
+team_id(ENV["DEVELOPMENT_TEAM"])

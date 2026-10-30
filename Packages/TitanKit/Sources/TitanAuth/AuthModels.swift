@@ -1,4 +1,5 @@
 import Foundation
+import TitanCore
 
 /// The signed-in user as the app sees it. Adapters convert their own user type into this.
 public struct AuthUser: Sendable, Equatable, Codable, Identifiable {
@@ -33,6 +34,16 @@ public enum SignInMethod: Sendable, Equatable {
     case apple(idToken: String, rawNonce: String, fullName: PersonNameComponents?)
     case google(idToken: String, accessToken: String)
     case anonymous
+}
+
+/// Reasons carried by `TitanError.unknown` for auth failures the screens explain specifically.
+public enum AuthFailure {
+    /// The Google or Apple account is already linked to another account.
+    public static let credentialInUse = TitanError.unknown("auth/credential-already-in-use")
+    /// The account must keep at least one way to sign in.
+    public static let lastProvider = TitanError.unknown("auth/last-provider")
+    /// This way to sign in is already on the account.
+    public static let alreadyLinked = TitanError.unknown("auth/provider-already-linked")
 }
 
 /// Simple checks shared by sign-in and sign-up forms.

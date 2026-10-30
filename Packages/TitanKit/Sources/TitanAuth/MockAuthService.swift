@@ -9,18 +9,37 @@ public actor MockAuthService: AuthService {
     private var nextError: TitanError?
     public var delay: Duration
     public private(set) var resetRequests: [String] = []
+    /// The code every password reset email "contains".
+    public let resetCode: String
+    /// Reset tokens handed out by `verifyPasswordResetCode`, with their email.
+    private var resetTokens: [String: String] = [:]
+    /// Ways to sign in added with `link`, by user id.
+    private var linked: [String: [AuthProvider]] = [:]
+    /// Providers whose credential "belongs to another account": linking them fails.
+    private var taken: Set<AuthProvider> = []
 
     /// - Parameter accounts: email → password pairs that can sign in.
-    public init(accounts: [String: String] = ["demo@titan.app": "123456"], signedIn: AuthUser? = nil, delay: Duration = .zero) {
+    public init(
+        accounts: [String: String] = ["demo@titan.app": "123456"],
+        signedIn: AuthUser? = nil,
+        delay: Duration = .zero,
+        resetCode: String = "1234"
+    ) {
         self.accounts = accounts.reduce(into: [:]) { result, pair in
             result[pair.key.lowercased()] = (pair.value, AuthUser(id: UUID().uuidString, email: pair.key.lowercased(), provider: .email))
         }
         self.signedIn = signedIn
         self.delay = delay
+        self.resetCode = resetCode
     }
 
     public func fail(next error: TitanError) {
         nextError = error
+    }
+
+    /// Makes `link` with this provider fail as if another account used it.
+    public func markTaken(_ provider: AuthProvider) {
+        taken.insert(provider)
     }
 
     public func currentUser() async -> AuthUser? {
@@ -62,6 +81,21 @@ public actor MockAuthService: AuthService {
         resetRequests.append(email.lowercased())
     }
 
+    public func verifyPasswordResetCode(email: String, code: String) async throws(TitanError) -> String {
+        try await prepare()
+        let key = email.lowercased()
+        guard resetRequests.contains(key), accounts[key] != nil, code == resetCode else { throw .unauthorized }
+        let token = UUID().uuidString
+        resetTokens[token] = key
+        return token
+    }
+
+    public func resetPassword(token: String, newPassword: String) async throws(TitanError) {
+        try await prepare()
+        guard let key = resetTokens.removeValue(forKey: token), let account = accounts[key] else { throw .unauthorized }
+        accounts[key] = (newPassword, account.user)
+    }
+
     public func updateProfile(displayName: String) async throws(TitanError) -> AuthUser {
         try await prepare()
         guard let user = signedIn else { throw .unauthorized }
@@ -77,6 +111,53 @@ public actor MockAuthService: AuthService {
     public func signOut() async throws(TitanError) {
         try await prepare()
         signedIn = nil
+    }
+
+    public func linkedProviders() async -> [AuthProvider] {
+        guard let user = signedIn else { return [] }
+        return providers(of: user)
+    }
+
+    public func link(_ method: SignInMethod) async throws(TitanError) -> AuthUser {
+        try await prepare()
+        guard let user = signedIn else { throw .unauthorized }
+        let provider: AuthProvider
+        switch method {
+        case .email: provider = .email
+        case .apple: provider = .apple
+        case .google: provider = .google
+        case .anonymous: throw .unknown("a guest sign-in can't be linked")
+        }
+        var current = providers(of: user)
+        if current.contains(provider) { throw AuthFailure.alreadyLinked }
+        if taken.contains(provider) { throw AuthFailure.credentialInUse }
+        current.append(provider)
+        linked[user.id] = current
+        let updated = AuthUser(id: user.id, email: user.email, displayName: user.displayName,
+                               provider: user.isAnonymous ? provider : user.provider, isAnonymous: false)
+        signedIn = updated
+        return updated
+    }
+
+    public func unlink(_ provider: AuthProvider) async throws(TitanError) -> AuthUser {
+        try await prepare()
+        guard let user = signedIn else { throw .unauthorized }
+        var current = providers(of: user)
+        guard current.contains(provider) else { throw .notFound }
+        guard current.count > 1 else { throw AuthFailure.lastProvider }
+        current.removeAll { $0 == provider }
+        linked[user.id] = current
+        return user
+    }
+
+    private func providers(of user: AuthUser) -> [AuthProvider] {
+        linked[user.id] ?? (user.isAnonymous ? [] : [user.provider])
+    }
+
+    public func idToken(forceRefresh: Bool) async throws(TitanError) -> String {
+        try await prepare()
+        guard let user = signedIn else { throw .unauthorized }
+        return "mock-token-\(user.id)"
     }
 
     public func deleteAccount() async throws(TitanError) {
