@@ -190,8 +190,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             languageDefaults: UserDefaults(suiteName: "preview") ?? .standard,
             remoteConfig: MockRemoteConfig(),
             purchase: MockPurchaseService(),
-            speech: MockSpeechRecognizer(transcripts: ["hello"]),
-            reminders: MockReminderScheduler()
+            reminders: MockReminderScheduler(),
+            speech: MockSpeechRecognizer(transcripts: ["hello"])
         )
     }
 
