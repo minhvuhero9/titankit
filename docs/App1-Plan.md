@@ -20,14 +20,14 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** có repo build được một app trống trên CI.
 
-- [ ] Tạo repo `titankit` theo cấu trúc ở [README mục 7](README.md#7-cấu-trúc-repo).
-- [ ] Tạo `Packages/TitanKit/Package.swift` với các module rỗng.
-- [ ] Cấu hình Tuist (`Project.swift`, `Tuist/`) và `Templates/NewApp`.
-- [ ] Tạo App1 từ mẫu, với `Dev`, `Staging`, `Prod` xcconfig và `Secrets.xcconfig` ngoài git.
-- [ ] Thêm `.swiftlint.yml`, `CHANGELOG.md`, `.gitignore`.
-- [ ] Thiết lập fastlane (`test`, `beta`) và `fastlane match`.
-- [ ] Thêm GitHub Actions chạy lint + test cho mỗi PR.
-- [ ] Đăng ký bundle id và app trên App Store Connect.
+- [x] Tạo repo `titankit` theo cấu trúc ở [README mục 7](README.md#7-cấu-trúc-repo).
+- [x] Tạo `Packages/TitanKit/Package.swift` với các module.
+- [x] Cấu hình Tuist (`Project.swift`, `Tuist/`) và mẫu `Tuist/Templates/NewApp` (`tuist scaffold NewApp --name App2`).
+- [x] Tạo Dolingo với `Dev`, `Staging`, `Prod` xcconfig và `Secrets.xcconfig` ngoài git.
+- [x] Thêm `.swiftlint.yml`, `CHANGELOG.md`, `.gitignore`.
+- [x] Thiết lập fastlane (`test`, `beta`, `release`) và `fastlane match` ([TestFlight.md](TestFlight.md)).
+- [x] GitHub Actions chạy SwiftLint, test kit, build và test app, kiểm tra server cho mỗi PR.
+- [ ] Đăng ký bundle id và app trên App Store Connect (cần tài khoản Apple Developer).
 
 **Xong khi:** PR đầu tiên chạy CI xanh; `tuist generate App1` mở được app trống trên simulator.
 
@@ -57,7 +57,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] Base theme sáng và tối.
 - [x] Component `TK*` cơ bản: Button, TextField, Card, Toast, Loading, EmptyState, ErrorView, AsyncContent. List row và Sheet làm khi màn hình cần.
 - [x] Trang Catalog (`TKCatalogView`) hiển thị mọi component với theme của app; Dolingo mở từ màn hình đầu.
-- [ ] Snapshot test cho từng component (hiện có unit test cho màu và trạng thái; snapshot cần thêm thư viện, để sau).
+- [x] Snapshot test component (`TitanSnapshotTests`, swift-snapshot-testing): nút, ô nhập, thẻ gói, tab, ô mã, dòng cài đặt, trạng thái rỗng, ở light và dark. Ảnh gốc ghi bằng workflow **Snapshots** trên CI. Còn: thêm dần component khác, Dynamic Type lớn.
 - [x] Lấy token Figma của App 1, tạo `DolingoTheme` (chép tay; `gen-tokens` để sau).
 
 **Xong khi:** Catalog chạy được với base theme và `App1Theme`; snapshot test xanh.
@@ -73,7 +73,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage, Maintenance, Force update, Profile, Delete account.
 - [x] Rate app prompt (`RatePromptState`, `tkRequestReview`).
 - [x] Paywall (`PaywallScreen`, `PaywallViewModel`); Dolingo mở từ Cài đặt và `dolingo://premium`.
-- [ ] Mỗi màn hình có trang Catalog và snapshot test.
+- [ ] Mỗi màn hình có trang Catalog và snapshot test (đã có cho component; màn hình dựng sẵn chưa có).
 - [ ] Nối các màn hình vào Router của App 1 bằng `Config` và callback.
 
 **Xong khi:** đi hết luồng chính trên simulator với service Mock, ở cả `vi` và `en`, sáng và tối.
@@ -106,11 +106,11 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 - [x] Liệt kê màn hình riêng từ Figma ([Dolingo-Screens.md](Dolingo-Screens.md)).
 - [x] Đăng ký: 10 câu hỏi, chuẩn bị lộ trình, tạo tài khoản (màn 5–20).
-- [ ] Định nghĩa model và Repository của App 1 (ví dụ `UserRepository`).
-- [ ] Viết View + ViewModel cho từng màn trong `Apps/App1/Sources/Features/`.
-- [ ] Unit test ViewModel với Repository Mock.
-- [ ] Xử lý loading, lỗi, rỗng, mất mạng bằng `StateView`.
-- [ ] Component nào dùng lại được cho app khác thì chuyển vào kit (PR `kit/...`).
+- [x] Model và Repository của Dolingo (`CourseRepository`, `RoleplayRepository`, `PhrasebookRepository`, các store trong `Sources/Data`).
+- [x] View và ViewModel cho từng màn trong `Apps/Dolingo/Sources/Features/`; mọi màn Figma đã có ([Dolingo-Screens.md](Dolingo-Screens.md)).
+- [x] Unit test với Repository và dịch vụ Mock (`Apps/Dolingo/Tests`).
+- [x] Loading, lỗi, rỗng, mất mạng bằng `TKAsyncContent` và `TKEmptyState`.
+- [x] Component dùng lại được đã nằm trong kit (paywall, quên mật khẩu, liên kết tài khoản, `TKCodeField`...).
 
 **Xong khi:** mọi màn hình trong Figma có trên App1-Staging, khớp design, test xanh.
 
@@ -122,9 +122,9 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 - [x] `PrivacyInfo.xcprivacy` của Dolingo và câu trả lời nhãn App Privacy ([AppStore-Dolingo.md](AppStore-Dolingo.md)). Còn kiểm tra Privacy Report trên bản archive.
 - [x] Không cần ATT và UMP (không quảng cáo, không theo dõi). Có xóa tài khoản, Sign in with Apple, Restore purchases.
-- [ ] Thu hồi token Apple khi xóa tài khoản đăng nhập bằng Apple (cần tài khoản Apple Developer để thử).
+- [x] Thu hồi token Apple khi xóa tài khoản đăng nhập bằng Apple (`FirebaseAuthService.deleteAccount`). Còn: cấu hình key Apple trong Firebase và thử trên máy thật, cần tài khoản Apple Developer.
 - [x] Privacy Policy và Terms (tiếng Việt, tiếng Anh) do server AI phục vụ ở `/privacy`, `/terms`; app lấy từ cùng server với `AI_BASE_URL`. Server có môi trường staging/prod và workflow deploy ([AI-Deploy.md](AI-Deploy.md)). Còn: tài khoản Cloudflare và khoá Anthropic, điền URL, nhờ người có chuyên môn đọc lại.
-- [ ] Ảnh chụp App Store. Icon và mô tả đã có (mô tả ở [AppStore-Dolingo.md](AppStore-Dolingo.md)).
+- [x] Ảnh chụp App Store chụp tự động (tiếng Việt, tiếng Anh, iPhone Pro Max) bằng UI test và workflow **Screenshots**. Icon và mô tả đã có ([AppStore-Dolingo.md](AppStore-Dolingo.md)). Còn: chọn ảnh, thêm chữ quảng cáo lên ảnh nếu muốn.
 - [x] Lane `beta`, `release` (fastlane, match, App Store Connect API key) và workflow TestFlight chạy tay. Còn: tài khoản Apple Developer và secrets ([TestFlight.md](TestFlight.md)).
 - [ ] Đi hết checklist trong Compliance.md: còn email hỗ trợ, trang web, App Store id, tài khoản demo.
 - [ ] Tag `kit/v0.1.0` và `app1/v1.0.0`.

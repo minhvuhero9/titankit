@@ -4,8 +4,9 @@ import TitanDesignSystem
 import TitanIcons
 import TitanLocalization
 
-/// Personal info: avatar with initials, an editable name, the email (read only) and a
-/// "Delete account" link at the bottom. Saving calls `AuthService.updateProfile`.
+/// Figma "settings - personal info": avatar with initials, an editable name and the email (read
+/// only) in underlined fields, and an optional "Delete account" link at the bottom. Saving calls
+/// `AuthService.updateProfile`.
 ///
 ///     ProfileScreen(auth: container.auth, onBack: { router.pop() },
 ///                   onDeleteAccount: { router.push(.deleteAccount) })
@@ -42,8 +43,7 @@ public struct ProfileScreen: View {
                         TKTextField(
                             label: kit(KitStrings.Profile.name),
                             text: $viewModel.name,
-                            prompt: kit(KitStrings.Profile.name),
-                            icon: Image(tk: .profile)
+                            prompt: kit(KitStrings.Profile.name)
                         )
                         .textContentType(.name)
                         if let email = viewModel.user?.email {
@@ -55,6 +55,7 @@ public struct ProfileScreen: View {
                             .disabled(true)
                         }
                     }
+                    .tkFieldStyle(.underlined)
                     if let onDeleteAccount {
                         TKSettingsRow(
                             title: kit(KitStrings.DeleteAccount.title),

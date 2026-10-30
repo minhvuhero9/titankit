@@ -26,10 +26,14 @@ enum DolingoSurvey {
     static func steps() -> [SurveyStep] {
         [
             SurveyStep(Step.level, title: Text("survey.level.title"), kind: .single([
-                SurveyOption("beginner", title: Text("survey.level.beginner"), detail: Text("survey.level.beginner.detail"), icon: Image(tk: TKColorIcon.signalLow)),
-                SurveyOption("elementary", title: Text("survey.level.elementary"), detail: Text("survey.level.elementary.detail"), icon: Image(tk: TKColorIcon.signalMedium)),
-                SurveyOption("intermediate", title: Text("survey.level.intermediate"), detail: Text("survey.level.intermediate.detail"), icon: Image(tk: TKColorIcon.signalHigh)),
-                SurveyOption("advanced", title: Text("survey.level.advanced"), detail: Text("survey.level.advanced.detail"), icon: Image(tk: TKColorIcon.signalFull)),
+                SurveyOption("beginner", title: Text("survey.level.beginner"),
+                             detail: Text("survey.level.beginner.detail"), icon: Image(tk: TKColorIcon.signalLow)),
+                SurveyOption("elementary", title: Text("survey.level.elementary"),
+                             detail: Text("survey.level.elementary.detail"), icon: Image(tk: TKColorIcon.signalMedium)),
+                SurveyOption("intermediate", title: Text("survey.level.intermediate"),
+                             detail: Text("survey.level.intermediate.detail"), icon: Image(tk: TKColorIcon.signalHigh)),
+                SurveyOption("advanced", title: Text("survey.level.advanced"),
+                             detail: Text("survey.level.advanced.detail"), icon: Image(tk: TKColorIcon.signalFull)),
             ])),
             SurveyStep(Step.reason, title: Text("survey.reason.title"), kind: .single([
                 SurveyOption("travel", title: Text("survey.reason.travel"), icon: Image(tk: TKColorIcon.airplane)),

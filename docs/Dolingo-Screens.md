@@ -134,13 +134,13 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | # | Màn hình | Node | Trạng thái |
 | --- | --- | --- | --- |
 | 86 | account & settings | `30478:40857` | Đã có (`SettingsScreen`) |
-| 87 | upgrade plan - monthly | `10469:37147` | Đã có, cần so Figma (`PaywallScreen`) |
-| 88 | upgrade plan - yearly | `10469:37813` | Đã có, cần so Figma (`PaywallScreen`) |
+| 87 | upgrade plan - monthly | `10469:37147` | Đã có (`PaywallScreen`) |
+| 88 | upgrade plan - yearly | `10469:37813` | Đã có (`PaywallScreen`) |
 | 89 | choose payment methods | `10469:38008` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 90 | review summary | `10469:39913` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 91 | processing payment | `14479:39026` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 92 | upgrade plan subscription successful | `10469:40191` | Đã có (`PremiumWelcomeScreen`) |
-| 93 | settings - personal info | `26452:26758` | Đã có, cần so Figma (`ProfileScreen`) |
+| 93 | settings - personal info | `26452:26758` | Đã có (`ProfileScreen`): tên, email; không có quốc gia, số điện thoại, giới tính, ngày sinh, đổi ảnh đại diện |
 | 94 | settings - preferences | `34500:45916` | Đã có (`PreferencesScreen`: học lại từ đầu, xoá bộ nhớ đệm) |
 | 95 | settings - manage courses | `34500:46927` | Bỏ: chỉ có một khoá tiếng Anh |
 | 96 | settings - notification | `34500:47555` | Đã có (`NotificationSettingsScreen`: nhắc học hằng ngày) |

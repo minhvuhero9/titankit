@@ -328,6 +328,8 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).
+- Đã làm: `Packages/TitanKit/Tests/TitanSnapshotTests` (swift-snapshot-testing 1.17.6) chụp nút, ô nhập, thẻ gói, tab, ô mã, dòng cài đặt, trạng thái rỗng ở light và dark, rộng 360 pt, scale 2, theme base. Ảnh gốc ở `__Snapshots__`; CI (job TitanKit tests) so sánh với độ khớp 99 % (cảm nhận 98 %). Chưa có Dynamic Type lớn.
+- Ghi ảnh gốc: PR có sửa design system hay snapshot test thì workflow **Snapshots** tự chụp các ảnh còn thiếu, kiểm tra test qua, rồi commit vào branch của PR; ảnh đã có mà khác đi vẫn làm job TitanKit tests đỏ. Đổi giao diện có chủ ý: Actions → **Snapshots** → Run workflow trên branch đó để chụp lại toàn bộ (chỉ chạy được khi workflow đã có trên `main`). Mở commit ảnh xem trước khi merge. Trên máy Mac: `Tools/snapshots.sh record`.
 - `Theme.preview` dùng cho SwiftUI Preview; Catalog hiển thị mọi component với theme của từng app.
 
 ## 9. Checklist cho App 1

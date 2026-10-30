@@ -17,6 +17,7 @@ Code đã sẵn (`Adapters/TitanFirebase`, xem [Backend.md](modules/Backend.md))
 
 - **Authentication → Sign-in method:** bật Email/Password, Anonymous, Apple, Google.
   - Apple: cần App ID có capability "Sign in with Apple" trên Apple Developer (app đã có file `Dolingo.entitlements`).
+  - Apple, để thu hồi token khi xóa tài khoản: Apple Developer → Keys → tạo key có Sign in with Apple, tải file `.p8`. Trong Firebase → Sign-in method → Apple → **OAuth code flow configuration**, điền Services ID (có thể để trống với app iOS), Apple Team ID, Key ID và nội dung file `.p8`. Thiếu bước này thì xóa tài khoản Apple sẽ báo lỗi ở bước thu hồi.
   - Google: bật là xong; mở `GoogleService-Info-<Env>.plist`, chép giá trị `REVERSED_CLIENT_ID` vào `Apps/Dolingo/Config/Secrets.xcconfig` dòng `GOOGLE_REVERSED_CLIENT_ID = ...`. Mỗi môi trường một giá trị khác, nên khi đổi scheme cần đổi theo (hoặc để mỗi môi trường một file Secrets riêng).
 - **Remote Config:** thêm `maintenance_enabled` (bool), `maintenance_message` (string), `minimum_version` (string). Xem [RemoteConfig.md](modules/RemoteConfig.md).
 - **Analytics** và **Crashlytics:** bật trong console. Muốn Crashlytics đọc được stack trace thì thêm bước Run Script tải dSYM (chưa làm, cần khi lên TestFlight).

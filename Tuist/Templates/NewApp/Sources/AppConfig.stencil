@@ -1,0 +1,33 @@
+import Foundation
+import TitanCore
+
+/// Values that differ per environment. They come from Config/*.xcconfig via Info.plist.
+struct AppConfig: Equatable, Sendable {
+    let environment: AppEnvironment
+    let apiBaseURL: URL
+    /// CFBundleShortVersionString.
+    var appVersion = "0.0.0"
+
+    static let current = AppConfig(infoDictionary: Bundle.main.infoDictionary ?? [:])
+
+    static let languages = ["vi", "en"]
+    static let defaultLanguage = "vi"
+    /// Custom URL scheme for deep links, registered in Project.swift.
+    static let urlScheme = "{{ name|lowercase }}"
+
+    init(environment: AppEnvironment, apiBaseURL: URL) {
+        self.environment = environment
+        self.apiBaseURL = apiBaseURL
+    }
+
+    /// Falls back to dev so a misconfigured build never talks to production.
+    init(infoDictionary: [String: Any]) {
+        let rawURL = infoDictionary["TitanAPIBaseURL"] as? String ?? ""
+        let fallbackURL = URL(string: "https://api-dev.example.com")! // swiftlint:disable:this force_unwrapping
+        self.init(
+            environment: AppEnvironment(infoDictionary: infoDictionary),
+            apiBaseURL: URL(string: rawURL) ?? fallbackURL
+        )
+        appVersion = infoDictionary["CFBundleShortVersionString"] as? String ?? "0.0.0"
+    }
+}

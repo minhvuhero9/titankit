@@ -1,0 +1,57 @@
+# Records the reference images of the kit's snapshot tests on CI, so nobody needs a Mac for it,
+# checks the tests pass with them and commits them to the branch. Look at the images in that
+# commit before merging: they become what every later build is compared with.
+#   - pull request touching the snapshot tests or the design system: records only images that
+#     don't exist yet; a changed image still fails the TitanKit tests job.
+#   - Actions > Snapshots > Run workflow on a branch: rewrites every image (after an intended
+#     change to how a component looks).
+name: Snapshots
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - Packages/TitanKit/Tests/TitanSnapshotTests/**
+      - Packages/TitanKit/Sources/TitanDesignSystem/**
+      - Tools/snapshots.sh
+      - .github/workflows/snapshots.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  record:
+    name: Record snapshots
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The PR's branch rather than the merge commit, so the images can be pushed to it.
+          ref: ${{ github.head_ref || github.ref }}
+      - name: Record and verify
+        run: Tools/snapshots.sh ${{ github.event_name == 'workflow_dispatch' && 'record' || 'missing' }}
+      - name: Commit the images
+        run: |
+          git add Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__
+          if git diff --cached --quiet; then
+            echo "::notice::The images did not change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # [skip ci]: a bot's push only starts runs that wait for approval; the next push
+          # from a person runs CI with these images.
+          git commit -m "[Kit] Record component snapshots [skip ci]"
+          git push
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshots
+          path: |
+            Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__
+            build-snapshots.log

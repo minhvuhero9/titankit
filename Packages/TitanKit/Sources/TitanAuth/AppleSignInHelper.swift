@@ -12,7 +12,14 @@ import UIKit
 ///     let user = try await auth.signIn(method)
 @MainActor
 public final class AppleSignInHelper: NSObject {
-    private var continuation: CheckedContinuation<SignInMethod, any Error>?
+    /// What the sheet returns: the sign-in, plus the one-time authorization code a backend needs
+    /// to revoke the user's Apple tokens when the account is deleted (App Store guideline 5.1.1(v)).
+    public struct Authorization: Sendable {
+        public let method: SignInMethod
+        public let authorizationCode: String?
+    }
+
+    private var continuation: CheckedContinuation<Authorization, any Error>?
     private var rawNonce = ""
 
     override public init() {
@@ -21,6 +28,12 @@ public final class AppleSignInHelper: NSObject {
 
     /// Throws `.cancelled` when the user closes the sheet.
     public func request() async throws(TitanError) -> SignInMethod {
+        try await authorize().method
+    }
+
+    /// The sheet again, for deleting the account: a fresh sign-in and the authorization code.
+    /// Throws `.cancelled` when the user closes the sheet.
+    public func authorize() async throws(TitanError) -> Authorization {
         let nonce = Self.randomNonce()
         rawNonce = nonce
         let request = ASAuthorizationAppleIDProvider().createRequest()
@@ -42,7 +55,7 @@ public final class AppleSignInHelper: NSObject {
         }
     }
 
-    private func finish(_ result: Result<SignInMethod, TitanError>) {
+    private func finish(_ result: Result<Authorization, TitanError>) {
         continuation?.resume(with: result.mapError { $0 as any Error })
         continuation = nil
     }
@@ -68,7 +81,9 @@ extension AppleSignInHelper: @preconcurrency ASAuthorizationControllerDelegate {
             finish(.failure(.unknown("Apple returned no identity token")))
             return
         }
-        finish(.success(.apple(idToken: token, rawNonce: rawNonce, fullName: credential.fullName)))
+        let code = credential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
+        finish(.success(Authorization(method: .apple(idToken: token, rawNonce: rawNonce, fullName: credential.fullName),
+                                      authorizationCode: code)))
     }
 
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: any Error) {

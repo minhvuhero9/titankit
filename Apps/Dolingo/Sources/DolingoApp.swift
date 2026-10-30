@@ -7,7 +7,7 @@ import TitanStorage
 
 @main
 struct DolingoApp: App {
-    @StateObject private var container = AppContainer(config: .current)
+    @StateObject private var container = AppContainer.launch()
     @Preference(DolingoKeys.appearance) private var appearance
 
     var body: some Scene {

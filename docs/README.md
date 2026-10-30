@@ -140,7 +140,7 @@ titankit/
 │       ├── Theme/
 │       └── Config/{Dev,Staging,Prod}.xcconfig
 ├── Catalog/                      # app xem trước component và theme
-├── Templates/NewApp/             # mẫu Tuist tạo app mới
+├── Tuist/Templates/NewApp/       # mẫu Tuist tạo app mới
 ├── Tokens/                       # JSON token từ Figma
 ├── Tools/                        # script sinh code
 ├── docs/                         # bộ tài liệu này

@@ -1514,6 +1514,23 @@
         }
       }
     },
+    "kit.paywall.continue %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue - %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục - %@"
+          }
+        }
+      }
+    },
     "kit.paywall.message": {
       "extractionState": "manual",
       "localizations": {
@@ -1667,6 +1684,23 @@
         }
       }
     },
+    "kit.paywall.save %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save %lld%%"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiết kiệm %lld%%"
+          }
+        }
+      }
+    },
     "kit.paywall.startTrial": {
       "extractionState": "manual",
       "localizations": {
@@ -1680,6 +1714,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bắt đầu dùng thử"
+          }
+        }
+      }
+    },
+    "kit.paywall.tab.monthly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monthly"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hàng tháng"
+          }
+        }
+      }
+    },
+    "kit.paywall.tab.yearly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yearly"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hàng năm"
           }
         }
       }
@@ -1714,6 +1782,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Miễn phí %1$lld ngày đầu, sau đó %2$@"
+          }
+        }
+      }
+    },
+    "kit.paywall.upgradePlan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade Plan"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nâng cấp gói"
           }
         }
       }

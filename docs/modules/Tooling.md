@@ -8,7 +8,7 @@ Tooling gồm mẫu tạo app mới, cấu hình môi trường, script sinh tok
 
 ## 2. Trách nhiệm
 
-- `Templates/NewApp`: tạo app mới đã nối sẵn kit, theme, `AppContainer`, 3 môi trường.
+- `Tuist/Templates/NewApp`: tạo app mới đã nối sẵn kit, theme, `AppContainer`, 3 môi trường.
 - `Config/*.xcconfig`: tách Dev, Staging, Prod; giữ bí mật ngoài git.
 - `Tools/`: script sinh code Swift từ token JSON của Figma.
 - SwiftLint: giữ code style thống nhất (xem [Conventions.md](../Conventions.md)).
@@ -32,15 +32,23 @@ flowchart LR
 ### Tạo app mới trong 3 bước
 
 ```bash
-# 1. Tạo app từ mẫu
-tuist scaffold NewApp --name App2 --bundle-id com.<company>.app2
+# 1. Tạo app từ mẫu (chạy ở gốc repo); bundle id thành com.<company>.app2
+tuist scaffold NewApp --name App2 --company titanstudio
 # 2. Điền bí mật (copy từ mẫu, không commit)
 cp Apps/App2/Config/Secrets.example.xcconfig Apps/App2/Config/Secrets.xcconfig
-# 3. Sinh project và mở
-tuist install && tuist generate App2
+# 3. Sinh project và mở; workspace tự nhận mọi app trong Apps/
+tuist install && tuist generate
 ```
 
-Mẫu tạo ra: `App2App.swift`, `AppContainer.swift`, `AppConfig.swift`, `Theme/App2Theme.swift`, 3 file xcconfig, `Localizable.xcstrings`, `PrivacyInfo.xcprivacy`.
+Mẫu (`Tuist/Templates/NewApp`) tạo `Apps/App2/` gồm:
+
+- `Project.swift`: target app và test, cấu hình Dev, Staging, Prod, scheme `App2-Dev`, `App2-Staging`, `App2-Prod`, URL scheme `app2`, các module kit thường dùng (thêm module khác vào `kitModules`).
+- `Config/`: `Shared`, `Dev`, `Staging`, `Prod`, `Secrets.example` (xcconfig).
+- `Sources/`: `App2App.swift`, `AppConfig.swift`, `AppContainer.swift` (dịch vụ Mock, đổi sang Firebase khi cần), `RootView.swift` (splash rồi màn đầu), `HomeScreen.swift`, `Theme/App2Theme.swift` (điền màu, font từ Figma).
+- `Resources/`: `Localizable.xcstrings` (vi, en), `PrivacyInfo.xcprivacy` (chưa thu thập gì), `Assets.xcassets` với `AppIcon` trống.
+- `Tests/AppConfigTests.swift`.
+
+Mỗi PR, CI sinh thử app `TemplateCheck` từ mẫu, build và chạy test (`Tools/ci-test-template.sh`) để mẫu không bị hỏng khi kit thay đổi. Dolingo không tạo từ mẫu (có trước mẫu), nhưng cùng cấu trúc.
 
 ### Môi trường
 
@@ -107,7 +115,7 @@ Thêm `beta.yml` chạy khi merge vào `main`, `release.yml` chạy khi có tag 
 
 | Pattern | Dùng ở đâu | Lý do |
 | --- | --- | --- |
-| Template | `Templates/NewApp` | App mới đúng cấu trúc ngay từ đầu |
+| Template | `Tuist/Templates/NewApp` | App mới đúng cấu trúc ngay từ đầu |
 | Configuration by environment | xcconfig Dev/Staging/Prod | Một codebase, nhiều môi trường, không `#if` rải rác |
 | Code generation | `gen-tokens` | Token Figma là nguồn duy nhất, không gõ tay mã màu |
 | Pipeline | CI → beta → release | Mỗi bước tự động, lặp lại được |
@@ -116,7 +124,7 @@ Thêm `beta.yml` chạy khi merge vào `main`, `release.yml` chạy khi có tag 
 
 ```
 titankit/
-├── Templates/NewApp/          # mẫu Tuist scaffold
+├── Tuist/Templates/NewApp/    # mẫu Tuist scaffold
 ├── Tokens/                    # JSON xuất từ Figma
 ├── Tools/                     # Swift package chứa gen-tokens
 ├── fastlane/{Fastfile, Appfile, Matchfile}
@@ -136,7 +144,7 @@ titankit/
 
 ## 8. Test
 
-- Chạy `tuist scaffold` trên CI định kỳ để chắc mẫu NewApp vẫn build được.
+- CI chạy `tuist scaffold` cho mỗi PR để chắc mẫu NewApp vẫn build được (`Tools/ci-test-template.sh`).
 - `gen-tokens` có test với file JSON mẫu và so với output mong đợi.
 - Kiểm tra `git status` sạch sau khi build (không có bí mật bị sinh ra trong vùng commit).
 
@@ -144,7 +152,7 @@ titankit/
 
 - [ ] Có quyền ghi vào repo và tài khoản Apple Developer.
 - [ ] Chốt bundle id `com.<company>.app1`.
-- [ ] Tạo App1 từ `Templates/NewApp`.
+- [x] Mẫu `Tuist/Templates/NewApp`, CI sinh thử và build mỗi PR. (Dolingo có trước mẫu nên không tạo từ mẫu.)
 - [ ] Tạo 3 xcconfig và `Secrets.xcconfig` (không commit).
 - [ ] Thiết lập `fastlane match` và App Store Connect API key trong GitHub Secrets.
 - [ ] CI chạy lint + test trên mỗi PR.

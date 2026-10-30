@@ -1,0 +1,22 @@
+import SwiftUI
+import TitanFeatures
+
+/// The splash while the app gets ready, then the first screen.
+struct RootView: View {
+    @EnvironmentObject private var container: AppContainer
+    @State private var isReady = false
+
+    var body: some View {
+        if isReady {
+            NavigationStack {
+                HomeScreen()
+            }
+        } else {
+            SplashScreen(
+                config: SplashConfig(logo: Image(systemName: "sparkles"), appName: "{{ name }}"),
+                prepare: { try? await container.remoteConfig.fetchAndActivate() },
+                onFinish: { isReady = true }
+            )
+        }
+    }
+}

@@ -34,6 +34,7 @@ struct DolingoPaywall: View {
             PaywallScreen(
                 purchase: purchase,
                 config: AppConfig.paywall,
+                planTitle: Text(verbatim: "Dolingo Premium"),
                 benefits: Self.benefits,
                 onClose: onDismiss,
                 onPurchased: { withAnimation { isPremium = true } }

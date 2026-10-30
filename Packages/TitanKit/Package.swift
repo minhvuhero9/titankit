@@ -27,6 +27,10 @@ let package = Package(
         .library(name: "TitanAI", targets: ["TitanAI"]),
         .library(name: "TitanFeatures", targets: ["TitanFeatures"]),
     ],
+    dependencies: [
+        // Only the snapshot tests use it; apps never link it.
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.17.6"),
+    ],
     targets: [
         // Foundation
         .target(name: "TitanCore"),
@@ -76,6 +80,16 @@ let package = Package(
         .testTarget(name: "TitanAITests", dependencies: ["TitanCore", "TitanAI"]),
         .testTarget(name: "TitanAnalyticsTests", dependencies: ["TitanCore", "TitanAnalytics"]),
         .testTarget(name: "TitanFeaturesTests", dependencies: ["TitanCore", "TitanAuth", "TitanDesignSystem", "TitanLocalization", "TitanPurchase", "TitanFeatures"]),
+
+        // Reference images live in __Snapshots__; record them with the Snapshots workflow.
+        .testTarget(
+            name: "TitanSnapshotTests",
+            dependencies: [
+                "TitanDesignSystem", "TitanIcons",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+            ],
+            exclude: ["__Snapshots__"]
+        ),
 
         .testTarget(
             name: "TitanKitTests",

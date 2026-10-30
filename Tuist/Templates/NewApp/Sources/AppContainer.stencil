@@ -1,0 +1,46 @@
+import SwiftUI
+import TitanAnalytics
+import TitanAuth
+import TitanCore
+import TitanLocalization
+import TitanRemoteConfig
+import TitanStorage
+
+/// Builds every service once and hands it to the screens. Swap a mock for the real service
+/// here (for example `FirebaseAuthService` from Adapters/TitanFirebase) when the app needs it.
+@MainActor
+final class AppContainer: ObservableObject {
+    let config: AppConfig
+    let logger: any Logging
+    let preferences: Preferences
+    let localization: LocalizationService
+    let auth: any AuthService
+    let remoteConfig: any RemoteConfigService
+    let analytics: any AnalyticsService
+
+    init(
+        config: AppConfig,
+        preferences: Preferences = Preferences(),
+        languageDefaults: UserDefaults = .standard,
+        auth: (any AuthService)? = nil,
+        remoteConfig: (any RemoteConfigService)? = nil,
+        analytics: (any AnalyticsService)? = nil
+    ) {
+        let logger = OSLogger(subsystem: "com.{{ company }}.{{ name|lowercase }}",
+                              minLevel: config.environment.defaultLogLevel)
+        self.config = config
+        self.logger = logger
+        self.preferences = preferences
+        localization = LocalizationService(
+            supported: AppConfig.languages,
+            defaultLanguage: AppConfig.defaultLanguage,
+            defaults: languageDefaults
+        )
+        self.auth = auth ?? MockAuthService()
+        self.remoteConfig = remoteConfig ?? MockRemoteConfig()
+        let console: any AnalyticsService = config.environment.isProduction
+            ? NoOpAnalyticsService()
+            : ConsoleAnalyticsService(logger: logger)
+        self.analytics = analytics ?? console
+    }
+}

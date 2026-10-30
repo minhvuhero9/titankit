@@ -1,0 +1,76 @@
+import ProjectDescription
+
+// Made with `tuist scaffold NewApp`; change freely.
+let appName = "{{ name }}"
+let bundlePrefix = "com.{{ company }}"
+
+let kitModules = [
+    "TitanCore", "TitanNetworking", "TitanStorage",
+    "TitanIcons", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig",
+    "TitanPurchase", "TitanAnalytics", "TitanFeatures",
+]
+
+let project = Project(
+    name: appName,
+    settings: .settings(
+        base: [
+            "SWIFT_VERSION": "6.0",
+            // The version people see, and the build number fastlane raises for each upload.
+            "MARKETING_VERSION": "1.0.0",
+            "CURRENT_PROJECT_VERSION": "1",
+            "DEVELOPMENT_TEAM": "",
+        ],
+        configurations: [
+            .debug(name: "Dev", xcconfig: "Config/Dev.xcconfig"),
+            .release(name: "Staging", xcconfig: "Config/Staging.xcconfig"),
+            .release(name: "Prod", xcconfig: "Config/Prod.xcconfig"),
+        ]
+    ),
+    targets: [
+        .target(
+            name: appName,
+            destinations: [.iPhone],
+            product: .app,
+            bundleId: "\(bundlePrefix).{{ name|lowercase }}$(BUNDLE_ID_SUFFIX)",
+            deploymentTargets: .iOS("16.0"),
+            infoPlist: .extendingDefault(with: [
+                "CFBundleDisplayName": "$(APP_DISPLAY_NAME)",
+                "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+                "UILaunchScreen": [:],
+                "TitanAppEnvironment": "$(APP_ENV)",
+                "TitanAPIBaseURL": "$(API_BASE_URL)",
+                // Only HTTPS and Apple's own encryption: exempt, so no export compliance questions.
+                "ITSAppUsesNonExemptEncryption": false,
+                "CFBundleDevelopmentRegion": "vi",
+                "CFBundleLocalizations": ["vi", "en"],
+                "CFBundleURLTypes": [
+                    ["CFBundleURLName": "\(bundlePrefix).{{ name|lowercase }}", "CFBundleURLSchemes": ["{{ name|lowercase }}"]],
+                ],
+            ]),
+            sources: ["Sources/**"],
+            resources: ["Resources/**"],
+            dependencies: kitModules.map { .external(name: $0) }
+        ),
+        .target(
+            name: "\(appName)Tests",
+            destinations: [.iPhone],
+            product: .unitTests,
+            bundleId: "\(bundlePrefix).{{ name|lowercase }}.tests",
+            deploymentTargets: .iOS("16.0"),
+            infoPlist: .default,
+            sources: ["Tests/**"],
+            dependencies: [.target(name: appName)] + kitModules.map { .external(name: $0) }
+        ),
+    ],
+    schemes: ["Dev", "Staging", "Prod"].map { env in
+        .scheme(
+            name: "\(appName)-\(env)",
+            shared: true,
+            buildAction: .buildAction(targets: [.target(appName)]),
+            testAction: .targets(["\(appName)Tests"], configuration: .configuration(env)),
+            runAction: .runAction(configuration: .configuration(env)),
+            archiveAction: .archiveAction(configuration: .configuration(env))
+        )
+    }
+)

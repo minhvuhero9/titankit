@@ -1,0 +1,18 @@
+import SwiftUI
+import TitanDesignSystem
+
+/// The first screen. Replace it with the app's own, built from the kit's components
+/// (TitanDesignSystem) and ready-made screens (TitanFeatures).
+struct HomeScreen: View {
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        TKEmptyState(
+            icon: Image(systemName: "sparkles"),
+            title: "home.title",
+            message: "home.message"
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(theme.colors.surfaceBackground.color.ignoresSafeArea())
+    }
+}

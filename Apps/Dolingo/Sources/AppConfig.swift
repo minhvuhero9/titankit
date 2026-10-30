@@ -31,7 +31,7 @@ struct AppConfig: Equatable, Sendable {
         if base.hasPrefix("https://"), let url = URL(string: base) {
             return url.appendingPathComponent(page)
         }
-        return URL(string: "https://www.example.com")!.appendingPathComponent(page)
+        return URL(string: "https://www.example.com")!.appendingPathComponent(page) // swiftlint:disable:this force_unwrapping
     }
     /// Premium subscriptions. Placeholders until the products exist on App Store Connect.
     static let purchase = PurchaseConfig(premiumProductIds: [
@@ -47,15 +47,15 @@ struct AppConfig: Equatable, Sendable {
     )
     /// Placeholders until the support inbox and website exist.
     static let supportEmail = "support@example.com"
-    static let websiteURL = URL(string: "https://www.example.com")!
+    static let websiteURL = URL(string: "https://www.example.com")! // swiftlint:disable:this force_unwrapping
     /// Where "Manage subscription" leads: the App Store's subscription list.
-    static let manageSubscriptionsURL = URL(string: "https://apps.apple.com/account/subscriptions")!
+    static let manageSubscriptionsURL = URL(string: "https://apps.apple.com/account/subscriptions")! // swiftlint:disable:this force_unwrapping
     /// Placeholder until the app is registered on App Store Connect.
     static let appStoreID = "0000000000"
     /// Opened by the force update screen.
-    static let appStoreURL = AppStoreLink.app(id: appStoreID)!
+    static let appStoreURL = AppStoreLink.app(id: appStoreID)! // swiftlint:disable:this force_unwrapping
     /// Opened by the "Rate the app" row in Settings.
-    static let writeReviewURL = AppStoreLink.writeReview(id: appStoreID)!
+    static let writeReviewURL = AppStoreLink.writeReview(id: appStoreID)! // swiftlint:disable:this force_unwrapping
 
     init(environment: AppEnvironment, apiBaseURL: URL) {
         self.environment = environment
@@ -65,7 +65,7 @@ struct AppConfig: Equatable, Sendable {
     /// Falls back to dev so a misconfigured build never talks to production.
     init(infoDictionary: [String: Any]) {
         let rawURL = infoDictionary["TitanAPIBaseURL"] as? String ?? ""
-        let fallbackURL = URL(string: "https://api-dev.example.com")!
+        let fallbackURL = URL(string: "https://api-dev.example.com")! // swiftlint:disable:this force_unwrapping
         self.init(
             environment: AppEnvironment(infoDictionary: infoDictionary),
             apiBaseURL: URL(string: rawURL) ?? fallbackURL

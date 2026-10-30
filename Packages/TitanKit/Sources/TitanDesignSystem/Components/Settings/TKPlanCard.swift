@@ -84,7 +84,9 @@ public struct TKPlanCard: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            TKDivider()
+            if isCurrent || (actionTitle != nil && action != nil) {
+                TKDivider()
+            }
             if isCurrent {
                 Text.kit(KitStrings.currentPlan, locale: locale)
                     .font(theme.typography.font(size: 20, weight: .semibold, relativeTo: .title3))

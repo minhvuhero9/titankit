@@ -33,6 +33,17 @@ Dolingo Premium mở khoá mọi bài học, roleplay, chủ đề và tạo rol
 
 Điều khoản: <LEGAL_BASE_URL>/terms · Quyền riêng tư: <LEGAL_BASE_URL>/privacy
 
+## Ảnh chụp màn hình
+
+App Store Connect cần ảnh iPhone 6,9 inch (1320 × 2868), 3 đến 10 ảnh cho mỗi ngôn ngữ. Ảnh được chụp tự động:
+
+- **Trên CI:** Actions → **Screenshots** → Run workflow; tải artifact `dolingo-screenshots`. Workflow cũng chạy trên PR có sửa phần chụp ảnh.
+- **Trên máy Mac:** `Tools/screenshots.sh`, ảnh nằm trong `screenshots/` (git bỏ qua).
+
+Bảy ảnh theo thứ tự, mỗi ngôn ngữ `vi` và `en`: Home, bài học, Chats (roleplay), gia sư AI, Speak, tiến độ, Premium. Tên file dạng `vi-1-home.png`.
+
+Ảnh lấy từ chế độ chụp ảnh của app (`Apps/Dolingo/Sources/ScreenshotMode.swift`): mở app với `-screenshots <màn> -screenshotLanguage <vi|en>`, app đăng nhập sẵn tài khoản mẫu "Minh" đã học 3 bài, chuỗi 7 ngày, 4 huy hiệu, một đoạn chat với gia sư; dịch vụ đều là bản giả lập nên không cần mạng và không hỏi quyền. Dữ liệu mẫu nằm riêng, không đụng dữ liệu thật trên máy. Muốn đổi nội dung ảnh thì sửa hàm `seed` ở file đó; thêm màn thì thêm vào `ScreenshotMode.Screen` và `AppStoreScreenshots.screens`.
+
 ## Nhãn App Privacy (khớp `Apps/Dolingo/Resources/PrivacyInfo.xcprivacy`)
 
 "Do you or your third-party partners collect data?" → **Yes**. Không dùng để theo dõi (tracking).
