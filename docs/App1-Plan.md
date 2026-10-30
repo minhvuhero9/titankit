@@ -89,7 +89,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] TitanAuth: `AppleSignInHelper`, `idToken`, xóa tài khoản; `GoogleSignInHelper` nằm trong adapter vì cần SDK Google.
 - [x] TitanRemoteConfig: adapter Firebase cho `LaunchChecker`.
 - [x] TitanAnalytics: `AnalyticsService`, `CrashService`, sự kiện chung, Composite, Console, NoOp, Spy; màn Dữ liệu & Phân tích.
-- [x] TitanPurchase: `PurchaseService`, adapter StoreKit 2 và Mock (chưa có RevenueCat, chưa có file `.storekit`).
+- [x] TitanPurchase: `PurchaseService`, adapter StoreKit 2 và Mock (chưa có RevenueCat); `Dolingo.storekit` để mua thử trong Xcode.
 - [ ] TitanAds (AdMob + UMP), TitanPush nếu cần.
 - [x] `AppContainer` dùng Firebase khi có `GoogleService-Info-<Env>.plist`, không có thì chạy Mock.
 - [x] Server AI kiểm tra token Firebase và giới hạn lượt mỗi ngày theo tài khoản.

@@ -36,7 +36,7 @@ Simulator không cần ký app. Chạy trên iPhone bằng Apple ID miễn phí 
 2. Xcode → target Dolingo → Signing & Capabilities → Team: chọn Apple ID của bạn. Chạy scheme `Dolingo-Dev`.
 3. Lần đầu mở app trên iPhone: Cài đặt → Cài đặt chung → VPN & Quản lý thiết bị → tin cậy Apple ID của bạn.
 
-Bản ký bằng Personal Team hết hạn sau 7 ngày (chạy lại từ Xcode là được). Đăng nhập Apple và mua gói trong app cần tài khoản Apple Developer.
+Bản ký bằng Personal Team hết hạn sau 7 ngày (chạy lại từ Xcode là được). Đăng nhập Apple cần tài khoản Apple Developer. Mua gói thử được ngay khi chạy `Dolingo-Dev` từ Xcode (file `Apps/Dolingo/Dolingo.storekit`, không trừ tiền thật).
 
 ## Kiểm tra
 

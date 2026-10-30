@@ -88,8 +88,13 @@ let project = Project(
             shared: true,
             buildAction: .buildAction(targets: [.target(appName)]),
             testAction: .targets(["\(appName)Tests"], configuration: .configuration(env)),
-            runAction: .runAction(configuration: .configuration(env)),
+            // Dev buys from Dolingo.storekit inside Xcode; Staging and Prod use the App Store sandbox.
+            runAction: .runAction(
+                configuration: .configuration(env),
+                options: env == "Dev" ? .options(storeKitConfigurationPath: "Dolingo.storekit") : .options()
+            ),
             archiveAction: .archiveAction(configuration: .configuration(env))
         )
-    }
+    },
+    additionalFiles: ["Dolingo.storekit"]
 )

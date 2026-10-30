@@ -137,7 +137,7 @@ Khóa một tính năng trong màn hình riêng của app:
 ## 7. Test
 
 - `MockPurchaseService`: danh sách sản phẩm cố định, đặt trước kết quả mua (`.success`, `.cancelled`) và phát `Entitlements` bằng tay.
-- Dùng file `App1.storekit` (StoreKit Configuration) để chạy thật trên Simulator, không cần App Store Connect.
+- `Apps/Dolingo/Dolingo.storekit` (StoreKit Configuration) gắn vào scheme `Dolingo-Dev`: chạy từ Xcode là mua thử được trên Simulator và iPhone, không cần App Store Connect. Hai gói giống `AppConfig.purchase`: tháng 99.000 ₫, năm 599.000 ₫ có 7 ngày dùng thử, cửa hàng Việt Nam. Xcode → Debug → StoreKit → Manage Transactions để huỷ, hoàn tiền hay xoá giao dịch; Editor → Subscription Renewal Rate để gia hạn nhanh. Staging và Prod dùng sandbox của App Store.
 - Unit test với `StoreKitTest` (`SKTestSession`): mua, hết hạn, gia hạn, hoàn tiền, restore.
 - Test `PaywallViewModel`: `.cancelled` không hiện lỗi, `.pending` hiện thông báo chờ phụ huynh duyệt.
 
@@ -149,12 +149,12 @@ Khóa một tính năng trong màn hình riêng của app:
 - `StoreKitPurchaseService`: chỉ tin giao dịch đã xác minh, bỏ giao dịch đã hoàn tiền, gói trọn đời (không hết hạn) thắng mọi ngày hết hạn. Quyền được lưu bằng `UserDefaultsEntitlementCache` để lần mở sau hiện premium ngay.
 - `MockPurchaseService`: có hai gói mẫu (tháng có 7 ngày dùng thử, năm), `nextResult`, `failCalls(with:)`, `setEntitlements`.
 - Dolingo: `AppConfig.purchase` có hai ID gói giả `com.titanstudio.dolingo.premium.monthly` và `.yearly`, `AppContainer.purchase` dùng StoreKit, gọi `start()` lúc mở app. Preview và test dùng Mock.
-- Chưa làm: file `Dolingo.storekit` để mua thử trên Simulator, `PaywallScreen` (đợt sau), RevenueCat.
+- Chưa làm: RevenueCat. (`Dolingo.storekit` và `PaywallScreen` đã có.)
 
 ## 8. Checklist cho App 1
 
 - [ ] Tạo sản phẩm và nhóm thuê bao trên App Store Connect
-- [ ] Tạo file `App1.storekit` khớp với ID sản phẩm thật
+- [x] Tạo file `Dolingo.storekit` khớp với ID sản phẩm (giá thật đặt trên App Store Connect)
 - [ ] Điền `PurchaseConfig` trong `AppConfig`
 - [ ] Gọi `purchase.start()` lúc mở app
 - [ ] Paywall có nút Restore, link Điều khoản và Chính sách quyền riêng tư
