@@ -194,7 +194,18 @@ final class AppContainer: ObservableObject, DependencyContainer {
         case .security:
             SecurityScreen(auth: auth, onBack: { [router] in router.pop() },
                            onChangePassword: { [router] in router.push(.changePassword(email: $0)) },
+                           onLinkedAccounts: { [router] in router.push(.linkedAccounts) },
                            onDeleteAccount: { [router] in router.push(.deleteAccount) })
+        case .linkedAccounts:
+            LinkedAccountsScreen(
+                auth: auth,
+                options: [
+                    LinkedAccountOption(.google, icon: Image("SocialGoogle"), name: "Google"),
+                    LinkedAccountOption(.apple, icon: Image("SocialApple"), name: "Apple"),
+                ],
+                credential: linkCredential,
+                onBack: { [router] in router.pop() }
+            )
         case .dataAnalytics:
             DataAnalyticsScreen(store: dataSharing) { [router] in router.pop() }
         case let .changePassword(email):
@@ -273,6 +284,19 @@ final class AppContainer: ObservableObject, DependencyContainer {
     /// its own SDK and app, so it only appears without Firebase, where every button is a guest.
     var socialProviders: [AuthProvider] {
         usesFirebase ? [.google, .apple] : [.google, .apple, .facebook]
+    }
+
+    /// Apple's or Google's sheet with Firebase; made-up tokens on the mocks, so linking can be
+    /// tried without accounts.
+    var linkCredential: CredentialRequest {
+        usesFirebase ? AppContainer.socialSignIn : AppContainer.mockCredential
+    }
+
+    private static func mockCredential(_ provider: AuthProvider) async throws(TitanError) -> SignInMethod {
+        switch provider {
+        case .apple: .apple(idToken: "mock", rawNonce: "mock", fullName: nil)
+        default: .google(idToken: "mock", accessToken: "mock")
+        }
     }
 
     private static func socialSignIn(_ provider: AuthProvider) async throws(TitanError) -> SignInMethod {

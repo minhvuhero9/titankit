@@ -158,11 +158,12 @@ struct PreferencesScreen: View {
 
 // MARK: - Account & Security (Figma 97)
 
-/// Change password with a code sent by email, and delete the account.
+/// Change password, linked Google and Apple accounts, and delete the account.
 struct SecurityScreen: View {
     let auth: any AuthService
     let onBack: () -> Void
     let onChangePassword: (_ email: String) -> Void
+    let onLinkedAccounts: () -> Void
     let onDeleteAccount: () -> Void
 
     @State private var email: String?
@@ -176,6 +177,8 @@ struct SecurityScreen: View {
                         onChangePassword(email)
                     }
                 }
+                TKSettingsRow(title: Text.kit(KitStrings.LinkedAccounts.title, locale: locale), accessory: .chevron,
+                              action: onLinkedAccounts)
                 TKSettingsRow(title: Text.kit(KitStrings.DeleteAccount.title, locale: locale), role: .destructive,
                               action: onDeleteAccount)
             }

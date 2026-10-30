@@ -29,6 +29,8 @@ enum AppRoute: Routable {
     case changePassword(email: String)
     /// Figma "settings - data & analytics".
     case dataAnalytics
+    /// Figma "settings - linked accounts".
+    case linkedAccounts
 }
 
 /// The five tabs of the Figma "Menu Bar".
