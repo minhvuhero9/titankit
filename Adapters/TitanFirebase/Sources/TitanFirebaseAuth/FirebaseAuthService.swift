@@ -141,9 +141,15 @@ public struct FirebaseAuthService: AuthService {
         }
     }
 
-    /// Throws `.unauthorized` when Firebase wants a recent sign-in first.
+    /// Throws `.unauthorized` when Firebase wants a recent sign-in first. An account that signs in
+    /// with Apple shows the Apple sheet once more: the fresh sign-in satisfies Firebase, and its
+    /// authorization code revokes the app's Apple tokens, as App Store guideline 5.1.1(v) requires.
+    /// Throws `.cancelled` when the user closes that sheet.
     public func deleteAccount() async throws(TitanError) {
         guard let user = auth.currentUser else { throw .unauthorized }
+        if user.providerData.contains(where: { $0.providerID == "apple.com" }) {
+            try await revokeApple(for: user)
+        }
         do {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
                 user.delete { error in
@@ -154,6 +160,19 @@ public struct FirebaseAuthService: AuthService {
                     }
                 }
             }
+        } catch {
+            throw Self.map(error)
+        }
+    }
+
+    private func revokeApple(for user: User) async throws(TitanError) {
+        let authorization = try await AppleSignInHelper().authorize()
+        guard let code = authorization.authorizationCode, let credential = Self.credential(for: authorization.method) else {
+            throw .unknown("Apple returned no authorization code")
+        }
+        do {
+            try await user.reauthenticate(with: credential)
+            try await auth.revokeToken(withAuthorizationCode: code)
         } catch {
             throw Self.map(error)
         }

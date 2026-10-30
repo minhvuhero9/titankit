@@ -112,7 +112,7 @@ Apple yêu cầu cho xóa tài khoản ngay trong app. Luồng:
 1. Màn Settings gọi `AuthRepository.deleteAccount()`.
 2. Repository xóa dữ liệu của người dùng (`DataService`, `FileStorageService`) trước.
 3. Gọi `AuthService.deleteAccount()`. Firebase báo cần đăng nhập gần đây thì adapter ném `.unauthorized`. Repository hỏi đăng nhập lại, gọi `reauthenticate`, rồi thử lại.
-4. Với Apple, adapter thu hồi token Apple (revoke) trước khi xóa.
+4. Với tài khoản có Apple: `FirebaseAuthService.deleteAccount()` mở lại hộp Sign in with Apple. Lần đăng nhập mới này vừa đủ để Firebase cho xóa (không bị `.unauthorized`), vừa cho mã `authorizationCode` (`AppleSignInHelper.authorize()`) để gọi `Auth.revokeToken(withAuthorizationCode:)` thu hồi token Apple, đúng guideline 5.1.1(v). Đóng hộp thì trả `.cancelled`, màn xóa tài khoản không báo lỗi. Firebase cần cấu hình OAuth code flow cho Apple ([Firebase-Setup.md](../Firebase-Setup.md)).
 5. Phát `AuthState.signedOut`, Router về Onboarding.
 
 ## 4. Design pattern áp dụng và lý do
@@ -198,7 +198,7 @@ Root view lắng nghe phiên để đổi màn hình gốc:
 ## 8. Checklist cho App 1
 
 - [ ] Bật Email, Apple, Google trong cả 3 Firebase project
-- [ ] Thêm capability Sign in with Apple, cấu hình Services ID và key cho revoke token
+- [ ] Thêm capability Sign in with Apple, cấu hình Services ID và key cho revoke token (code đã có; cấu hình cần tài khoản Apple Developer)
 - [ ] Thêm URL scheme của Google (`REVERSED_CLIENT_ID`) cho từng môi trường
 - [ ] Viết `AuthRepository` của App 1, tạo hồ sơ sau lần đăng nhập đầu
 - [ ] Nối `AuthInterceptor(tokens: AuthTokenProvider(auth:))` vào TitanNetworking
