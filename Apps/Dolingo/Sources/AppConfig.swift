@@ -21,9 +21,18 @@ struct AppConfig: Equatable, Sendable {
     static let defaultLanguage = "vi"
     /// Custom URL scheme for deep links, registered in Project.swift.
     static let urlScheme = "dolingo"
-    /// Placeholders until the real Privacy Policy and Terms pages are published.
-    static let privacyURL = URL(string: "https://www.example.com/privacy")!
-    static let termsURL = URL(string: "https://www.example.com/terms")!
+    /// The Privacy Policy and Terms, served by the AI server (Backend/dolingo-ai) at /privacy and
+    /// /terms once LEGAL_BASE_URL is set in Config/Shared.xcconfig; placeholders until then.
+    static let privacyURL = legalURL("privacy", base: Bundle.main.infoDictionary?["DolingoLegalBaseURL"] as? String)
+    static let termsURL = legalURL("terms", base: Bundle.main.infoDictionary?["DolingoLegalBaseURL"] as? String)
+
+    static func legalURL(_ page: String, base: String?) -> URL {
+        let base = (base ?? "").trimmingCharacters(in: .whitespaces)
+        if base.hasPrefix("https://"), let url = URL(string: base) {
+            return url.appendingPathComponent(page)
+        }
+        return URL(string: "https://www.example.com")!.appendingPathComponent(page)
+    }
     /// Premium subscriptions. Placeholders until the products exist on App Store Connect.
     static let purchase = PurchaseConfig(premiumProductIds: [
         "com.titanstudio.dolingo.premium.monthly",

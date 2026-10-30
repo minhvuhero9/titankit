@@ -21,6 +21,9 @@ let project = Project(
     settings: .settings(
         base: [
             "SWIFT_VERSION": "6.0",
+            // The version people see, and the build number fastlane raises for each upload.
+            "MARKETING_VERSION": "1.0.0",
+            "CURRENT_PROJECT_VERSION": "1",
             "DEVELOPMENT_TEAM": "",
             // Firebase's static libraries register their Objective-C categories only with -ObjC.
             "OTHER_LDFLAGS": "$(inherited) -ObjC",
@@ -40,11 +43,16 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
                 "CFBundleDisplayName": "$(APP_DISPLAY_NAME)",
+                "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                 "UILaunchScreen": [:],
                 "TitanAppEnvironment": "$(APP_ENV)",
                 "TitanAPIBaseURL": "$(API_BASE_URL)",
                 "DolingoAIBaseURL": "$(AI_BASE_URL)",
                 "DolingoAIClientKey": "$(AI_CLIENT_KEY)",
+                "DolingoLegalBaseURL": "$(LEGAL_BASE_URL)",
+                // Only HTTPS and Apple's own encryption: exempt, so no export compliance questions.
+                "ITSAppUsesNonExemptEncryption": false,
                 "CFBundleDevelopmentRegion": "vi",
                 "CFBundleLocalizations": ["vi", "en"],
                 // Speaking practice in lessons (TitanSpeech).

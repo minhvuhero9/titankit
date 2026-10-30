@@ -45,4 +45,11 @@ final class AppConfigTests: XCTestCase {
         XCTAssertNil(AppConfig(infoDictionary: ["DolingoAIBaseURL": ""]).aiBaseURL)
         XCTAssertNil(AppConfig(infoDictionary: ["DolingoAIBaseURL": "http://insecure.example.com"]).aiBaseURL)
     }
+
+    func testLegalPagesComeFromTheConfiguredServer() {
+        XCTAssertEqual(AppConfig.legalURL("privacy", base: "https://dolingo-ai.example.workers.dev").absoluteString,
+                       "https://dolingo-ai.example.workers.dev/privacy")
+        XCTAssertEqual(AppConfig.legalURL("terms", base: "").absoluteString, "https://www.example.com/terms")
+        XCTAssertEqual(AppConfig.legalURL("terms", base: nil).host, "www.example.com")
+    }
 }
