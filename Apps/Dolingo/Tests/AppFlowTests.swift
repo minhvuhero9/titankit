@@ -143,11 +143,13 @@ final class AppFlowTests: XCTestCase {
 
     func testDataSharingChoicesReachTheServices() {
         let preferences = makePreferences()
-        let spy = SpyAnalyticsService()
-        let store = DataSharingStore(preferences: preferences, analytics: spy, crash: spy)
-        XCTAssertTrue(spy.isCollectionEnabled)
+        let analytics = SpyAnalyticsService()
+        let crash = SpyAnalyticsService()
+        let store = DataSharingStore(preferences: preferences, analytics: analytics, crash: crash)
+        XCTAssertTrue(analytics.isCollectionEnabled)
         store.settings.analytics = false
-        XCTAssertFalse(spy.isCollectionEnabled)
+        XCTAssertFalse(analytics.isCollectionEnabled)
+        XCTAssertTrue(crash.isCollectionEnabled)
         let reopened = DataSharingStore(preferences: preferences, analytics: SpyAnalyticsService(), crash: SpyAnalyticsService())
         XCTAssertFalse(reopened.settings.analytics)
         XCTAssertTrue(reopened.settings.crashReports)
