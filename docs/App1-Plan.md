@@ -93,7 +93,8 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [ ] TitanAds (AdMob + UMP), TitanPush nếu cần.
 - [x] `AppContainer` dùng Firebase khi có `GoogleService-Info-<Env>.plist`, không có thì chạy Mock.
 - [x] Server AI kiểm tra token Firebase và giới hạn lượt mỗi ngày theo tài khoản.
-- [ ] Liên kết tài khoản (màn 99); đăng nhập Facebook.
+- [x] Liên kết tài khoản (màn 99): Google, Apple; tài khoản khách liên kết để giữ tiến độ.
+- [ ] Đăng nhập Facebook.
 
 **Xong khi:** App1-Staging đăng nhập thật, đọc Remote Config thật, sự kiện analytics hiện trên console.
 

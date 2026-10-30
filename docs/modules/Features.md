@@ -303,6 +303,10 @@ PasswordResetScreen(auth: container.auth, email: "", codeLength: 4,
 - Cần ba hàm của `AuthService`: `sendPasswordReset(email:)`, `verifyPasswordResetCode(email:code:)` trả token, `resetPassword(token:newPassword:)`. `MockAuthService` nhận mã cố định `resetCode` (mặc định "1234"). Backend thật phải gửi mã OTP; Firebase Auth chỉ gửi link, nên adapter Firebase cần một Cloud Function cho hai hàm sau.
 - Dolingo: "Quên mật khẩu?" ở màn đăng nhập mở luồng này (`AppFlow.Stage.resetPassword`); "Đổi mật khẩu" trong Tài khoản & Bảo mật đẩy cùng màn với email đã điền sẵn.
 
+## 8j. Đã làm (giai đoạn 4, Liên kết tài khoản)
+
+`LinkedAccountsScreen(auth:options:credential:onBack:)` theo màn 99: mỗi nhà cung cấp một thẻ với "Đã liên kết" hoặc "Liên kết". App đưa logo (`LinkedAccountOption`) và cách lấy credential (`CredentialRequest`, ví dụ `AppleSignInHelper` hay `GoogleSignInHelper`). Huỷ liên kết có hỏi lại và không cho bỏ cách đăng nhập cuối cùng. Tài khoản khách liên kết Google hoặc Apple thì thành tài khoản thật mà vẫn giữ tiến độ. Dolingo mở nó từ Tài khoản & Bảo mật.
+
 ## 9. Checklist cho App 1
 
 - [ ] Chọn màn hình App 1 dùng: Splash, Onboarding, Login, Paywall, Settings, Profile, Delete account...
