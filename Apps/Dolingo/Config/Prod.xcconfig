@@ -5,3 +5,5 @@ APP_ENV = prod
 API_BASE_URL = https:/$()/api.example.com
 BUNDLE_ID_SUFFIX =
 APP_DISPLAY_NAME = Dolingo
+// The prod AI server, from Secrets.xcconfig, so one Secrets file builds every configuration.
+AI_BASE_URL = $(AI_BASE_URL_PROD)

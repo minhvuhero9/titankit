@@ -22,7 +22,7 @@ struct AppConfig: Equatable, Sendable {
     /// Custom URL scheme for deep links, registered in Project.swift.
     static let urlScheme = "dolingo"
     /// The Privacy Policy and Terms, served by the AI server (Backend/dolingo-ai) at /privacy and
-    /// /terms once LEGAL_BASE_URL is set in Config/Shared.xcconfig; placeholders until then.
+    /// /terms once its URL is set (LEGAL_BASE_URL in Config/Shared.xcconfig); placeholders until then.
     static let privacyURL = legalURL("privacy", base: Bundle.main.infoDictionary?["DolingoLegalBaseURL"] as? String)
     static let termsURL = legalURL("terms", base: Bundle.main.infoDictionary?["DolingoLegalBaseURL"] as? String)
 
