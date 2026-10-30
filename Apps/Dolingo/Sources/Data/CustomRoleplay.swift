@@ -124,7 +124,7 @@ struct RoleplayTurnRequest: Encodable, Sendable, Equatable {
 }
 
 /// The AI partner's next line.
-struct RoleplayTurn: Codable, Sendable, Equatable {
+struct AIRoleplayTurn: Codable, Sendable, Equatable {
     let reply: String
     /// The reply in Vietnamese.
     let translation: String
@@ -138,7 +138,7 @@ struct RoleplayTurn: Codable, Sendable, Equatable {
 
 protocol RoleplayAI: Sendable {
     func draft(_ form: RoleplayForm) async throws(TitanError) -> AIAnswer<RoleplayDraft>
-    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<RoleplayTurn>
+    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<AIRoleplayTurn>
 }
 
 /// `POST /v1/roleplay/draft` and `/v1/roleplay/turn` on the Dolingo AI server.
@@ -149,8 +149,8 @@ struct RemoteRoleplayAI: RoleplayAI {
         try await client.post("v1/roleplay/draft", body: form, as: RoleplayDraft.self)
     }
 
-    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<RoleplayTurn> {
-        try await client.post("v1/roleplay/turn", body: request, as: RoleplayTurn.self)
+    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<AIRoleplayTurn> {
+        try await client.post("v1/roleplay/turn", body: request, as: AIRoleplayTurn.self)
     }
 }
 
@@ -176,13 +176,13 @@ struct MockRoleplayAI: RoleplayAI {
         ))
     }
 
-    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<RoleplayTurn> {
+    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<AIRoleplayTurn> {
         await wait()
         let learnerTurns = request.turns.filter { $0.role == "user" }.count
         let tasks = request.roleplay.tasks
         let completed = learnerTurns > 0 && learnerTurns <= tasks.count ? [tasks[learnerTurns - 1].id] : []
         let isLast = learnerTurns >= max(tasks.count, 1)
-        return .answer(RoleplayTurn(
+        return .answer(AIRoleplayTurn(
             reply: isLast ? "Thank you, have a great day!" : learnerTurns == 0 ? "Hi! What can I get you?" : "Sure. Anything else?",
             translation: isLast ? "Cảm ơn bạn, chúc một ngày tốt lành!" : learnerTurns == 0 ? "Chào bạn! Bạn muốn dùng gì?" : "Được ạ. Bạn cần gì nữa không?",
             completedTaskIds: completed,

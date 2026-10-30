@@ -139,7 +139,7 @@ final class AIRoleplayViewModel: ObservableObject {
         return false
     }
 
-    private func apply(_ turn: RoleplayTurn) {
+    private func apply(_ turn: AIRoleplayTurn) {
         let known = Set(roleplay.tasks.map(\.id))
         completedTasks.formUnion(turn.completedTaskIds.filter(known.contains))
         messages.append(RoleplayViewModel.Message(

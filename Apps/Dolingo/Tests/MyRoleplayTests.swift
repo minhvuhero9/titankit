@@ -153,5 +153,5 @@ final class AIRoleplayViewModelTests: XCTestCase {
 
 private struct RefusingRoleplayAI: RoleplayAI {
     func draft(_ form: RoleplayForm) async throws(TitanError) -> AIAnswer<RoleplayDraft> { .refused }
-    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<RoleplayTurn> { .refused }
+    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<AIRoleplayTurn> { .refused }
 }
