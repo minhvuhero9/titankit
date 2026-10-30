@@ -4726,6 +4726,210 @@
           }
         }
       }
+    },
+    "tutor.error.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo couldn't reply right now. Please try again in a moment."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo chưa trả lời được lúc này. Hãy thử lại sau ít phút."
+          }
+        }
+      }
+    },
+    "tutor.error.offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No internet connection. Your message is back in the box, send it again when you're online."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có kết nối mạng. Tin nhắn đã được giữ lại, hãy gửi lại khi có mạng."
+          }
+        }
+      }
+    },
+    "tutor.error.refused": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo can't answer that. Try asking something else about English."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo không trả lời được câu này. Hãy hỏi điều khác về tiếng Anh nhé."
+          }
+        }
+      }
+    },
+    "tutor.greeting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hello! I'm Dolingo, your English tutor. Ask me anything about English, or let's just chat in English!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xin chào! Mình là Dolingo, gia sư tiếng Anh của bạn. Hãy hỏi mình bất cứ điều gì về tiếng Anh, hoặc cùng trò chuyện bằng tiếng Anh nhé!"
+          }
+        }
+      }
+    },
+    "tutor.more": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More options"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tùy chọn khác"
+          }
+        }
+      }
+    },
+    "tutor.newChat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New chat"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuộc trò chuyện mới"
+          }
+        }
+      }
+    },
+    "tutor.newChat.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The messages in this chat will be deleted."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Các tin nhắn trong cuộc trò chuyện này sẽ bị xóa."
+          }
+        }
+      }
+    },
+    "tutor.newChat.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start a new chat?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bắt đầu cuộc trò chuyện mới?"
+          }
+        }
+      }
+    },
+    "tutor.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type a message ..."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập tin nhắn ..."
+          }
+        }
+      }
+    },
+    "tutor.send": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi"
+          }
+        }
+      }
+    },
+    "tutor.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chat with Dolingo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trò chuyện với Dolingo"
+          }
+        }
+      }
+    },
+    "tutor.typing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo is typing"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolingo đang trả lời"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

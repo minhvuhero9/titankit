@@ -1,4 +1,5 @@
 import Foundation
+import TitanAI
 import TitanAuth
 import TitanDesignSystem
 import TitanFeatures
@@ -21,6 +22,8 @@ enum DolingoKeys {
     static let activity = PreferenceKey("dolingo.activity", default: ActivityStats())
     /// The daily study reminder.
     static let reminder = PreferenceKey("dolingo.reminder", default: ReminderSettings())
+    /// The "Chat with Dolingo" conversation.
+    static let tutorChat = PreferenceKey<[ChatMessage]>("dolingo.tutorChat", default: [])
 }
 
 /// Which part of the app is showing: splash, onboarding, the sign-up steps, sign-in,

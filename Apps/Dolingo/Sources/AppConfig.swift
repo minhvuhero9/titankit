@@ -7,6 +7,9 @@ import TitanPurchase
 struct AppConfig: Equatable, Sendable {
     let environment: AppEnvironment
     let apiBaseURL: URL
+    /// The AI tutor's server; nil until it is deployed and set in Secrets.xcconfig.
+    var aiBaseURL: URL?
+    var aiClientKey = ""
     /// CFBundleShortVersionString, compared with `minimum_version` at launch.
     var appVersion = "0.0.0"
 
@@ -59,5 +62,8 @@ struct AppConfig: Equatable, Sendable {
             apiBaseURL: URL(string: rawURL) ?? fallbackURL
         )
         appVersion = infoDictionary["CFBundleShortVersionString"] as? String ?? "0.0.0"
+        let aiURL = (infoDictionary["DolingoAIBaseURL"] as? String ?? "").trimmingCharacters(in: .whitespaces)
+        aiBaseURL = aiURL.hasPrefix("https://") ? URL(string: aiURL) : nil
+        aiClientKey = infoDictionary["DolingoAIClientKey"] as? String ?? ""
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import TitanAI
 import TitanAuth
 import TitanCore
 import TitanDesignSystem
@@ -35,6 +36,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let savedPhrases: SavedPhrases
     let activity: ActivityStore
     let reminder: StudyReminder
+    let tutorChat: TutorChat
     /// One navigation stack per tab.
     let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -55,7 +57,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         roleplays: any RoleplayRepository = BundledRoleplayRepository(),
         phrasebook: any PhrasebookRepository = BundledPhrasebookRepository(),
         reminders: any ReminderScheduler = UserNotificationReminderScheduler(),
-        speech: (any SpeechRecognizer)? = nil
+        speech: (any SpeechRecognizer)? = nil,
+        chat: (any ChatService)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -85,7 +88,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         self.remoteConfig = remoteConfig
         self.purchase = purchase ?? StoreKitPurchaseService(config: AppConfig.purchase, logger: logger)
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
-        flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
+        let flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker, appVersion: config.appVersion)
+        self.flow = flow
         let learning = LearningStore(repository: courses, preferences: preferences)
         self.learning = learning
         self.speech = speech ?? AppleSpeechRecognizer()
@@ -96,6 +100,14 @@ final class AppContainer: ObservableObject, DependencyContainer {
         activity.chaptersDone = { learning.chaptersDone }
         self.activity = activity
         reminder = StudyReminder(scheduler: reminders, preferences: preferences)
+        tutorChat = TutorChat(
+            service: chat ?? AppContainer.chatService(config: config),
+            preferences: preferences
+        ) {
+            let user = await auth.currentUser()
+            return ChatLearner(name: user?.displayName,
+                               level: flow.surveyAnswers[DolingoSurvey.Step.level]?.optionIds.first)
+        }
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -159,6 +171,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             FAQScreen { [router] in router.pop() }
         case .contactSupport:
             ContactSupportScreen { [router] in router.pop() }
+        case .tutorChat:
+            TutorChatScreen(chat: tutorChat) { [router] in router.dismiss() }
         case .savedPhrases:
             SavedPhrasesScreen(saved: savedPhrases) { [router] in router.pop() }
         case let .roleplayChat(roleplay):
@@ -166,6 +180,17 @@ final class AppContainer: ObservableObject, DependencyContainer {
                                activity: activity) { [router] in
                 router.popToRoot()
             }
+        }
+    }
+
+    /// The AI server when it is configured, otherwise local answers that say so.
+    static func chatService(config: AppConfig) -> any ChatService {
+        if let url = config.aiBaseURL, !config.aiClientKey.isEmpty {
+            return RemoteChatService(baseURL: url, clientKey: config.aiClientKey)
+        }
+        return MockChatService { _ in
+            "I'm not connected yet: the Dolingo AI server isn't set up in this build. "
+                + "Once it is, I'll answer your questions about English here."
         }
     }
 
@@ -196,7 +221,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             remoteConfig: MockRemoteConfig(),
             purchase: MockPurchaseService(),
             reminders: MockReminderScheduler(),
-            speech: MockSpeechRecognizer(transcripts: ["hello"])
+            speech: MockSpeechRecognizer(transcripts: ["hello"]),
+            chat: MockChatService()
         )
     }
 

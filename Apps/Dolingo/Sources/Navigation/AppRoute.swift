@@ -17,6 +17,8 @@ enum AppRoute: Routable {
     /// Figma "speaking practice": one Speak topic, phrase by phrase, full screen.
     case phrasePractice(PhraseCategory)
     case savedPhrases
+    /// Figma "chat with dolingo": free conversation with the AI tutor, full screen.
+    case tutorChat
     /// Settings sub-screens (Figma 94, 96, 97, 98, 107–109).
     case preferences, notifications, security, billing, help, faq, contactSupport
     /// "Change password" in Account & Security: the forgot password steps with the email filled in.

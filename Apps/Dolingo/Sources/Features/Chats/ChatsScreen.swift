@@ -7,6 +7,7 @@ import TitanPurchase
 
 /// Figma "chats (roleplay & AI chatbot)": Roleplay and My Roleplay tabs, then a two-column grid
 /// of scenario cards. Premium scenarios carry a crown and open "Premium Content" for free users.
+/// The robot button opens "Chat with Dolingo".
 struct ChatsScreen: View {
     enum Section: Hashable {
         case roleplay, mine
@@ -40,6 +41,22 @@ struct ChatsScreen: View {
                 TKEmptyState(icon: Image(tk: .editSquare), title: "chats.mine.title", message: "chats.mine.message")
                     .frame(maxHeight: .infinity)
             }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            Button {
+                router.present(.tutorChat, fullScreen: true)
+            } label: {
+                Image(tk: TKSymbol.botSparkleFilled)
+                    .renderingMode(.template)
+                    .resizable().scaledToFit()
+                    .frame(width: 28, height: 28)
+                    .foregroundStyle(theme.colors.actionOnPrimary.color)
+                    .frame(width: 60, height: 60)
+                    .background(theme.gradientPrimary.linearGradient, in: Circle())
+                    .shadow(color: theme.colors.actionPrimary.color.opacity(0.35), radius: 12, y: 6)
+            }
+            .padding(Spacing.lg)
+            .accessibilityLabel(Text("tutor.title"))
         }
         .background(theme.colors.surfaceBackground.color.ignoresSafeArea())
         .tkNavigationBar("tab.chats")
