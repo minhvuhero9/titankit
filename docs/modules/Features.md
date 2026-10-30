@@ -284,6 +284,10 @@ SignUpScreen(auth: container.auth, onExit: { flow.leaveSignUp() }) { user in flo
 - Dolingo: "Bắt đầu" ở màn chào và "Đăng ký" ở màn đăng nhập mở bộ 10 câu hỏi (Dolingo chỉ dạy tiếng Anh cho người Việt nên bỏ hai câu chọn ngôn ngữ của Figma). Đáp án lưu trong `DolingoKeys.surveyAnswers` để các màn học sau dùng (trình độ, mục tiêu mỗi ngày, giờ nhắc). Icon trình độ, lý do và thời gian dùng `TKColorIcon` có sẵn.
 - Giờ nhắc mới được lưu, chưa đặt thông báo: phần này đi cùng TitanPush.
 
+## 8h2. Đã làm (giai đoạn 5, Nâng cấp thành công)
+
+`PremiumWelcomeScreen(message:benefits:footnote:actionTitle:action:)` theo màn 92 của Figma: vương miện dưới mưa giấy màu (tắt khi bật Giảm chuyển động), "Chúc mừng bạn!", danh sách quyền lợi đã mở khoá, ghi chú gia hạn và một nút. Dolingo hiện nó ngay trong sheet paywall sau khi mua hoặc khôi phục được Premium.
+
 ## 8i. Đã làm (giai đoạn 5, Quên mật khẩu)
 
 Theo các màn 24–27 của Figma Dolingo.

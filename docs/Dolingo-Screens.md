@@ -139,7 +139,7 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 89 | choose payment methods | `10469:38008` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 90 | review summary | `10469:39913` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 91 | processing payment | `14479:39026` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
-| 92 | upgrade plan subscription successful | `10469:40191` | Chưa làm |
+| 92 | upgrade plan subscription successful | `10469:40191` | Đã có (`PremiumWelcomeScreen`) |
 | 93 | settings - personal info | `26452:26758` | Đã có, cần so Figma (`ProfileScreen`) |
 | 94 | settings - preferences | `34500:45916` | Đã có (`PreferencesScreen`: học lại từ đầu, xoá bộ nhớ đệm) |
 | 95 | settings - manage courses | `34500:46927` | Bỏ: chỉ có một khoá tiếng Anh |
