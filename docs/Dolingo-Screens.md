@@ -45,10 +45,10 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 21 | sign in blank form | `34461:41625` | Đã có (`LoginScreen`) |
 | 22 | sign in filled form | `34461:44049` | Đã có (`LoginScreen`) |
 | 23 | sign in loading | `34462:44226` | Đã có (`LoginScreen`) |
-| 24 | forgot password | `4746:54104` | Chưa làm |
-| 25 | enter OTP code | `4748:54244` | Chưa làm |
-| 26 | create new password | `4748:54475` | Chưa làm |
-| 27 | reset password successful | `4748:54632` | Chưa làm |
+| 24 | forgot password | `4746:54104` | Đã có (`PasswordResetScreen`) |
+| 25 | enter OTP code | `4748:54244` | Đã có (`PasswordResetScreen`) |
+| 26 | create new password | `4748:54475` | Đã có (`PasswordResetScreen`) |
+| 27 | reset password successful | `4748:54632` | Đã có (`PasswordResetScreen`) |
 
 ## Home và học bài với gia sư (28–47)
 

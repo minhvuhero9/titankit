@@ -284,6 +284,21 @@ SignUpScreen(auth: container.auth, onExit: { flow.leaveSignUp() }) { user in flo
 - Dolingo: "Bắt đầu" ở màn chào và "Đăng ký" ở màn đăng nhập mở bộ 10 câu hỏi (Dolingo chỉ dạy tiếng Anh cho người Việt nên bỏ hai câu chọn ngôn ngữ của Figma). Đáp án lưu trong `DolingoKeys.surveyAnswers` để các màn học sau dùng (trình độ, mục tiêu mỗi ngày, giờ nhắc). Icon trình độ, lý do và thời gian dùng `TKColorIcon` có sẵn.
 - Giờ nhắc mới được lưu, chưa đặt thông báo: phần này đi cùng TitanPush.
 
+## 8i. Đã làm (giai đoạn 5, Quên mật khẩu)
+
+Theo các màn 24–27 của Figma Dolingo.
+
+```swift
+PasswordResetScreen(auth: container.auth, email: "", codeLength: 4,
+                    onExit: { flow.leaveResetPassword() }) { user in flow.didSignIn() }
+```
+
+- Bốn bước: nhập email ("Gửi mã OTP"), nhập mã gửi qua email, mật khẩu mới hai lần, rồi "Xong rồi!". Nút "Tiếp tục hành trình" đăng nhập luôn bằng mật khẩu mới; nếu không được thì quay về màn đăng nhập.
+- Mã nhập bằng `TKCodeField` (TitanDesignSystem): mỗi ô một chữ số, bàn phím số, tự điền mã từ Mail/Tin nhắn, ô đang nhập được tô như ô có focus, viền đỏ khi mã sai. Đủ số chữ số là tự kiểm tra, không cần nút.
+- "Gửi lại mã" bật sau 60 giây (`resendDelay`), có đếm ngược. Mã sai hoặc hết hạn: xóa mã, báo lỗi, viền đỏ tới khi gõ lại. Mã hết hạn lúc lưu mật khẩu: quay về bước nhập mã.
+- Cần ba hàm của `AuthService`: `sendPasswordReset(email:)`, `verifyPasswordResetCode(email:code:)` trả token, `resetPassword(token:newPassword:)`. `MockAuthService` nhận mã cố định `resetCode` (mặc định "1234"). Backend thật phải gửi mã OTP; Firebase Auth chỉ gửi link, nên adapter Firebase cần một Cloud Function cho hai hàm sau.
+- Dolingo: "Quên mật khẩu?" ở màn đăng nhập mở luồng này (`AppFlow.Stage.resetPassword`); "Đổi mật khẩu" trong Tài khoản & Bảo mật đẩy cùng màn với email đã điền sẵn.
+
 ## 9. Checklist cho App 1
 
 - [ ] Chọn màn hình App 1 dùng: Splash, Onboarding, Login, Paywall, Settings, Profile, Delete account...
