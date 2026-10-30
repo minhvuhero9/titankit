@@ -12,25 +12,35 @@ let kitModules = [
 
 // Used when Config/Secrets.xcconfig and Resources/Firebase/GoogleService-Info-<Env>.plist exist;
 // otherwise the app runs on the kit's mocks.
+// `TUIST_PERSONAL_TEAM=1 tuist generate` builds for a free Apple ID (Personal Team), which can't
+// sign Sign in with Apple or In-App Purchase. Firebase Analytics links StoreKit.framework, which
+// makes Xcode ask for In-App Purchase, so it is left out (with Crashlytics), along with the
+// entitlements. StoreKit itself still works with Dolingo.storekit.
+let personalTeam = Environment.personalTeam.getBoolean(default: false)
+
 let firebaseModules = [
-    "TitanFirebaseCore", "TitanFirebaseAuth", "TitanFirebaseAnalytics", "TitanFirebaseRemoteConfig",
+    "TitanFirebaseCore", "TitanFirebaseAuth", "TitanFirebaseRemoteConfig",
+] + (personalTeam ? [] : ["TitanFirebaseAnalytics"])
+
+var baseSettings: SettingsDictionary = [
+    "SWIFT_VERSION": "6.0",
+    // The version people see, and the build number fastlane raises for each upload.
+    "MARKETING_VERSION": "1.0.0",
+    "CURRENT_PROJECT_VERSION": "1",
+    "DEVELOPMENT_TEAM": "",
+    // Dolingo.entitlements (Sign in with Apple), except for a Personal Team (see above).
+    "CODE_SIGN_ENTITLEMENTS": personalTeam ? "" : "$(DOLINGO_ENTITLEMENTS)",
+    // Firebase's static libraries register their Objective-C categories only with -ObjC.
+    "OTHER_LDFLAGS": "$(inherited) -ObjC",
 ]
+if personalTeam {
+    baseSettings["OTHER_SWIFT_FLAGS"] = "$(inherited) -DPERSONAL_TEAM"
+}
 
 let project = Project(
     name: appName,
     settings: .settings(
-        base: [
-            "SWIFT_VERSION": "6.0",
-            // The version people see, and the build number fastlane raises for each upload.
-            "MARKETING_VERSION": "1.0.0",
-            "CURRENT_PROJECT_VERSION": "1",
-            "DEVELOPMENT_TEAM": "",
-            // Dolingo.entitlements (Sign in with Apple) unless Secrets.xcconfig empties it, as a
-            // free Personal Team must: those teams can't sign Sign in with Apple.
-            "CODE_SIGN_ENTITLEMENTS": "$(DOLINGO_ENTITLEMENTS)",
-            // Firebase's static libraries register their Objective-C categories only with -ObjC.
-            "OTHER_LDFLAGS": "$(inherited) -ObjC",
-        ],
+        base: baseSettings,
         configurations: [
             .debug(name: "Dev", xcconfig: "Config/Dev.xcconfig"),
             .release(name: "Staging", xcconfig: "Config/Staging.xcconfig"),
