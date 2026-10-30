@@ -77,4 +77,35 @@ final class MockAuthServiceTests: XCTestCase {
         let current = await auth.currentUser()
         XCTAssertNil(current)
     }
+
+    func testPasswordResetWithTheEmailedCode() async throws {
+        let auth = MockAuthService(resetCode: "4321")
+        try await auth.sendPasswordReset(email: "Demo@titan.app")
+        do {
+            _ = try await auth.verifyPasswordResetCode(email: "demo@titan.app", code: "0000")
+            XCTFail("wrong code")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+        let token = try await auth.verifyPasswordResetCode(email: "demo@titan.app", code: "4321")
+        try await auth.resetPassword(token: token, newPassword: "newpass")
+        let user = try await auth.signIn(.email(email: "demo@titan.app", password: "newpass"))
+        XCTAssertEqual(user.email, "demo@titan.app")
+        do {
+            try await auth.resetPassword(token: token, newPassword: "again1")
+            XCTFail("a token works once")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+    }
+
+    func testResetCodeNeedsARequestFirst() async {
+        let auth = MockAuthService()
+        do {
+            _ = try await auth.verifyPasswordResetCode(email: "demo@titan.app", code: "1234")
+            XCTFail("no email was sent")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+    }
 }

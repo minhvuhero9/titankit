@@ -9,14 +9,24 @@ public actor MockAuthService: AuthService {
     private var nextError: TitanError?
     public var delay: Duration
     public private(set) var resetRequests: [String] = []
+    /// The code every password reset email "contains".
+    public let resetCode: String
+    /// Reset tokens handed out by `verifyPasswordResetCode`, with their email.
+    private var resetTokens: [String: String] = [:]
 
     /// - Parameter accounts: email → password pairs that can sign in.
-    public init(accounts: [String: String] = ["demo@titan.app": "123456"], signedIn: AuthUser? = nil, delay: Duration = .zero) {
+    public init(
+        accounts: [String: String] = ["demo@titan.app": "123456"],
+        signedIn: AuthUser? = nil,
+        delay: Duration = .zero,
+        resetCode: String = "1234"
+    ) {
         self.accounts = accounts.reduce(into: [:]) { result, pair in
             result[pair.key.lowercased()] = (pair.value, AuthUser(id: UUID().uuidString, email: pair.key.lowercased(), provider: .email))
         }
         self.signedIn = signedIn
         self.delay = delay
+        self.resetCode = resetCode
     }
 
     public func fail(next error: TitanError) {
@@ -60,6 +70,21 @@ public actor MockAuthService: AuthService {
     public func sendPasswordReset(email: String) async throws(TitanError) {
         try await prepare()
         resetRequests.append(email.lowercased())
+    }
+
+    public func verifyPasswordResetCode(email: String, code: String) async throws(TitanError) -> String {
+        try await prepare()
+        let key = email.lowercased()
+        guard resetRequests.contains(key), accounts[key] != nil, code == resetCode else { throw .unauthorized }
+        let token = UUID().uuidString
+        resetTokens[token] = key
+        return token
+    }
+
+    public func resetPassword(token: String, newPassword: String) async throws(TitanError) {
+        try await prepare()
+        guard let key = resetTokens.removeValue(forKey: token), let account = accounts[key] else { throw .unauthorized }
+        accounts[key] = (newPassword, account.user)
     }
 
     public func updateProfile(displayName: String) async throws(TitanError) -> AuthUser {

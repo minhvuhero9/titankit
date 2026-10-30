@@ -66,3 +66,22 @@ final class TKFlowLayoutTests: XCTestCase {
         XCTAssertEqual(TKFlowLayout.arrange([], width: 300, spacing: 10, lineSpacing: 12).size, .zero)
     }
 }
+
+final class TKCodeFieldTests: XCTestCase {
+    func testKeepsDigitsUpToTheLength() {
+        XCTAssertEqual(TKCodeField.sanitize("Code: 12 34 5", length: 4), "1234")
+        XCTAssertEqual(TKCodeField.sanitize("7a4", length: 4), "74")
+        XCTAssertEqual(TKCodeField.sanitize("٣٤", length: 4), "")
+    }
+
+    func testHighlightsTheNextBoxThenTheLast() {
+        XCTAssertEqual(TKCodeField.activeIndex(count: 0, length: 4), 0)
+        XCTAssertEqual(TKCodeField.activeIndex(count: 2, length: 4), 2)
+        XCTAssertEqual(TKCodeField.activeIndex(count: 4, length: 4), 3)
+    }
+
+    func testDigitPerBox() {
+        XCTAssertEqual(TKCodeField.digit(in: "749", at: 2), "9")
+        XCTAssertEqual(TKCodeField.digit(in: "749", at: 3), "")
+    }
+}

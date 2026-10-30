@@ -98,6 +98,29 @@ public enum KitStrings {
         public static let creating = "kit.signUp.creating"
     }
 
+    public enum PasswordReset {
+        public static let emailTitle = "kit.passwordReset.email.title"
+        public static let emailMessage = "kit.passwordReset.email.message"
+        public static let emailSubmit = "kit.passwordReset.email.submit"
+        public static let codeTitle = "kit.passwordReset.code.title"
+        /// The email the code was sent to.
+        public static let codeMessage = "kit.passwordReset.code.message %@"
+        public static let codeLabel = "kit.passwordReset.code.label"
+        /// Seconds left before the code can be sent again.
+        public static let resendIn = "kit.passwordReset.code.resendIn %lld"
+        public static let resend = "kit.passwordReset.code.resend"
+        public static let codeSent = "kit.passwordReset.code.sent"
+        public static let wrongCode = "kit.passwordReset.code.wrong"
+        public static let passwordTitle = "kit.passwordReset.password.title"
+        public static let passwordMessage = "kit.passwordReset.password.message"
+        public static let newPassword = "kit.passwordReset.password.new"
+        public static let confirmPassword = "kit.passwordReset.password.confirm"
+        public static let passwordSubmit = "kit.passwordReset.password.submit"
+        public static let doneTitle = "kit.passwordReset.done.title"
+        public static let doneMessage = "kit.passwordReset.done.message"
+        public static let doneAction = "kit.passwordReset.done.action"
+    }
+
     public enum Paywall {
         public static let title = "kit.paywall.title"
         public static let message = "kit.paywall.message"
