@@ -147,7 +147,7 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 97 | settings - account & security | `24484:40375` | Đã có (`SecurityScreen`: đổi mật khẩu qua email, xoá tài khoản) |
 | 98 | settings - billing & subscriptions | `24484:40381` | Đã có (`BillingScreen`) |
 | 99 | settings - linked accounts | `24484:40369` | Chưa làm (cần đăng nhập Google/Apple/Facebook thật qua Firebase) |
-| 100 | settings - data & analytics | `34503:30531` | Chưa làm (cần Analytics và backend) |
+| 100 | settings - data & analytics | `34503:30531` | Đã có (`DataAnalyticsScreen`) |
 | 101 | settings - payment methods | `12462:31975` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 102 | add new payment | `12462:31911` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 103 | new payment method added | `12462:31904` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |

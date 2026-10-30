@@ -4,6 +4,8 @@
 
 Kiến trúc adapter giúp app dùng Firebase hôm nay và đổi sang backend khác sau này mà không phải sửa màn hình hay Repository.
 
+> Trạng thái: `Adapters/TitanFirebase` đã có các target `TitanFirebaseCore` (`FirebaseBootstrap`), `TitanFirebaseAuth` (`FirebaseAuthService`, `GoogleSignInHelper`), `TitanFirebaseAnalytics`, `TitanFirebaseRemoteConfig`, dùng Firebase 12.19.3 và GoogleSignIn 9.2.0; Tuist kéo vào qua `Tuist/Package.swift`. Cách bật cho Dolingo: [Firebase-Setup.md](../Firebase-Setup.md). `DataService` và `FileStorageService` chưa làm vì Dolingo chưa cần.
+
 ## 1. Trách nhiệm
 
 **Làm:**

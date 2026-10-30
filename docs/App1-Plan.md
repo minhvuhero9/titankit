@@ -84,14 +84,15 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 
 **Mục tiêu:** thay Mock bằng dịch vụ thật cho những gì App 1 cần (xem câu hỏi 4).
 
-- [ ] Tạo project Firebase cho Dev, Staging, Prod.
-- [ ] `Adapters/TitanFirebase`: Auth, Firestore/Backend, Remote Config, Analytics, Messaging.
-- [ ] TitanAuth: Apple, Google, email; xóa tài khoản.
-- [ ] TitanRemoteConfig: `LaunchChecker` cho bảo trì và bắt buộc cập nhật (kit và Mock đã xong; còn adapter Firebase).
-- [ ] TitanAnalytics: sự kiện chung của kit + sự kiện riêng App 1.
+- [ ] Tạo project Firebase cho Dev, Staging, Prod (việc của chủ tài khoản, xem [Firebase-Setup.md](Firebase-Setup.md)).
+- [x] `Adapters/TitanFirebase`: Core, Auth (email, Apple, Google, khách), Remote Config, Analytics + Crashlytics. Firestore và Messaging chưa cần.
+- [x] TitanAuth: `AppleSignInHelper`, `idToken`, xóa tài khoản; `GoogleSignInHelper` nằm trong adapter vì cần SDK Google.
+- [x] TitanRemoteConfig: adapter Firebase cho `LaunchChecker`.
+- [x] TitanAnalytics: `AnalyticsService`, `CrashService`, sự kiện chung, Composite, Console, NoOp, Spy; màn Dữ liệu & Phân tích.
 - [x] TitanPurchase: `PurchaseService`, adapter StoreKit 2 và Mock (chưa có RevenueCat, chưa có file `.storekit`).
 - [ ] TitanAds (AdMob + UMP), TitanPush nếu cần.
-- [ ] `AppContainer` chọn adapter theo môi trường.
+- [x] `AppContainer` dùng Firebase khi có `GoogleService-Info-<Env>.plist`, không có thì chạy Mock.
+- [ ] Server AI kiểm tra token Firebase thay cho khoá chung; liên kết tài khoản (màn 99); đăng nhập Facebook.
 
 **Xong khi:** App1-Staging đăng nhập thật, đọc Remote Config thật, sự kiện analytics hiện trên console.
 
