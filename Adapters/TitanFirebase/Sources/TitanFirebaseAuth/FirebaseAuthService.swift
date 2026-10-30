@@ -24,19 +24,16 @@ public struct FirebaseAuthService: AuthService {
             switch method {
             case let .email(email, password):
                 result = try await auth.signIn(withEmail: email, password: password)
-            case let .apple(idToken, rawNonce, fullName):
-                let credential = OAuthProvider.appleCredential(withIDToken: idToken, rawNonce: rawNonce,
-                                                               fullName: fullName)
-                result = try await auth.signIn(with: credential)
+            case let .apple(_, _, fullName):
+                result = try await auth.signIn(with: Self.credential(for: method)!)
                 // Apple gives the name only the first time; keep it on the Firebase user.
                 if result.user.displayName == nil, let name = fullName.flatMap(Self.displayName) {
                     let change = result.user.createProfileChangeRequest()
                     change.displayName = name
                     try? await change.commitChanges()
                 }
-            case let .google(idToken, accessToken):
-                let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
-                result = try await auth.signIn(with: credential)
+            case .google:
+                result = try await auth.signIn(with: Self.credential(for: method)!)
             case .anonymous:
                 result = try await auth.signInAnonymously()
             }
@@ -107,6 +104,34 @@ public struct FirebaseAuthService: AuthService {
         }
     }
 
+    public func linkedProviders() async -> [TitanAuth.AuthProvider] {
+        guard let user = auth.currentUser, !user.isAnonymous else { return [] }
+        return user.providerData.map { Self.provider(for: $0.providerID) }
+    }
+
+    public func link(_ method: SignInMethod) async throws(TitanError) -> TitanAuth.AuthUser {
+        guard let user = auth.currentUser else { throw .unauthorized }
+        guard let credential = Self.credential(for: method) else { throw .unknown("a guest sign-in can't be linked") }
+        do {
+            let result = try await user.link(with: credential)
+            return Self.user(auth.currentUser ?? result.user)
+        } catch {
+            throw Self.map(error)
+        }
+    }
+
+    public func unlink(_ provider: TitanAuth.AuthProvider) async throws(TitanError) -> TitanAuth.AuthUser {
+        guard let user = auth.currentUser else { throw .unauthorized }
+        let ids = user.providerData.map(\.providerID)
+        guard let id = ids.first(where: { Self.provider(for: $0) == provider }) else { throw .notFound }
+        guard ids.count > 1 else { throw AuthFailure.lastProvider }
+        do {
+            return Self.user(try await user.unlink(fromProvider: id))
+        } catch {
+            throw Self.map(error)
+        }
+    }
+
     public func idToken(forceRefresh: Bool) async throws(TitanError) -> String {
         guard let user = auth.currentUser else { throw .unauthorized }
         do {
@@ -155,6 +180,20 @@ public struct FirebaseAuthService: AuthService {
         }
     }
 
+    /// Firebase's credential for Apple, Google or email; nil for a guest.
+    static func credential(for method: SignInMethod) -> AuthCredential? {
+        switch method {
+        case let .email(email, password):
+            return EmailAuthProvider.credential(withEmail: email, password: password)
+        case let .apple(idToken, rawNonce, fullName):
+            return OAuthProvider.appleCredential(withIDToken: idToken, rawNonce: rawNonce, fullName: fullName)
+        case let .google(idToken, accessToken):
+            return GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+        case .anonymous:
+            return nil
+        }
+    }
+
     static func displayName(_ components: PersonNameComponents) -> String? {
         let name = PersonNameComponentsFormatter().string(from: components)
         return name.isEmpty ? nil : name
@@ -178,6 +217,12 @@ public struct FirebaseAuthService: AuthService {
             return .network(.server(statusCode: 429))
         case .emailAlreadyInUse:
             return .unknown("email already in use")
+        case .credentialAlreadyInUse, .accountExistsWithDifferentCredential:
+            return AuthFailure.credentialInUse
+        case .providerAlreadyLinked:
+            return AuthFailure.alreadyLinked
+        case .noSuchProvider:
+            return .notFound
         default:
             return .unknown(error.localizedDescription)
         }
