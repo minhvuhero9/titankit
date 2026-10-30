@@ -65,26 +65,15 @@ Cloudflare Worker viết bằng TypeScript, dùng `@anthropic-ai/sdk`:
 - Prompt gia sư cố định nằm ở `src/prompts.ts` (tiếng Anh theo trình độ, giải thích tiếng Việt khi cần, sửa tối đa hai lỗi mỗi lượt, câu trả lời ngắn cho điện thoại); thông tin người học là một khối riêng phía sau để cache prompt vẫn trúng.
 - Kiểm tra yêu cầu trước khi gọi model: tối đa 40 lượt gần nhất, mỗi tin của người học tối đa 2.000 ký tự, các lượt phải xen kẽ và kết thúc bằng người học.
 
-Chạy và triển khai:
+Chạy và kiểm tra:
 
 ```bash
 cd Backend/dolingo-ai
 npm ci
 npm run check && npm test            # CI chạy hai lệnh này ở job "dolingo-ai server checks"
-npx wrangler login
-npx wrangler secret put ANTHROPIC_API_KEY
-npx wrangler secret put CLIENT_KEY    # một chuỗi ngẫu nhiên dài, ví dụ: openssl rand -hex 32
-npm run deploy                        # in ra URL dạng https://dolingo-ai.<tài khoản>.workers.dev
 ```
 
-Rồi điền vào `Apps/Dolingo/Config/Secrets.xcconfig` (chép từ `Secrets.example.xcconfig`):
-
-```
-AI_BASE_URL = https:/$()/dolingo-ai.<tài khoản>.workers.dev
-AI_CLIENT_KEY = <CLIENT_KEY ở trên>
-```
-
-Để trống thì app dùng `MockChatService` và gia sư báo là chưa được kết nối.
+Triển khai (staging và prod, secrets, workflow tự deploy, nối app): [AI-Deploy.md](../AI-Deploy.md). Khi URL server trong `Secrets.xcconfig` còn trống, app dùng `MockChatService` và gia sư báo là chưa được kết nối.
 
 ## 5. Ai được gọi server
 
@@ -93,16 +82,10 @@ AI_CLIENT_KEY = <CLIENT_KEY ở trên>
 - **Không có Firebase:** app vẫn gửi `X-Dolingo-Key` (`CLIENT_KEY`), không có giới hạn theo người dùng. Khi mọi bản build đã dùng Firebase, đặt `REQUIRE_SIGN_IN = "true"` để tắt đường này.
 - Server chưa biết ai là Premium (gói mua qua App Store nằm trên máy): mọi người dùng chung một giới hạn. Muốn giới hạn khác cho Premium thì cần server kiểm tra giao dịch App Store.
 
-Triển khai thêm cho phần này:
-
-```bash
-npx wrangler kv namespace create USAGE      # dán id vào [[kv_namespaces]] trong wrangler.toml
-# điền FIREBASE_PROJECT_ID trong [vars] của wrangler.toml, rồi
-npm run deploy
-```
+KV `USAGE` và `FIREBASE_PROJECT_ID` của từng môi trường nằm trong `wrangler.toml`; KV được tạo tự động ở lần deploy đầu.
 
 ## 6. Test
 
 - Kit: `TitanAITests` kiểm tra request gửi đi, cách đọc từng dòng sự kiện, mã lỗi HTTP và `MockChatService`.
 - App: `TutorChatTests` kiểm tra gửi tin, nhận câu trả lời chảy về, lưu lại, trả câu hỏi về ô nhập khi lỗi, `restart`, xoá cuộc trò chuyện.
-- Server: `npm test` (`node:test`) kiểm tra đầu vào, khoá, định dạng luồng sự kiện, token Firebase (ký bằng cặp khoá RSA tạo trong test: đúng, sai project, hết hạn, giả mạo) và giới hạn mỗi ngày.
+- Server: `npm test` (`node:test`) kiểm tra đầu vào, khoá, định dạng luồng sự kiện, token Firebase (ký bằng cặp khoá RSA tạo trong test: đúng, sai project, hết hạn, giả mạo), giới hạn mỗi ngày và trang pháp lý. Sau khi deploy, `npm run smoke -- <URL>` kiểm tra server thật mà không tốn lượt AI.

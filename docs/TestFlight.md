@@ -28,7 +28,7 @@ Code và lane đã sẵn; còn thiếu tài khoản Apple Developer (99 USD/năm
 | `ASC_KEY_CONTENT` | `base64 -i AuthKey_XXXX.p8` |
 | `MATCH_GIT_URL`, `MATCH_PASSWORD` | từ bước 2 |
 | `MATCH_GIT_BASIC_AUTHORIZATION` | `echo -n "<github user>:<token đọc repo certificates>" \| base64` |
-| `DOLINGO_SECRETS_XCCONFIG` | `base64 -i Apps/Dolingo/Config/Secrets.xcconfig` (AI, Google Sign-In) |
+| `DOLINGO_SECRETS_XCCONFIG` | `base64 -i Apps/Dolingo/Config/Secrets.xcconfig` (URL server AI theo [AI-Deploy.md](AI-Deploy.md), Google Sign-In) |
 | `DOLINGO_FIREBASE_PLIST_STAGING`, `..._PROD` | `base64 -i GoogleService-Info-Staging.plist` (và Prod) |
 
 ## 4. Gửi bản
