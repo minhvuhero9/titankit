@@ -1,0 +1,21 @@
+{
+  "name": "dolingo-ai",
+  "private": true,
+  "type": "module",
+  "description": "Dolingo's AI server: keeps the Anthropic API key off the phone and streams Claude's replies to the app.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "tsc --noEmit",
+    "test": "node --test --experimental-strip-types --no-warnings test/*.test.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "4.20260702.1",
+    "typescript": "5.9.3",
+    "wrangler": "4.49.1",
+    "@types/node": "22.19.0"
+  }
+}

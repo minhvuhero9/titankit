@@ -42,3 +42,23 @@ jobs:
         with:
           name: ${{ matrix.app }}-log
           path: build-${{ matrix.app }}.log
+
+  backend:
+    name: dolingo-ai server checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Backend/dolingo-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Backend/dolingo-ai/package-lock.json
+      - run: npm ci
+      - name: Type-check
+        run: npm run check
+      - name: Test
+        run: npm test
