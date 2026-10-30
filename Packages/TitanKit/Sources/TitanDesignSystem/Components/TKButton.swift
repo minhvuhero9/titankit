@@ -140,9 +140,13 @@ public struct TKButton: View {
                 title
                     .font(theme.typography.font(size: size.fontSize, weight: .bold, relativeTo: .headline))
                     .tracking(0.2)
-                    .lineLimit(1)
+                    // Two lines at large text sizes rather than "Continue wit…"; the button
+                    // grows past its height (a minimum) to fit them.
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
                 trailingIcon?.resizable().scaledToFit().frame(width: size.iconSize, height: size.iconSize)
             }
+            .padding(.vertical, Spacing.sm)
         }
     }
 }
