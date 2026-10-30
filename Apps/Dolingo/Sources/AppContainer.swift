@@ -138,9 +138,12 @@ final class AppContainer: ObservableObject, DependencyContainer {
         }
         self.learner = learner
         // With Firebase the AI server knows who is calling from the sign-in token.
-        let aiToken: AITokenProvider? = usesFirebase ? { [auth] forceRefresh in
-            try? await auth.idToken(forceRefresh: forceRefresh)
-        } : nil
+        var aiToken: AITokenProvider?
+        if usesFirebase {
+            aiToken = { @Sendable [auth] forceRefresh in
+                try? await auth.idToken(forceRefresh: forceRefresh)
+            }
+        }
         tutorChat = TutorChat(service: chat ?? AppContainer.chatService(config: config, token: aiToken),
                               preferences: preferences, learner: learner)
         self.roleplayAI = roleplayAI ?? AppContainer.roleplayAI(config: config, token: aiToken)
