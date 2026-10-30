@@ -2517,6 +2517,125 @@
         }
       }
     },
+    "premium.benefit.createRoleplay": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited roleplays created with AI"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tạo roleplay bằng AI không giới hạn"
+          }
+        }
+      }
+    },
+    "premium.benefit.lessons": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every lesson of the course unlocked"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở khoá mọi bài học của khoá học"
+          }
+        }
+      }
+    },
+    "premium.benefit.roleplays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All roleplay scenarios"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mọi tình huống roleplay"
+          }
+        }
+      }
+    },
+    "premium.benefit.topics": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every speaking topic and phrase"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mọi chủ đề và mẫu câu luyện nói"
+          }
+        }
+      }
+    },
+    "premium.welcome.action": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Exploring Premium Features"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bắt đầu khám phá Premium"
+          }
+        }
+      }
+    },
+    "premium.welcome.footnote": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your subscription renews automatically unless canceled. Manage it in Account > Billing & Subscriptions."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gói của bạn tự động gia hạn trừ khi bạn huỷ. Quản lý gói trong Tài khoản > Gói & Thanh toán."
+          }
+        }
+      }
+    },
+    "premium.welcome.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're Now a Dolingo Premium Member!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã là thành viên Dolingo Premium!"
+          }
+        }
+      }
+    },
     "progress.achievements": {
       "extractionState": "manual",
       "localizations": {

@@ -2,22 +2,41 @@ import SwiftUI
 import TitanFeatures
 import TitanPurchase
 
-/// The kit's paywall with Dolingo's plans and benefits. Shown in a sheet; closes after a purchase.
+/// The kit paywall with Dolingo's benefits; after buying or restoring Premium it turns into
+/// Figma "upgrade plan subscription successful".
 struct DolingoPaywall: View {
     let purchase: any PurchaseService
     let onDismiss: () -> Void
 
+    @State private var isPremium = false
+
     var body: some View {
-        PaywallScreen(
-            purchase: purchase,
-            config: AppConfig.paywall,
-            benefits: [
-                Text("paywall.benefit.noAds"),
-                Text("paywall.benefit.unlimited"),
-                Text("paywall.benefit.offline"),
-            ],
-            onClose: onDismiss,
-            onPurchased: onDismiss
-        )
+        if isPremium {
+            PremiumWelcomeScreen(
+                message: Text("premium.welcome.message"),
+                benefits: [
+                    Text("premium.benefit.lessons"),
+                    Text("premium.benefit.roleplays"),
+                    Text("premium.benefit.topics"),
+                    Text("premium.benefit.createRoleplay"),
+                ],
+                footnote: Text("premium.welcome.footnote"),
+                actionTitle: Text("premium.welcome.action"),
+                action: onDismiss
+            )
+            .transition(.opacity)
+        } else {
+            PaywallScreen(
+                purchase: purchase,
+                config: AppConfig.paywall,
+                benefits: [
+                    Text("paywall.benefit.noAds"),
+                    Text("paywall.benefit.unlimited"),
+                    Text("paywall.benefit.offline"),
+                ],
+                onClose: onDismiss,
+                onPurchased: { withAnimation { isPremium = true } }
+            )
+        }
     }
 }
