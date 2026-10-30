@@ -119,6 +119,13 @@ public enum KitStrings {
         public static let doneTitle = "kit.passwordReset.done.title"
         public static let doneMessage = "kit.passwordReset.done.message"
         public static let doneAction = "kit.passwordReset.done.action"
+        /// For backends that email a reset link instead of a code.
+        public static let emailMessageLink = "kit.passwordReset.email.messageLink"
+        public static let linkSubmit = "kit.passwordReset.link.submit"
+        public static let linkTitle = "kit.passwordReset.link.title"
+        /// The email the link was sent to.
+        public static let linkMessage = "kit.passwordReset.link.message %@"
+        public static let backToSignIn = "kit.passwordReset.link.back"
     }
 
     public enum Paywall {

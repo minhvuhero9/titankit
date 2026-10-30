@@ -74,6 +74,7 @@ let package = Package(
         .testTarget(name: "TitanPurchaseTests", dependencies: ["TitanCore", "TitanPurchase"]),
         .testTarget(name: "TitanSpeechTests", dependencies: ["TitanCore", "TitanSpeech"]),
         .testTarget(name: "TitanAITests", dependencies: ["TitanCore", "TitanAI"]),
+        .testTarget(name: "TitanAnalyticsTests", dependencies: ["TitanCore", "TitanAnalytics"]),
         .testTarget(name: "TitanFeaturesTests", dependencies: ["TitanCore", "TitanAuth", "TitanDesignSystem", "TitanLocalization", "TitanPurchase", "TitanFeatures"]),
 
         .testTarget(

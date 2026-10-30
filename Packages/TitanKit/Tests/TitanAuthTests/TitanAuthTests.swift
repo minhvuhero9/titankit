@@ -108,4 +108,25 @@ final class MockAuthServiceTests: XCTestCase {
             XCTAssertEqual(error, .unauthorized)
         }
     }
+
+    func testMockTokenNeedsASignedInUser() async throws {
+        let auth = MockAuthService()
+        do {
+            _ = try await auth.idToken(forceRefresh: false)
+            XCTFail("signed out")
+        } catch {
+            XCTAssertEqual(error, .unauthorized)
+        }
+        let user = try await auth.signIn(.anonymous)
+        let token = try await auth.idToken(forceRefresh: true)
+        XCTAssertEqual(token, "mock-token-\(user.id)")
+    }
+
+    func testAppleNonceIsRandomAndHashed() {
+        let first = AppleSignInHelper.randomNonce()
+        XCTAssertEqual(first.count, 32)
+        XCTAssertNotEqual(first, AppleSignInHelper.randomNonce())
+        XCTAssertEqual(AppleSignInHelper.sha256("abc"),
+                       "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+    }
 }

@@ -117,4 +117,20 @@ final class PasswordResetViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.step, .email)
         XCTAssertEqual(viewModel.errorKey, TitanError.network(.offline).messageKey)
     }
+
+    func testLinkBackendsStopAtCheckYourEmail() async {
+        let auth = MockAuthService()
+        let time = time
+        let viewModel = PasswordResetViewModel(auth: auth, email: "demo@titan.app", resendDelay: 60, sendsLink: true) {
+            time.now
+        }
+        _ = await viewModel.next()
+        XCTAssertEqual(viewModel.step, .linkSent)
+        clock = clock.addingTimeInterval(61)
+        await viewModel.resend()
+        let requests = await auth.resetRequests
+        XCTAssertEqual(requests.count, 2)
+        XCTAssertTrue(viewModel.back())
+        XCTAssertEqual(viewModel.step, .email)
+    }
 }

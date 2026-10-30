@@ -1072,6 +1072,23 @@
         }
       }
     },
+    "kit.passwordReset.email.messageLink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the email address of your account and we'll send you a link to reset your password."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập email của tài khoản, chúng tôi sẽ gửi cho bạn một đường link để đặt lại mật khẩu."
+          }
+        }
+      }
+    },
     "kit.passwordReset.email.submit": {
       "extractionState": "manual",
       "localizations": {
@@ -1102,6 +1119,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quên mật khẩu? 🔑"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to Sign In"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại đăng nhập"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.message %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We've sent a link to reset your password to %@. Open it, choose a new password, then sign in again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúng tôi đã gửi link đặt lại mật khẩu tới %@. Mở link, chọn mật khẩu mới rồi đăng nhập lại."
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.submit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send Reset Link"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi link đặt lại"
+          }
+        }
+      }
+    },
+    "kit.passwordReset.link.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check Your Email 📬"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiểm tra email 📬"
           }
         }
       }

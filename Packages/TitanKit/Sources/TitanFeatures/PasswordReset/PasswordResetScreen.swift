@@ -28,12 +28,14 @@ public struct PasswordResetScreen: View {
         auth: any AuthService,
         email: String = "",
         codeLength: Int = 4,
+        sendsLink: Bool = false,
         onExit: @escaping () -> Void,
         onSignedIn: @escaping (AuthUser) -> Void
     ) {
         self.onExit = onExit
         self.onSignedIn = onSignedIn
-        _viewModel = StateObject(wrappedValue: PasswordResetViewModel(auth: auth, email: email, codeLength: codeLength))
+        _viewModel = StateObject(wrappedValue: PasswordResetViewModel(auth: auth, email: email, codeLength: codeLength,
+                                                                      sendsLink: sendsLink))
     }
 
     public var body: some View {
@@ -111,23 +113,31 @@ public struct PasswordResetScreen: View {
         case .email, .done: kit(KitStrings.PasswordReset.emailTitle)
         case .code: kit(KitStrings.PasswordReset.codeTitle)
         case .password: kit(KitStrings.PasswordReset.passwordTitle)
+        case .linkSent: kit(KitStrings.PasswordReset.linkTitle)
         }
     }
 
     private var message: Text {
         switch viewModel.step {
         case .email, .done:
-            kit(KitStrings.PasswordReset.emailMessage)
+            kit(viewModel.sendsLink ? KitStrings.PasswordReset.emailMessageLink : KitStrings.PasswordReset.emailMessage)
         case .code:
             Text(verbatim: String(format: KitStrings.string(KitStrings.PasswordReset.codeMessage, locale: locale),
                                   viewModel.trimmedEmail))
         case .password:
             kit(KitStrings.PasswordReset.passwordMessage)
+        case .linkSent:
+            Text(verbatim: String(format: KitStrings.string(KitStrings.PasswordReset.linkMessage, locale: locale),
+                                  viewModel.trimmedEmail))
         }
     }
 
     private var submitKey: String {
-        viewModel.step == .password ? KitStrings.PasswordReset.passwordSubmit : KitStrings.PasswordReset.emailSubmit
+        switch viewModel.step {
+        case .password: KitStrings.PasswordReset.passwordSubmit
+        case .linkSent: KitStrings.PasswordReset.backToSignIn
+        default: viewModel.sendsLink ? KitStrings.PasswordReset.linkSubmit : KitStrings.PasswordReset.emailSubmit
+        }
     }
 
     @ViewBuilder
@@ -145,6 +155,11 @@ public struct PasswordResetScreen: View {
                 .onSubmit { Task { await submit() } }
         case .code:
             codeEntry
+        case .linkSent:
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                resend(secondsLeft: viewModel.secondsUntilResend(at: context.date))
+            }
+            .frame(maxWidth: .infinity)
         case .password:
             VStack(spacing: Spacing.lg) {
                 TKTextField(label: kit(KitStrings.PasswordReset.newPassword), text: $viewModel.password,
@@ -211,6 +226,10 @@ public struct PasswordResetScreen: View {
     }
 
     private func submit() async {
+        if viewModel.step == .linkSent {
+            onExit()
+            return
+        }
         let wasDone = viewModel.step == .done
         if let user = await viewModel.next() {
             onSignedIn(user)

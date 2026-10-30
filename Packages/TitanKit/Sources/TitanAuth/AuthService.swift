@@ -18,6 +18,9 @@ public protocol AuthService: Sendable {
     /// Changes the signed-in user's name and returns the updated user.
     func updateProfile(displayName: String) async throws(TitanError) -> AuthUser
     func signOut() async throws(TitanError)
+    /// A token the app's own servers can check to know who is calling, refreshed when it is
+    /// about to expire or when `forceRefresh` is set. Throws `.unauthorized` when signed out.
+    func idToken(forceRefresh: Bool) async throws(TitanError) -> String
     /// Throws `.unauthorized` when the backend wants a fresh sign-in first.
     func deleteAccount() async throws(TitanError)
 }

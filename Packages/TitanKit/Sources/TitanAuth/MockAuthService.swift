@@ -104,6 +104,12 @@ public actor MockAuthService: AuthService {
         signedIn = nil
     }
 
+    public func idToken(forceRefresh: Bool) async throws(TitanError) -> String {
+        try await prepare()
+        guard let user = signedIn else { throw .unauthorized }
+        return "mock-token-\(user.id)"
+    }
+
     public func deleteAccount() async throws(TitanError) {
         try await prepare()
         guard let user = signedIn else { throw .unauthorized }

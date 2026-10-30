@@ -4,11 +4,14 @@ import TitanCore
 import TitanLocalization
 
 /// Forgot password in four steps: the email, the code sent to it, a new password twice, then
-/// "You're all set" which signs in with the new password.
+/// "You're all set" which signs in with the new password. With `sendsLink`, for backends that
+/// email a reset link instead of a code (Firebase), it stops at "Check your email".
 @MainActor
 public final class PasswordResetViewModel: ObservableObject {
     public enum Step: Int, CaseIterable, Sendable {
         case email, code, password, done
+        /// The reset link is on its way; the password is changed from the email.
+        case linkSent
     }
 
     @Published public private(set) var step: Step = .email
@@ -32,6 +35,8 @@ public final class PasswordResetViewModel: ObservableObject {
 
     public let codeLength: Int
     public let resendDelay: TimeInterval
+    /// The backend emails a link rather than a code.
+    public let sendsLink: Bool
     private let auth: any AuthService
     private let now: () -> Date
     private var token: String?
@@ -45,12 +50,14 @@ public final class PasswordResetViewModel: ObservableObject {
         email: String = "",
         codeLength: Int = 4,
         resendDelay: TimeInterval = 60,
+        sendsLink: Bool = false,
         now: @escaping () -> Date = Date.init
     ) {
         self.auth = auth
         self.email = email
         self.codeLength = codeLength
         self.resendDelay = resendDelay
+        self.sendsLink = sendsLink
         self.now = now
     }
 
@@ -64,7 +71,7 @@ public final class PasswordResetViewModel: ObservableObject {
         case .email: return !email.isBlank
         case .code: return code.count == codeLength
         case .password: return !password.isEmpty && !confirmPassword.isEmpty
-        case .done: return true
+        case .done, .linkSent: return true
         }
     }
 
@@ -97,7 +104,7 @@ public final class PasswordResetViewModel: ObservableObject {
         switch step {
         case .email:
             guard emailErrorKey == nil else { return nil }
-            if await sendCode() { move(to: .code) }
+            if await sendCode() { move(to: sendsLink ? .linkSent : .code) }
         case .code:
             await verifyCode()
         case .password:
@@ -105,13 +112,15 @@ public final class PasswordResetViewModel: ObservableObject {
             await saveNewPassword()
         case .done:
             return await signIn()
+        case .linkSent:
+            break
         }
         return nil
     }
 
     /// Sends the code again once the countdown is over.
     public func resend() async {
-        guard step == .code, !isLoading, secondsUntilResend(at: now()) == 0 else { return }
+        guard step == .code || step == .linkSent, !isLoading, secondsUntilResend(at: now()) == 0 else { return }
         errorKey = nil
         noticeKey = nil
         if await sendCode() {
@@ -126,7 +135,7 @@ public final class PasswordResetViewModel: ObservableObject {
         switch step {
         case .email, .done:
             return false
-        case .code:
+        case .code, .linkSent:
             move(to: .email)
         case .password:
             token = nil
