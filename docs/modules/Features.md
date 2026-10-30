@@ -246,17 +246,18 @@ PaywallScreen(
     config: PaywallConfig(productIds: AppConfig.purchase.productIds,
                           highlightedProductId: "com.titanstudio.dolingo.premium.yearly",
                           termsURL: AppConfig.termsURL, privacyURL: AppConfig.privacyURL),
+    planTitle: Text(verbatim: "Dolingo Premium"),
     benefits: [Text("paywall.benefit.noAds"), Text("paywall.benefit.offline")],
     onClose: { router.dismiss() },
     onPurchased: { router.dismiss() }      // mua xong, hoặc khôi phục ra premium
 )
 ```
 
-- Bố cục: nút đóng (X) luôn hiện ở góc phải, vương miện, tiêu đề, rồi mỗi sản phẩm một `TKPlanCard` theo thứ tự `productIds`. Gói `highlightedProductId` có nhãn "Phổ biến nhất". Gói người dùng đang có hiện "Gói hiện tại của bạn" thay cho nút.
+- Bố cục theo Figma "upgrade plan - monthly/yearly" (màn 87, 88): thanh trên có nút quay lại (đóng paywall) và "Nâng cấp gói"; `TKSegmentedTabs` "Hàng tháng / Hàng năm" khi có từ hai gói; một `TKPlanCard` của gói đang chọn (tên `planTitle`, giá to, lợi ích); nút "Tiếp tục - <giá>" cố định ở dưới ("Dùng thử miễn phí" nếu gói có dùng thử). Mặc định chọn gói `highlightedProductId`.
+- Nhãn góc thẻ: gói năm ghi "Tiết kiệm X%" so với 12 tháng gói tháng (`PaywallViewModel.savingsPercent`, làm tròn như Figma "Save 17%"); không tính được thì gói `highlightedProductId` ghi "Phổ biến nhất". Gói người dùng đang có hiện "Gói hiện tại của bạn" trong thẻ và trên nút.
 - Đủ các dòng App Review yêu cầu (xem [Compliance.md](Compliance.md#paywall)): giá và chu kỳ lấy từ store (`displayPrice`), gói có dùng thử ghi số ngày miễn phí và giá sau đó, câu tự động gia hạn và cách huỷ (chỉ khi có gói thuê bao), nút "Khôi phục giao dịch", link Terms và Privacy.
 - `PaywallViewModel`: không có sản phẩm nào (sai id hoặc chưa tạo trên App Store Connect) thì hiện lỗi `.notFound` có nút thử lại. Huỷ mua thì im lặng; giao dịch chờ duyệt (Ask to Buy) thì báo bằng toast; khôi phục không ra premium thì báo "Không tìm thấy gói nào để khôi phục". Trong lúc mua hoặc khôi phục, nút khác không chạy.
 - Màn hình nghe `entitlementStream`, nên gói được duyệt muộn vẫn cập nhật đúng.
-- Figma Dolingo chưa đọc được màn paywall (hết lượt gọi Figma), bố cục đang theo "Subscriptions Card" và các màn khác của kit.
 - Dolingo: Cài đặt có băng rôn "Nâng cấp ngay!" mở paywall trong sheet; deep link `dolingo://premium` cũng mở paywall. Chạy scheme `Dolingo-Dev` từ Xcode thì sản phẩm lấy từ `Dolingo.storekit` và mua thử được; các scheme khác cần sản phẩm thật trên App Store Connect. Dùng `MockPurchaseService` trong preview để xem đủ giao diện.
 
 ## 8h. Đã làm (giai đoạn 5, Đăng ký)

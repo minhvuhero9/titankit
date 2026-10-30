@@ -97,6 +97,8 @@ final class PaywallViewModelTests: XCTestCase {
             KitStrings.Paywall.perDay, KitStrings.Paywall.perWeek, KitStrings.Paywall.perMonth,
             KitStrings.Paywall.perYear, KitStrings.Paywall.trial, KitStrings.Paywall.autoRenew,
             KitStrings.Paywall.restore, KitStrings.Paywall.nothingToRestore, KitStrings.Paywall.pending,
+            KitStrings.Paywall.upgradePlan, KitStrings.Paywall.monthly, KitStrings.Paywall.yearly,
+            KitStrings.Paywall.save, KitStrings.Paywall.continuePrice,
         ]
         for key in keys {
             for code in ["vi", "en"] {
@@ -108,5 +110,19 @@ final class PaywallViewModelTests: XCTestCase {
     func testTrialLineNamesTheDaysAndThePriceAfter() {
         let format = KitStrings.string(KitStrings.Paywall.trial, locale: Locale(identifier: "en"))
         XCTAssertEqual(String(format: format, 7, "$9.99 / month"), "Free for 7 days, then $9.99 / month")
+    }
+
+    func testTheYearlyPlanShowsWhatItSaves() {
+        let monthly = StoreProduct(id: "m", displayName: "Monthly", displayPrice: "$4.99", price: 4.99,
+                                   kind: .autoRenewable, subscriptionPeriod: .month)
+        let yearly = StoreProduct(id: "y", displayName: "Yearly", displayPrice: "$49.99", price: 49.99,
+                                  kind: .autoRenewable, subscriptionPeriod: .year)
+        // Figma: $4.99 a month, $49.99 a year, "Save 17%".
+        XCTAssertEqual(PaywallViewModel.savingsPercent(of: yearly, in: [monthly, yearly]), 17)
+        XCTAssertNil(PaywallViewModel.savingsPercent(of: monthly, in: [monthly, yearly]))
+        XCTAssertNil(PaywallViewModel.savingsPercent(of: yearly, in: [yearly]))
+        let pricey = StoreProduct(id: "p", displayName: "Yearly", displayPrice: "$59.88", price: 59.88,
+                                  kind: .autoRenewable, subscriptionPeriod: .year)
+        XCTAssertNil(PaywallViewModel.savingsPercent(of: pricey, in: [monthly, pricey]))
     }
 }

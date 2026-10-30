@@ -161,6 +161,14 @@ public enum KitStrings {
         public static let nothingToRestore = "kit.paywall.restore.nothing"
         public static let pending = "kit.paywall.pending"
         public static let welcomeTitle = "kit.paywall.welcome.title"
+        /// The bar's title, Figma "Upgrade Plan".
+        public static let upgradePlan = "kit.paywall.upgradePlan"
+        public static let monthly = "kit.paywall.tab.monthly"
+        public static let yearly = "kit.paywall.tab.yearly"
+        /// Percent saved by the yearly plan, e.g. "Save 17%".
+        public static let save = "kit.paywall.save %lld"
+        /// The fixed button with the plan's price, e.g. "Continue - $4.99".
+        public static let continuePrice = "kit.paywall.continue %@"
         public static let benefitsUnlocked = "kit.paywall.welcome.benefits"
     }
 

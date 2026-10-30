@@ -93,4 +93,16 @@ public final class PaywallViewModel: ObservableObject {
             return false
         }
     }
+
+    /// Percent a yearly plan saves against twelve months of the monthly plan, rounded like Figma's
+    /// "Save 17%" ($49.99 against 12 × $4.99); nil without both plans or below 1 %.
+    public nonisolated static func savingsPercent(of product: StoreProduct, in products: [StoreProduct]) -> Int? {
+        guard product.subscriptionPeriod == .year,
+              let monthly = products.first(where: { $0.subscriptionPeriod == .month }),
+              monthly.price > 0 else { return nil }
+        let twelveMonths = monthly.price * 12
+        let saved = NSDecimalNumber(decimal: (twelveMonths - product.price) / twelveMonths * 100).doubleValue
+        let percent = Int(saved.rounded())
+        return percent >= 1 ? percent : nil
+    }
 }
