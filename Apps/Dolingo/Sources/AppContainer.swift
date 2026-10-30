@@ -181,8 +181,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         case .appearance: DolingoAppearanceScreen(localization: localization) { [router] in router.pop() }
         case let .webPage(page): DolingoWebPage(page: page) { [router] in router.pop() }
         case .profile:
-            ProfileScreen(auth: auth, onBack: { [router] in router.pop() },
-                          onDeleteAccount: { [router] in router.push(.deleteAccount) })
+            // Figma keeps "Delete Account" on Account & Security, not on Personal Info.
+            ProfileScreen(auth: auth, onBack: { [router] in router.pop() })
         case .deleteAccount:
             DeleteAccountScreen(auth: auth, onBack: { [router] in router.pop() }) { [flow, router] in
                 flow.didDeleteAccount()
