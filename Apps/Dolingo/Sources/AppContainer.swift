@@ -4,7 +4,9 @@ import TitanAnalytics
 import TitanAuth
 import TitanCore
 import TitanDesignSystem
+#if !PERSONAL_TEAM
 import TitanFirebaseAnalytics
+#endif
 import TitanFirebaseAuth
 import TitanFirebaseCore
 import TitanFirebaseRemoteConfig
@@ -108,11 +110,17 @@ final class AppContainer: ObservableObject, DependencyContainer {
             : AppContainer.launchArgumentConfig(arguments))
         self.remoteConfig = remoteConfig
         var trackers: [any AnalyticsService] = []
+        #if !PERSONAL_TEAM
         if usesFirebase { trackers.append(FirebaseAnalyticsService()) }
+        #endif
         if !config.environment.isProduction { trackers.append(ConsoleAnalyticsService(logger: logger)) }
         let analytics = analytics ?? CompositeAnalyticsService(trackers)
         self.analytics = analytics
+        #if PERSONAL_TEAM
+        let crash: any CrashService = NoOpAnalyticsService()
+        #else
         let crash: any CrashService = usesFirebase ? CrashlyticsService() : NoOpAnalyticsService()
+        #endif
         self.crash = crash
         dataSharing = DataSharingStore(preferences: preferences, analytics: analytics, crash: crash)
         self.purchase = purchase ?? StoreKitPurchaseService(config: AppConfig.purchase, logger: logger)

@@ -37,11 +37,14 @@ jobs:
       - uses: jdx/mise-action@v2
       - name: Generate, build and test
         run: Tools/ci-test-app.sh ${{ matrix.app }}
+      - name: Build for a free Personal Team
+        if: matrix.app == 'Dolingo'
+        run: Tools/ci-build-personal-team.sh
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: ${{ matrix.app }}-log
-          path: build-${{ matrix.app }}.log
+          path: build-${{ matrix.app }}*.log
 
   backend:
     name: dolingo-ai server checks
