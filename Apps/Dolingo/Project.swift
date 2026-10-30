@@ -89,7 +89,7 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .default,
             sources: ["Tests/**"],
-            dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanPurchase", "TitanSpeech", "TitanPush", "TitanAI", "TitanAnalytics", "TitanFeatures"].map { .external(name: $0) }
+            dependencies: [.target(name: appName)] + kitModules.map { .external(name: $0) }
         ),
         // App Store screenshots (Tools/screenshots.sh): launches the app in ScreenshotMode.
         .target(

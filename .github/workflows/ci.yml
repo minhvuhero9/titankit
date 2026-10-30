@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
       - name: Lint
-        run: swiftlint lint --strict --reporter github-actions-logging
+        run: swiftlint lint --strict --reporter xcode
 
   app:
     name: ${{ matrix.app }} build and tests

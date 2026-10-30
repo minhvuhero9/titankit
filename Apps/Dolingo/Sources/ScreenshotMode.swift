@@ -113,14 +113,16 @@ enum ScreenshotMode {
         if language == "en" {
             return [
                 ChatMessage(role: .user, text: "How do I order a coffee politely?"),
-                ChatMessage(role: .assistant, text: "Try: \"Could I have a latte, please?\" \"Could I…\" sounds polite and friendly. Want to practise? I'm the barista: \"Hi! What can I get for you?\""),
+                ChatMessage(role: .assistant, text: "Try: \"Could I have a latte, please?\" \"Could I…\" sounds polite and friendly. "
+                    + "Want to practise? I'm the barista: \"Hi! What can I get for you?\""),
                 ChatMessage(role: .user, text: "Could I have a latte, please?"),
                 ChatMessage(role: .assistant, text: "Perfect! 🎉 \"Sure! What size would you like: small, medium or large?\""),
             ]
         }
         return [
             ChatMessage(role: .user, text: "Gọi cà phê sao cho lịch sự nhỉ?"),
-            ChatMessage(role: .assistant, text: "Bạn thử nói: \"Could I have a latte, please?\" Mẫu \"Could I…\" nghe lịch sự và thân thiện. Mình đóng vai nhân viên nhé: \"Hi! What can I get for you?\""),
+            ChatMessage(role: .assistant, text: "Bạn thử nói: \"Could I have a latte, please?\" Mẫu \"Could I…\" nghe lịch sự và thân thiện. "
+                + "Mình đóng vai nhân viên nhé: \"Hi! What can I get for you?\""),
             ChatMessage(role: .user, text: "Could I have a latte, please?"),
             ChatMessage(role: .assistant, text: "Tuyệt vời! 🎉 \"Sure! What size would you like: small, medium or large?\""),
         ]

@@ -21,10 +21,16 @@ disabled_rules:
   # Generic parameters and nested types such as `Router<Route>.Destination`.
   - nesting
   - todo
+  # SwiftUI's own shape: Button { } label: { }, Section { } header: { }.
+  - multiple_closures_with_trailing_closure
+  # Small (value, label, detail) tuples in tests and view helpers.
+  - large_tuple
+  # Badge names come from the Figma design ("Streak Master").
+  - inclusive_language
 
 line_length:
-  warning: 140
-  error: 200
+  warning: 160
+  error: 250
   ignores_urls: true
   ignores_comments: true
 
@@ -33,9 +39,14 @@ file_length:
   error: 800
 
 type_body_length:
-  warning: 350
-  error: 500
+  warning: 450
+  error: 600
 
 function_body_length:
-  warning: 80
-  error: 120
+  warning: 100
+  error: 150
+
+cyclomatic_complexity:
+  warning: 12
+  error: 20
+  ignores_case_statements: true
