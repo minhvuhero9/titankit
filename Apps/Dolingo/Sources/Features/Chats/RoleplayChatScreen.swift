@@ -1,6 +1,7 @@
 import SwiftUI
 import TitanDesignSystem
 import TitanIcons
+import TitanLocalization
 import TitanSpeech
 import UIKit
 
@@ -10,11 +11,13 @@ import UIKit
 struct RoleplayChatScreen: View {
     let onBack: () -> Void
     private let activity: ActivityStore
+    @ObservedObject private var practice: PracticeSettingsStore
 
     @StateObject private var viewModel: RoleplayViewModel
     @State private var speaker = PhraseSpeaker()
     @State private var showsHint = false
     @State private var showsTasks = false
+    @State private var showsSettings = false
     @Environment(\.theme) private var theme
     @Environment(\.locale) private var locale
 
@@ -23,10 +26,12 @@ struct RoleplayChatScreen: View {
         language: String,
         speech: any SpeechRecognizer,
         activity: ActivityStore,
+        practice: PracticeSettingsStore,
         onBack: @escaping () -> Void
     ) {
         self.onBack = onBack
         self.activity = activity
+        self.practice = practice
         _viewModel = StateObject(wrappedValue: RoleplayViewModel(roleplay: roleplay, language: language, speech: speech,
                                                                  activity: activity))
     }
@@ -37,9 +42,10 @@ struct RoleplayChatScreen: View {
                 ScrollView {
                     LazyVStack(spacing: Spacing.md) {
                         ForEach(viewModel.messages) { message in
-                            RoleplayBubble(message: message, languageCode: languageCode) {
+                            RoleplayBubble(message: message, languageCode: languageCode,
+                                           showsMeaning: practice.settings.translations) {
                                 activity.recordListened()
-                                speaker.say(message.phrase.text, language: viewModel.language)
+                                say(message.phrase.text)
                             }
                             .id(message.id)
                         }
@@ -49,16 +55,34 @@ struct RoleplayChatScreen: View {
                 .onChange(of: viewModel.messages.count) { _ in
                     guard let last = viewModel.messages.last else { return }
                     withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
-                    if !last.isMine { speaker.say(last.phrase.text, language: viewModel.language) }
+                    if last.isMine {
+                        if practice.settings.soundEffects { PracticeSound.play(success: true) }
+                    } else {
+                        say(last.phrase.text, thenListen: true)
+                    }
+                }
+                .onChange(of: viewModel.state) { state in
+                    if case let .missed(score) = state, score.verdict != .notHeard, practice.settings.soundEffects {
+                        PracticeSound.play(success: false)
+                    }
                 }
             }
-            if showsHint, let hint = viewModel.hint {
+            if showsHint, practice.settings.hints || viewModel.isMicBlocked, let hint = viewModel.hint {
                 hintCard(hint)
             }
             controls
         }
         .background(theme.colors.surfaceBackground.color.ignoresSafeArea())
-        .tkNavigationBar(title: Text(verbatim: viewModel.roleplay.title.localized(languageCode)), onBack: onBack)
+        .tkNavigationBar(title: Text(verbatim: viewModel.roleplay.title.localized(languageCode)), onBack: onBack) {
+            TKNavBarButton(Image(tk: .setting), accessibilityLabel: KitStrings.string("practice.settings", locale: locale)) {
+                speaker.stop()
+                showsSettings = true
+            }
+        }
+        .sheet(isPresented: $showsSettings) {
+            PracticeSettingsSheet(kind: .roleplay, store: practice) { showsSettings = false }
+                .presentationDetents([.medium, .large])
+        }
         .tkSheet(isPresented: $showsTasks) {
             TKSheet(title: Text("roleplay.tasks \(viewModel.completedTaskCount) \(viewModel.taskCount)"),
                     primary: TKModalAction(title: Text("roleplay.tasks.close")) { showsTasks = false }) {
@@ -80,7 +104,7 @@ struct RoleplayChatScreen: View {
         }
         .onAppear {
             if let first = viewModel.messages.first {
-                speaker.say(first.phrase.text, language: viewModel.language)
+                say(first.phrase.text, thenListen: true)
             }
         }
     }
@@ -112,15 +136,19 @@ struct RoleplayChatScreen: View {
                 Spacer()
                 micButton
                 Spacer()
-                Button { withAnimation { showsHint.toggle() } } label: {
-                    Text(verbatim: "💡")
-                        .font(.system(size: 26))
-                        .frame(width: 52, height: 52)
-                        .background(theme.colors.feedbackWarning.color.opacity(showsHint ? 0.35 : 0.15), in: Circle())
+                if practice.settings.hints || viewModel.isMicBlocked {
+                    Button { withAnimation { showsHint.toggle() } } label: {
+                        Text(verbatim: "💡")
+                            .font(.system(size: 26))
+                            .frame(width: 52, height: 52)
+                            .background(theme.colors.feedbackWarning.color.opacity(showsHint ? 0.35 : 0.15), in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text("roleplay.hint"))
+                    .disabled(viewModel.hint == nil)
+                } else {
+                    Color.clear.frame(width: 52, height: 52)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text("roleplay.hint"))
-                .disabled(viewModel.hint == nil)
             }
         }
         .padding(.horizontal, Spacing.lg)
@@ -168,7 +196,7 @@ struct RoleplayChatScreen: View {
             HStack(alignment: .top, spacing: Spacing.sm) {
                 Button {
                     activity.recordListened()
-                    speaker.say(reply.text, language: viewModel.language)
+                    say(reply.text)
                 } label: {
                     Image(tk: .volumeUp)
                         .resizable().scaledToFit()
@@ -201,6 +229,17 @@ struct RoleplayChatScreen: View {
         .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
+    /// The partner's line at the chosen speed; with "Microphone: Automatic" on, listening starts
+    /// once it has been said.
+    private func say(_ text: String, thenListen: Bool = false) {
+        speaker.say(text, language: viewModel.language, speed: practice.settings.playbackSpeed) {
+            guard thenListen, practice.settings.autoMicrophone, !showsSettings, viewModel.state == .ready,
+                  !viewModel.isMicBlocked else { return }
+            showsHint = false
+            Task { await viewModel.speak() }
+        }
+    }
+
     private var languageCode: String {
         locale.language.languageCode?.identifier ?? "vi"
     }
@@ -213,8 +252,17 @@ struct RoleplayBubble: View {
     let languageCode: String
     let onListen: () -> Void
 
-    @State private var showsMeaning = false
+    @State private var showsMeaning: Bool
     @Environment(\.theme) private var theme
+
+    /// - Parameter showsMeaning: open with the meaning shown ("Enable Translations").
+    init(message: RoleplayViewModel.Message, languageCode: String, showsMeaning: Bool = false,
+         onListen: @escaping () -> Void) {
+        self.message = message
+        self.languageCode = languageCode
+        self.onListen = onListen
+        _showsMeaning = State(initialValue: showsMeaning && !message.isMine && !message.phrase.meaning.isEmpty)
+    }
 
     var body: some View {
         let foreground = message.isMine ? theme.colors.actionOnPrimary : theme.colors.textPrimary
@@ -222,7 +270,7 @@ struct RoleplayBubble: View {
             Text(verbatim: message.phrase.text)
                 .tkTextStyle(.body)
                 .foregroundStyle(foreground.color)
-            if showsMeaning {
+            if showsMeaning, !message.phrase.meaning.isEmpty {
                 Text(verbatim: message.phrase.meaning.localized(languageCode))
                     .tkTextStyle(.caption)
                     .foregroundStyle(foreground.color.opacity(0.75))

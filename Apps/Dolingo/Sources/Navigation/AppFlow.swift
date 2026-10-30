@@ -27,6 +27,8 @@ enum DolingoKeys {
     /// "My Roleplay", and how many free creations are used.
     static let myRoleplays = PreferenceKey<[CustomRoleplay]>("dolingo.myRoleplays", default: [])
     static let roleplayCreations = PreferenceKey("dolingo.roleplayCreations", default: 0)
+    /// The Settings sheet of lessons and roleplays.
+    static let practiceSettings = PreferenceKey("dolingo.practiceSettings", default: PracticeSettings())
 }
 
 /// Which part of the app is showing: splash, onboarding, the sign-up steps, sign-in,

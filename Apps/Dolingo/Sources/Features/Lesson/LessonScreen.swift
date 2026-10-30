@@ -11,13 +11,14 @@ struct LessonScreen: View {
     @ObservedObject var learning: LearningStore
     let speech: any SpeechRecognizer
     let activity: ActivityStore
+    let practice: PracticeSettingsStore
     let lessonId: String
     let onClose: () -> Void
 
     var body: some View {
         if case let .loaded(course?) = learning.course, let lesson = course.lessons.first(where: { $0.id == lessonId }) {
             LessonPlayer(lesson: lesson, language: course.language, speech: speech, activity: activity,
-                         onClose: onClose) { accuracy, seconds in
+                         practice: practice, onClose: onClose) { accuracy, seconds in
                 learning.complete(lesson)
                 activity.recordLesson(accuracy: accuracy, seconds: seconds)
                 onClose()
@@ -34,9 +35,11 @@ private struct LessonPlayer: View {
     /// Accuracy (nil without the microphone) and seconds spent.
     let onComplete: (Double?, TimeInterval) -> Void
     private let activity: ActivityStore
+    @ObservedObject private var practice: PracticeSettingsStore
 
     @StateObject private var viewModel: LessonViewModel
     @State private var confirmingLeave = false
+    @State private var showsSettings = false
     @State private var speaker = PhraseSpeaker()
     @Environment(\.theme) private var theme
     @Environment(\.locale) private var locale
@@ -46,12 +49,14 @@ private struct LessonPlayer: View {
         language: String,
         speech: any SpeechRecognizer,
         activity: ActivityStore,
+        practice: PracticeSettingsStore,
         onClose: @escaping () -> Void,
         onComplete: @escaping (Double?, TimeInterval) -> Void
     ) {
         self.onClose = onClose
         self.onComplete = onComplete
         self.activity = activity
+        self.practice = practice
         _viewModel = StateObject(wrappedValue: LessonViewModel(lesson: lesson, language: language, speech: speech,
                                                                activity: activity))
     }
@@ -80,6 +85,14 @@ private struct LessonPlayer: View {
                     .multilineTextAlignment(.center)
             }
         }
+        .sheet(isPresented: $showsSettings) {
+            PracticeSettingsSheet(kind: .lesson, store: practice) { showsSettings = false }
+                .presentationDetents([.medium, .large])
+        }
+        .onChange(of: viewModel.score) { score in
+            guard let score, practice.settings.soundEffects, score.verdict != .notHeard else { return }
+            PracticeSound.play(success: score.verdict.isPass)
+        }
     }
 
     private var player: some View {
@@ -90,6 +103,11 @@ private struct LessonPlayer: View {
                     confirmingLeave = true
                 }
                 TKProgressBar(value: viewModel.progress)
+                TKNavBarButton(Image(tk: .setting),
+                               accessibilityLabel: KitStrings.string("practice.settings", locale: locale)) {
+                    speaker.stop()
+                    showsSettings = true
+                }
             }
             Spacer()
             TKAvatar(name: viewModel.lesson.tutor, size: 160)
@@ -100,9 +118,11 @@ private struct LessonPlayer: View {
                 VStack(spacing: Spacing.xs) {
                     phraseText(phrase)
                         .tkTextStyle(.title2)
-                    Text(verbatim: phrase.meaning.localized(languageCode))
-                        .tkTextStyle(.body)
-                        .foregroundStyle(theme.colors.textSecondary.color)
+                    if practice.settings.showSubtitles {
+                        Text(verbatim: phrase.meaning.localized(languageCode))
+                            .tkTextStyle(.body)
+                            .foregroundStyle(theme.colors.textSecondary.color)
+                    }
                 }
                 .multilineTextAlignment(.center)
                 .padding(Spacing.lg)
@@ -113,7 +133,7 @@ private struct LessonPlayer: View {
                 .transition(.opacity)
                 TKButton("lesson.listen", style: .light, size: .medium, shape: .pill, leadingIcon: Image(tk: .volumeUp)) {
                     activity.recordListened()
-                    say(phrase)
+                    say(phrase, thenListen: false)
                 }
                 .disabled(viewModel.attempt == .listening)
             }
@@ -206,8 +226,13 @@ private struct LessonPlayer: View {
         }
     }
 
-    private func say(_ phrase: Phrase) {
-        speaker.say(phrase.text, language: viewModel.language)
+    /// - Parameter thenListen: with "Microphone: Automatic" on, starts listening once the tutor is done.
+    private func say(_ phrase: Phrase, thenListen: Bool = true) {
+        speaker.say(phrase.text, language: viewModel.language, speed: practice.settings.playbackSpeed) {
+            guard thenListen, practice.settings.autoMicrophone, !showsSettings, viewModel.attempt == .idle,
+                  !viewModel.isMicBlocked, !viewModel.canContinue else { return }
+            Task { await viewModel.speak() }
+        }
     }
 
     static func emoji(_ verdict: PronunciationScore.Verdict) -> String {

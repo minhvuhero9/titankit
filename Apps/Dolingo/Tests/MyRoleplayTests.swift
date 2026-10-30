@@ -151,6 +151,49 @@ final class AIRoleplayViewModelTests: XCTestCase {
     }
 }
 
+@MainActor
+final class PracticeSettingsTests: XCTestCase {
+    func testSettingsAreSavedAsTheyChange() {
+        let defaults = UserDefaults(suiteName: "PracticeSettingsTests")!
+        defaults.removePersistentDomain(forName: "PracticeSettingsTests")
+        let preferences = Preferences(defaults: defaults)
+        let store = PracticeSettingsStore(preferences: preferences)
+        XCTAssertTrue(store.settings.autoMicrophone)
+        XCTAssertFalse(store.settings.autoCorrections)
+        store.settings.playbackSpeed = 0.75
+        store.settings.hints = false
+        let reopened = PracticeSettingsStore(preferences: preferences)
+        XCTAssertEqual(reopened.settings.playbackSpeed, 0.75)
+        XCTAssertFalse(reopened.settings.hints)
+    }
+
+    func testSpeedLabels() {
+        XCTAssertEqual(PracticeSettings.speeds.map(PracticeSettings.speedLabel), ["0.5x", "0.75x", "1x", "1.25x", "1.5x"])
+    }
+
+    func testTheAIsCorrectionIsKeptForTheLearnersLine() async {
+        let roleplay = CustomRoleplay(emoji: "🍕", title: "Pizza", myRole: "Customer", aiRole: "Waiter",
+                                      scenario: "You order.", tasks: [])
+        let viewModel = AIRoleplayViewModel(roleplay: roleplay, language: "en", ai: CorrectingRoleplayAI(),
+                                            speech: MockSpeechRecognizer(transcripts: ["I wants pizza"]))
+        await viewModel.start()
+        XCTAssertTrue(viewModel.corrections.isEmpty)
+        await viewModel.speak()
+        XCTAssertEqual(viewModel.corrections[1], "I want pizza.")
+    }
+}
+
+/// Always answers the same line, correcting the learner from the second turn on.
+private struct CorrectingRoleplayAI: RoleplayAI {
+    func draft(_ form: RoleplayForm) async throws(TitanError) -> AIAnswer<RoleplayDraft> { .refused }
+
+    func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<AIRoleplayTurn> {
+        .answer(AIRoleplayTurn(reply: "Sure!", translation: "Được!", completedTaskIds: [],
+                               correction: request.turns.isEmpty ? "" : "I want pizza.",
+                               hint: "Thanks.", hintTranslation: "Cảm ơn.", isFinished: false))
+    }
+}
+
 private struct RefusingRoleplayAI: RoleplayAI {
     func draft(_ form: RoleplayForm) async throws(TitanError) -> AIAnswer<RoleplayDraft> { .refused }
     func turn(_ request: RoleplayTurnRequest) async throws(TitanError) -> AIAnswer<AIRoleplayTurn> { .refused }

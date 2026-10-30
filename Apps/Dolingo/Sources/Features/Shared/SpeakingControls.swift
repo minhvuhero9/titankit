@@ -1,24 +1,55 @@
 import AVFoundation
+import AudioToolbox
 import SwiftUI
 import TitanDesignSystem
 import TitanIcons
+import UIKit
 
 /// Reads a phrase aloud with the system voice for the course language.
 @MainActor
-final class PhraseSpeaker {
+final class PhraseSpeaker: NSObject, AVSpeechSynthesizerDelegate {
     private let synthesizer = AVSpeechSynthesizer()
+    private var onFinish: (() -> Void)?
+
+    override init() {
+        super.init()
+        synthesizer.delegate = self
+    }
 
     func stop() {
+        onFinish = nil
         synthesizer.stopSpeaking(at: .immediate)
     }
 
-    /// - Parameter slow: the snail button, for hearing every sound.
-    func say(_ text: String, language: String, slow: Bool = false) {
-        synthesizer.stopSpeaking(at: .immediate)
+    /// - Parameters:
+    ///   - slow: the snail button, for hearing every sound.
+    ///   - speed: the playback speed from the practice settings, 1 for the normal pace.
+    ///   - onFinish: called when the phrase has been said to the end, not when it is stopped.
+    func say(_ text: String, language: String, slow: Bool = false, speed: Double = 1, onFinish: (() -> Void)? = nil) {
+        stop()
+        self.onFinish = onFinish
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: language)
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * (slow ? 0.55 : 0.9)
+        let rate = AVSpeechUtteranceDefaultSpeechRate * Float(slow ? 0.55 : 0.9) * Float(speed)
+        utterance.rate = min(max(rate, AVSpeechUtteranceMinimumSpeechRate), AVSpeechUtteranceMaximumSpeechRate)
         synthesizer.speak(utterance)
+    }
+
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        Task { @MainActor in
+            let finished = self.onFinish
+            self.onFinish = nil
+            finished?()
+        }
+    }
+}
+
+/// The sound and tap of the "Play Sound Effects" setting.
+@MainActor
+enum PracticeSound {
+    static func play(success: Bool) {
+        AudioServicesPlaySystemSound(success ? 1057 : 1053)
+        UINotificationFeedbackGenerator().notificationOccurred(success ? .success : .error)
     }
 }
 

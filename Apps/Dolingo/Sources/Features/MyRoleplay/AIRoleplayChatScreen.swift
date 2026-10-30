@@ -9,19 +9,22 @@ import TitanLocalization
 struct AIRoleplayChatScreen: View {
     @StateObject private var viewModel: AIRoleplayViewModel
     private let activity: ActivityStore
+    @ObservedObject private var practice: PracticeSettingsStore
     let onBack: () -> Void
 
     @State private var speaker = PhraseSpeaker()
     @State private var showsHint = false
     @State private var showsTasks = false
+    @State private var showsSettings = false
     @State private var toast: TKToast?
     @Environment(\.theme) private var theme
     @Environment(\.locale) private var locale
 
     init(viewModel: @autoclosure @escaping () -> AIRoleplayViewModel, activity: ActivityStore,
-         onBack: @escaping () -> Void) {
+         practice: PracticeSettingsStore, onBack: @escaping () -> Void) {
         _viewModel = StateObject(wrappedValue: viewModel())
         self.activity = activity
+        self.practice = practice
         self.onBack = onBack
     }
 
@@ -31,11 +34,15 @@ struct AIRoleplayChatScreen: View {
                 ScrollView {
                     LazyVStack(spacing: Spacing.md) {
                         ForEach(viewModel.messages) { message in
-                            RoleplayBubble(message: message, languageCode: languageCode) {
+                            RoleplayBubble(message: message, languageCode: languageCode,
+                                           showsMeaning: practice.settings.translations) {
                                 activity.recordListened()
-                                speaker.say(message.phrase.text, language: viewModel.language)
+                                say(message.phrase.text)
                             }
                             .id(message.id)
+                            if practice.settings.autoCorrections, let correction = viewModel.corrections[message.id] {
+                                correctionNote(correction)
+                            }
                         }
                         if viewModel.state == .thinking {
                             ThinkingDots()
@@ -53,19 +60,31 @@ struct AIRoleplayChatScreen: View {
                 .onChange(of: viewModel.messages.count) { _ in
                     guard let last = viewModel.messages.last else { return }
                     withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
-                    if !last.isMine { speaker.say(last.phrase.text, language: viewModel.language) }
+                    if !last.isMine { say(last.phrase.text, thenListen: true) }
+                }
+                .onChange(of: viewModel.completedTaskCount) { _ in
+                    if practice.settings.soundEffects { PracticeSound.play(success: true) }
                 }
                 .onChange(of: viewModel.state) { state in
                     if state == .thinking { withAnimation { proxy.scrollTo("thinking", anchor: .bottom) } }
                 }
             }
-            if showsHint, let hint = viewModel.hint {
+            if showsHint, practice.settings.hints || viewModel.isMicBlocked, let hint = viewModel.hint {
                 hintCard(hint)
             }
             controls
         }
         .background(theme.colors.surfaceBackground.color.ignoresSafeArea())
-        .tkNavigationBar(title: Text(verbatim: "\(viewModel.roleplay.emoji) \(viewModel.roleplay.title)"), onBack: onBack)
+        .tkNavigationBar(title: Text(verbatim: "\(viewModel.roleplay.emoji) \(viewModel.roleplay.title)"), onBack: onBack) {
+            TKNavBarButton(Image(tk: .setting), accessibilityLabel: KitStrings.string("practice.settings", locale: locale)) {
+                speaker.stop()
+                showsSettings = true
+            }
+        }
+        .sheet(isPresented: $showsSettings) {
+            PracticeSettingsSheet(kind: .aiRoleplay, store: practice) { showsSettings = false }
+                .presentationDetents([.medium, .large])
+        }
         .tkSheet(isPresented: $showsTasks) {
             TKSheet(title: Text("roleplay.tasks \(viewModel.completedTaskCount) \(viewModel.taskCount)"),
                     primary: TKModalAction(title: Text("roleplay.tasks.close")) { showsTasks = false }) {
@@ -124,15 +143,19 @@ struct AIRoleplayChatScreen: View {
                 Spacer()
                 micButton
                 Spacer()
-                Button { withAnimation { showsHint.toggle() } } label: {
-                    Text(verbatim: "💡")
-                        .font(.system(size: 26))
-                        .frame(width: 52, height: 52)
-                        .background(theme.colors.feedbackWarning.color.opacity(showsHint ? 0.35 : 0.15), in: Circle())
+                if practice.settings.hints || viewModel.isMicBlocked {
+                    Button { withAnimation { showsHint.toggle() } } label: {
+                        Text(verbatim: "💡")
+                            .font(.system(size: 26))
+                            .frame(width: 52, height: 52)
+                            .background(theme.colors.feedbackWarning.color.opacity(showsHint ? 0.35 : 0.15), in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text("roleplay.hint"))
+                    .disabled(viewModel.hint == nil)
+                } else {
+                    Color.clear.frame(width: 52, height: 52)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text("roleplay.hint"))
-                .disabled(viewModel.hint == nil)
             }
         }
         .padding(.horizontal, Spacing.lg)
@@ -182,7 +205,7 @@ struct AIRoleplayChatScreen: View {
             HStack(alignment: .top, spacing: Spacing.sm) {
                 Button {
                     activity.recordListened()
-                    speaker.say(reply.text, language: viewModel.language)
+                    say(reply.text)
                 } label: {
                     Image(tk: .volumeUp)
                         .resizable().scaledToFit()
@@ -213,6 +236,37 @@ struct AIRoleplayChatScreen: View {
         .padding(.horizontal, Spacing.lg)
         .padding(.bottom, Spacing.xs)
         .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    /// "Auto Corrections": the AI's fixed version of the learner's line, under it.
+    private func correctionNote(_ correction: String) -> some View {
+        HStack(alignment: .top, spacing: Spacing.xs) {
+            Text(verbatim: "✏️").accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("practice.correction")
+                    .tkTextStyle(.caption)
+                    .foregroundStyle(theme.colors.textSecondary.color)
+                Text(verbatim: correction)
+                    .tkTextStyle(.callout)
+                    .foregroundStyle(theme.colors.feedbackSuccess.color)
+            }
+        }
+        .padding(Spacing.sm)
+        .background(theme.colors.feedbackSuccess.color.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .frame(maxWidth: 300, alignment: .trailing)
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// The partner's line at the chosen speed; with "Microphone: Automatic" on, listening starts
+    /// once it has been said.
+    private func say(_ text: String, thenListen: Bool = false) {
+        speaker.say(text, language: viewModel.language, speed: practice.settings.playbackSpeed) {
+            guard thenListen, practice.settings.autoMicrophone, !showsSettings, viewModel.state == .ready,
+                  !viewModel.isMicBlocked else { return }
+            showsHint = false
+            Task { await viewModel.speak() }
+        }
     }
 
     private var languageCode: String {

@@ -23,6 +23,8 @@ final class AIRoleplayViewModel: ObservableObject {
     @Published private(set) var state: State = .thinking
     @Published private(set) var completedTasks: Set<String> = []
     @Published private(set) var hint: RoleplayReply?
+    /// The AI's corrected version of the learner's lines, by message id.
+    @Published private(set) var corrections: [Int: String] = [:]
     /// No microphone or speech permission: the learner sends the hint instead of speaking.
     @Published private(set) var isMicBlocked = false
     /// Localizable key of the last error, shown as a toast.
@@ -142,6 +144,11 @@ final class AIRoleplayViewModel: ObservableObject {
     private func apply(_ turn: AIRoleplayTurn) {
         let known = Set(roleplay.tasks.map(\.id))
         completedTasks.formUnion(turn.completedTaskIds.filter(known.contains))
+        if let correction = turn.correction?.trimmingCharacters(in: .whitespacesAndNewlines), !correction.isEmpty,
+           let line = messages.last, line.isMine,
+           correction.lowercased() != line.phrase.text.lowercased() {
+            corrections[line.id] = correction
+        }
         messages.append(RoleplayViewModel.Message(
             id: messages.count,
             phrase: Phrase(text: turn.reply, meaning: ["vi": turn.translation, "en": turn.reply]),

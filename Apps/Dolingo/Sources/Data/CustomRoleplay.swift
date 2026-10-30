@@ -130,6 +130,8 @@ struct AIRoleplayTurn: Codable, Sendable, Equatable {
     let translation: String
     /// Tasks the learner's last message completed.
     let completedTaskIds: [String]
+    /// The learner's last message with its mistakes fixed; empty or nil when it was fine.
+    var correction: String?
     /// Something the learner could say next, and its Vietnamese.
     let hint: String
     let hintTranslation: String
