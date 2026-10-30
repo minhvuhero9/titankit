@@ -4,6 +4,8 @@
 
 TitanPush xin quyền thông báo, đăng ký token thiết bị với server và biến cú chạm vào thông báo thành một `Route` của TitanNavigation.
 
+> Đã làm: `ReminderScheduler` (`UserNotificationReminderScheduler`, `MockReminderScheduler`) đặt nhắc hằng ngày ngay trên máy bằng `UNUserNotificationCenter`, không cần server. Dolingo dùng cho "Nhắc học hằng ngày". Push từ server (APNs, Firebase Messaging) làm cùng backend.
+
 ## 1. Trách nhiệm
 
 **Làm:**

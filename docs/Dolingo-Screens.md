@@ -141,22 +141,22 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 91 | processing payment | `14479:39026` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 92 | upgrade plan subscription successful | `10469:40191` | Chưa làm |
 | 93 | settings - personal info | `26452:26758` | Đã có, cần so Figma (`ProfileScreen`) |
-| 94 | settings - preferences | `34500:45916` | Chưa làm |
-| 95 | settings - manage courses | `34500:46927` | Chưa làm |
-| 96 | settings - notification | `34500:47555` | Chưa làm |
-| 97 | settings - account & security | `24484:40375` | Chưa làm |
-| 98 | settings - billing & subscriptions | `24484:40381` | Chưa làm |
-| 99 | settings - linked accounts | `24484:40369` | Chưa làm |
-| 100 | settings - data & analytics | `34503:30531` | Chưa làm |
+| 94 | settings - preferences | `34500:45916` | Đã có (`PreferencesScreen`: học lại từ đầu, xoá bộ nhớ đệm) |
+| 95 | settings - manage courses | `34500:46927` | Bỏ: chỉ có một khoá tiếng Anh |
+| 96 | settings - notification | `34500:47555` | Đã có (`NotificationSettingsScreen`: nhắc học hằng ngày) |
+| 97 | settings - account & security | `24484:40375` | Đã có (`SecurityScreen`: đổi mật khẩu qua email, xoá tài khoản) |
+| 98 | settings - billing & subscriptions | `24484:40381` | Đã có (`BillingScreen`) |
+| 99 | settings - linked accounts | `24484:40369` | Chưa làm (cần đăng nhập Google/Apple/Facebook thật qua Firebase) |
+| 100 | settings - data & analytics | `34503:30531` | Chưa làm (cần Analytics và backend) |
 | 101 | settings - payment methods | `12462:31975` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 102 | add new payment | `12462:31911` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 103 | new payment method added | `12462:31904` | Bỏ: App Store bắt buộc mua qua Apple IAP, không nhập thẻ |
 | 104 | settings - app appearance | `4296:47952` | Đã có (`AppearanceScreen`) |
 | 105 | settings - app appearance - theme | `4303:61354` | Đã có (`AppearanceScreen`) |
 | 106 | settings - app appearance - app language | `4303:61469` | Đã có (`AppearanceScreen`) |
-| 107 | settings - help & support | `4299:51417` | Chưa làm |
-| 108 | settings - help & support - FAQ | `4299:51654` | Chưa làm |
-| 109 | settings - help & support - contact support | `4299:51893` | Chưa làm |
+| 107 | settings - help & support | `4299:51417` | Đã có (`HelpScreen`) |
+| 108 | settings - help & support - FAQ | `4299:51654` | Đã có (`FAQScreen`) |
+| 109 | settings - help & support - contact support | `4299:51893` | Đã có (`ContactSupportScreen`: email, trang web) |
 | 110 | settings - help & support - privacy policy | `4299:52080` | Đã có (`WebPageScreen`) |
 | 111 | settings - help & support - terms of service | `4299:52181` | Đã có (`WebPageScreen`) |
 | 112 | settings - logout | `32467:34622` | Đã có (`SettingsScreen`) |
@@ -168,6 +168,7 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 - Home: nội dung khoá học nằm trong `Apps/Dolingo/Resources/Courses/course-en.json` (3 chương, 15 bài, 60 câu, nghĩa tiếng Việt). Ảnh gia sư trong Figma thay bằng avatar chữ cái đầu cho tới khi có ảnh và video thật. Tiến độ lưu trong `DolingoKeys.learningProgress`.
 - Thanh tab có 5 mục như Figma; Chats, Speak và My Progress đang là trang "sắp ra mắt", Account là màn Cài đặt.
 - Luyện nói trong bài học dùng `TitanSpeech` (nhận dạng giọng nói của Apple, chấm theo từng từ). Màn hoàn thành mới có Thời gian và Độ chính xác; sáu vòng điểm (Nghe, Phát âm, Lưu loát, Ngữ điệu, Trọng âm, Ngữ pháp) cần dịch vụ chấm phát âm riêng. Cài đặt trong bài (màn 42) chưa làm.
+- Cài đặt: nhắc học hằng ngày là thông báo đặt ngay trên máy (`ReminderScheduler` trong TitanPush), giờ mặc định lấy từ câu hỏi đăng ký. Email hỗ trợ, trang web trong `AppConfig` đang là chỗ giữ. "Quản lý gói" mở trang đăng ký của App Store; "Khôi phục giao dịch" có cả trong Paywall và Gói & Thanh toán như `Compliance.md` yêu cầu.
 - My Progress: `ActivityStore` đếm trên máy (lưu trong `DolingoKeys.activity`) ngày học, thời gian học, bài học, câu đã nói, số lần nghe, roleplay và 10 huy hiệu. Biểu đồ "Growth Area" dùng 5 trục đo được thật (Bài học, Phát âm, Hội thoại, Sổ tay câu, Đều đặn) thay cho 6 trục của Figma; lịch học chỉ có dạng tháng, thời gian học chỉ có dạng tuần. Hộp chúc mừng chuỗi ngày hiện ở hoạt động đầu tiên trong ngày, hộp huy hiệu hiện khi đạt huy hiệu mới.
 - Speak: sổ tay câu trong `Apps/Dolingo/Resources/Phrasebook/phrasebook-en.json` (7 chủ đề, 56 câu, 3 chủ đề premium). Nghe thường và chậm bằng giọng máy; chấm bằng `PronunciationScore`; câu đã lưu nằm trong `DolingoKeys.savedPhrases`.
 - Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. Tạo roleplay bằng AI, "My Roleplay" và "Chat with Dolingo" (màn 60–69) cần một backend AI: app không gọi thẳng API AI để không lộ khoá. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
