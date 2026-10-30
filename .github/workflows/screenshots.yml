@@ -1,0 +1,35 @@
+# App Store screenshots of Dolingo (Vietnamese and English, iPhone Pro Max), as an artifact.
+# Run by hand from Actions > Screenshots, and on pull requests that change the screenshot code.
+name: Screenshots
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - Apps/Dolingo/UITests/**
+      - Apps/Dolingo/Sources/ScreenshotMode.swift
+      - Tools/screenshots.sh
+      - .github/workflows/screenshots.yml
+
+concurrency:
+  group: screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    name: Dolingo screenshots
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - name: Take screenshots
+        run: Tools/screenshots.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dolingo-screenshots
+          path: |
+            screenshots/*.png
+            build/screenshots.log
+          if-no-files-found: warn

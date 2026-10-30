@@ -91,6 +91,17 @@ let project = Project(
             sources: ["Tests/**"],
             dependencies: [.target(name: appName)] + ["TitanCore", "TitanNetworking", "TitanStorage", "TitanDesignSystem", "TitanNavigation", "TitanLocalization", "TitanAuth", "TitanRemoteConfig", "TitanPurchase", "TitanSpeech", "TitanPush", "TitanAI", "TitanAnalytics", "TitanFeatures"].map { .external(name: $0) }
         ),
+        // App Store screenshots (Tools/screenshots.sh): launches the app in ScreenshotMode.
+        .target(
+            name: "\(appName)UITests",
+            destinations: [.iPhone],
+            product: .uiTests,
+            bundleId: "\(bundlePrefix).dolingo.uitests",
+            deploymentTargets: .iOS("16.0"),
+            infoPlist: .default,
+            sources: ["UITests/**"],
+            dependencies: [.target(name: appName)]
+        ),
     ],
     schemes: ["Dev", "Staging", "Prod"].map { env in
         .scheme(
@@ -105,6 +116,13 @@ let project = Project(
             ),
             archiveAction: .archiveAction(configuration: .configuration(env))
         )
-    },
+    } + [
+        .scheme(
+            name: "\(appName)-Screenshots",
+            shared: true,
+            buildAction: .buildAction(targets: [.target(appName), .target("\(appName)UITests")]),
+            testAction: .targets(["\(appName)UITests"], configuration: .configuration("Dev"))
+        ),
+    ],
     additionalFiles: ["Dolingo.storekit"]
 )

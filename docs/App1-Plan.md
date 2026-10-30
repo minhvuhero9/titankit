@@ -124,7 +124,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] Không cần ATT và UMP (không quảng cáo, không theo dõi). Có xóa tài khoản, Sign in with Apple, Restore purchases.
 - [ ] Thu hồi token Apple khi xóa tài khoản đăng nhập bằng Apple (cần tài khoản Apple Developer để thử).
 - [x] Privacy Policy và Terms (tiếng Việt, tiếng Anh) do server AI phục vụ ở `/privacy`, `/terms`; app lấy từ cùng server với `AI_BASE_URL`. Server có môi trường staging/prod và workflow deploy ([AI-Deploy.md](AI-Deploy.md)). Còn: tài khoản Cloudflare và khoá Anthropic, điền URL, nhờ người có chuyên môn đọc lại.
-- [ ] Ảnh chụp App Store. Icon và mô tả đã có (mô tả ở [AppStore-Dolingo.md](AppStore-Dolingo.md)).
+- [x] Ảnh chụp App Store chụp tự động (tiếng Việt, tiếng Anh, iPhone Pro Max) bằng UI test và workflow **Screenshots**. Icon và mô tả đã có ([AppStore-Dolingo.md](AppStore-Dolingo.md)). Còn: chọn ảnh, thêm chữ quảng cáo lên ảnh nếu muốn.
 - [x] Lane `beta`, `release` (fastlane, match, App Store Connect API key) và workflow TestFlight chạy tay. Còn: tài khoản Apple Developer và secrets ([TestFlight.md](TestFlight.md)).
 - [ ] Đi hết checklist trong Compliance.md: còn email hỗ trợ, trang web, App Store id, tài khoản demo.
 - [ ] Tag `kit/v0.1.0` và `app1/v1.0.0`.
