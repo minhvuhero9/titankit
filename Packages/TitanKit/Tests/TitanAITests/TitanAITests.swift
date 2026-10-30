@@ -34,6 +34,16 @@ final class RemoteChatServiceTests: XCTestCase {
         XCTAssertNil(RemoteChatService.event(fromLine: #"data: {"type":"ping"}"#))
     }
 
+    func testSignedRequestsCarryTheToken() throws {
+        let request = try service.makeRequest(conversation: [ChatMessage(role: .user, text: "Hi")], learner: ChatLearner())
+        XCTAssertNil(RemoteChatService.signed(request, token: nil).value(forHTTPHeaderField: "Authorization"))
+        XCTAssertNil(RemoteChatService.signed(request, token: "").value(forHTTPHeaderField: "Authorization"))
+        XCTAssertEqual(RemoteChatService.signed(request, token: "abc").value(forHTTPHeaderField: "Authorization"), "Bearer abc")
+        let keyless = RemoteChatService(baseURL: URL(string: "https://ai.example.com")!, clientKey: "")
+        let plain = try keyless.makeRequest(conversation: [ChatMessage(role: .user, text: "Hi")], learner: ChatLearner())
+        XCTAssertNil(plain.value(forHTTPHeaderField: "X-Dolingo-Key"))
+    }
+
     func testStatusCodes() {
         XCTAssertNil(RemoteChatService.failure(for: 200))
         XCTAssertEqual(RemoteChatService.failure(for: 401), .unauthorized)

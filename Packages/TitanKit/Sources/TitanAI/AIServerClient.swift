@@ -17,11 +17,16 @@ extension AIAnswer: Equatable where Value: Equatable {}
 public struct AIServerClient: Sendable {
     public let baseURL: URL
     private let clientKey: String
+    private let token: AITokenProvider?
     private let session: URLSession
 
-    public init(baseURL: URL, clientKey: String, session: URLSession = .shared) {
+    /// - Parameters:
+    ///   - clientKey: the shared key for builds without sign-in; empty to leave it out.
+    ///   - token: the signed-in user's ID token; refreshed and retried once on a 401.
+    public init(baseURL: URL, clientKey: String, token: AITokenProvider? = nil, session: URLSession = .shared) {
         self.baseURL = baseURL
         self.clientKey = clientKey
+        self.token = token
         self.session = session
     }
 
@@ -38,14 +43,11 @@ public struct AIServerClient: Sendable {
         } catch {
             throw .unknown("could not encode the request")
         }
-        let reply: (Data, URLResponse)
-        do {
-            reply = try await session.data(for: request)
-        } catch {
-            throw RemoteChatService.map(error)
+        var (data, status) = try await send(RemoteChatService.signed(request, token: await token?(false)))
+        // An expired token: get a fresh one and try once more.
+        if status == 401, let token, let fresh = await token(true) {
+            (data, status) = try await send(RemoteChatService.signed(request, token: fresh))
         }
-        let (data, response) = reply
-        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         if status == 422 { return .refused }
         if let failure = RemoteChatService.failure(for: status) { throw failure }
         do {
@@ -55,12 +57,21 @@ public struct AIServerClient: Sendable {
         }
     }
 
+    private func send(_ request: URLRequest) async throws(TitanError) -> (Data, Int) {
+        do {
+            let (data, response) = try await session.data(for: request)
+            return (data, (response as? HTTPURLResponse)?.statusCode ?? 0)
+        } catch {
+            throw RemoteChatService.map(error)
+        }
+    }
+
     func makeRequest<Body: Encodable>(_ path: String, body: Body) throws -> URLRequest {
         var request = URLRequest(url: baseURL.appendingPathComponent(path))
         request.httpMethod = "POST"
         request.timeoutInterval = 60
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(clientKey, forHTTPHeaderField: "X-Dolingo-Key")
+        if !clientKey.isEmpty { request.setValue(clientKey, forHTTPHeaderField: "X-Dolingo-Key") }
         request.httpBody = try JSONEncoder().encode(body)
         return request
     }

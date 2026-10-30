@@ -4,16 +4,22 @@ import TitanCore
 /// Talks to the app's AI server: `POST <baseURL>/v1/chat` with the conversation, and reads the
 /// reply back as server-sent events, one JSON event per `data:` line.
 ///
-///     let chat = RemoteChatService(baseURL: URL(string: "https://ai.example.com")!, clientKey: "...")
+///     let chat = RemoteChatService(baseURL: url, clientKey: "", token: { try? await auth.idToken(forceRefresh: $0) })
 ///     for await event in chat.reply(to: messages, learner: ChatLearner(level: "beginner")) { ... }
 public struct RemoteChatService: ChatService {
     public let baseURL: URL
     private let clientKey: String
+    private let token: AITokenProvider?
     private let session: URLSession
 
-    public init(baseURL: URL, clientKey: String, session: URLSession = .shared) {
+    /// - Parameters:
+    ///   - clientKey: the shared key for builds without sign-in; empty to leave it out.
+    ///   - token: the signed-in user's ID token, sent as `Authorization: Bearer`. On a 401 it is
+    ///     asked again with `forceRefresh` and the request is sent once more.
+    public init(baseURL: URL, clientKey: String, token: AITokenProvider? = nil, session: URLSession = .shared) {
         self.baseURL = baseURL
         self.clientKey = clientKey
+        self.token = token
         self.session = session
     }
 
@@ -28,9 +34,16 @@ public struct RemoteChatService: ChatService {
             }
         }
         let session = session
+        let token = token
         return AsyncStream { continuation in
             let task = Task {
-                let last = await Self.stream(request, session: session) { continuation.yield($0) }
+                var last = await Self.stream(Self.signed(request, token: await token?(false)), session: session) {
+                    continuation.yield($0)
+                }
+                // An expired token: get a fresh one and try once more.
+                if last == .failed(.unauthorized), let token, let fresh = await token(true) {
+                    last = await Self.stream(Self.signed(request, token: fresh), session: session) { continuation.yield($0) }
+                }
                 continuation.yield(last)
                 continuation.finish()
             }
@@ -44,10 +57,17 @@ public struct RemoteChatService: ChatService {
         request.timeoutInterval = 60
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
-        request.setValue(clientKey, forHTTPHeaderField: "X-Dolingo-Key")
+        if !clientKey.isEmpty { request.setValue(clientKey, forHTTPHeaderField: "X-Dolingo-Key") }
         let turns = conversation.map { WireTurn(role: $0.role.rawValue, text: $0.text) }
         request.httpBody = try JSONEncoder().encode(WireRequest(turns: turns, learner: learner))
         return request
+    }
+
+    static func signed(_ request: URLRequest, token: String?) -> URLRequest {
+        guard let token, !token.isEmpty else { return request }
+        var signed = request
+        signed.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        return signed
     }
 
     /// Sends each event to `emit` and returns the last one: `.done`, `.refused` or `.failed`.

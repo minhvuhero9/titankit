@@ -48,3 +48,7 @@ public enum ChatReplyEvent: Sendable, Equatable {
 public protocol ChatService: Sendable {
     func reply(to conversation: [ChatMessage], learner: ChatLearner) -> AsyncStream<ChatReplyEvent>
 }
+
+/// The signed-in user's ID token for the AI server, or nil when there is none; `true` asks for
+/// a fresh one after the server refused the last.
+public typealias AITokenProvider = @Sendable (_ forceRefresh: Bool) async -> String?
