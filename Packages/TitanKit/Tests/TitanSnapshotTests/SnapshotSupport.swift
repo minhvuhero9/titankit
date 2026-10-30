@@ -75,6 +75,9 @@ private struct ThemedPage<Content: View>: View {
     var body: some View {
         content
             .padding(padded ? Spacing.lg : 0)
+            // A component takes the height its content needs: the snapshot's size-to-fit
+            // layout offers the smallest height, which would cut wrapped text to one line.
+            .fixedSize(horizontal: false, vertical: padded)
             .background(theme.colors.surfaceBackground.color)
     }
 }
