@@ -35,12 +35,15 @@ final class DolingoDeepLinkParserTests: XCTestCase {
     }
 
     func testSettingsRowsLeadToTheirScreens() {
-        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.profile), .profile)
+        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.preferences), .preferences)
+        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.notification), .notifications)
+        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.security), .security)
+        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.billing), .billing)
         XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.appearance), .appearance)
-        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.privacy), .webPage(.privacy))
-        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.terms), .webPage(.terms))
-        // Opens the App Store review page instead of a screen.
+        XCTAssertEqual(DolingoSettings.route(for: DolingoSettings.help), .help)
+        // Open the App Store review page and the share sheet instead of a screen.
         XCTAssertNil(DolingoSettings.route(for: DolingoSettings.rateApp))
+        XCTAssertNil(DolingoSettings.route(for: DolingoSettings.invite))
         XCTAssertNil(DolingoSettings.route(for: "unknown"))
     }
 }

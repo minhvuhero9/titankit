@@ -10,6 +10,7 @@ struct MainTabView: View {
     @ObservedObject var tabs: TabRouter<AppTab, AppRoute>
     @ObservedObject var flow: AppFlow
     @ObservedObject var activity: ActivityStore
+    @Environment(\.locale) private var locale
 
     var body: some View {
         TabView(selection: $tabs.selected) {
@@ -38,7 +39,10 @@ struct MainTabView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: activity.celebrations.first?.id)
         .tkRequestReview(when: flow.shouldAskForReview) { flow.didAskForReview() }
-        .task { await container.learning.load() }
+        .task {
+            await container.learning.load()
+            await container.reminder.applySurveyChoice(flow.surveyAnswers, locale: locale)
+        }
     }
 
     @ViewBuilder

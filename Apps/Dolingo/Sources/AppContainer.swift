@@ -6,6 +6,7 @@ import TitanFeatures
 import TitanLocalization
 import TitanNavigation
 import TitanNetworking
+import TitanPush
 import TitanPurchase
 import TitanRemoteConfig
 import TitanSpeech
@@ -33,6 +34,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let phrasebook: any PhrasebookRepository
     let savedPhrases: SavedPhrases
     let activity: ActivityStore
+    let reminder: StudyReminder
     /// One navigation stack per tab.
     let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -52,6 +54,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         courses: any CourseRepository = BundledCourseRepository(),
         roleplays: any RoleplayRepository = BundledRoleplayRepository(),
         phrasebook: any PhrasebookRepository = BundledPhrasebookRepository(),
+        reminders: any ReminderScheduler = UserNotificationReminderScheduler(),
         speech: (any SpeechRecognizer)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
@@ -92,6 +95,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         let activity = ActivityStore(preferences: preferences)
         activity.chaptersDone = { learning.chaptersDone }
         self.activity = activity
+        reminder = StudyReminder(scheduler: reminders, preferences: preferences)
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -133,6 +137,23 @@ final class AppContainer: ObservableObject, DependencyContainer {
             }
         case let .phrasePractice(category):
             PhrasePracticeScreen(category: category, saved: savedPhrases, speech: speech, activity: activity) { [router] in router.dismiss() }
+        case .preferences:
+            PreferencesScreen(container: self) { [router] in router.pop() }
+        case .notifications:
+            NotificationSettingsScreen(reminder: reminder) { [router] in router.pop() }
+        case .security:
+            SecurityScreen(auth: auth, onBack: { [router] in router.pop() },
+                           onDeleteAccount: { [router] in router.push(.deleteAccount) })
+        case .billing:
+            BillingScreen(purchase: purchase, onBack: { [router] in router.pop() },
+                          onUpgrade: { [router] in router.present(.paywall) })
+        case .help:
+            HelpScreen(appVersion: config.appVersion, onBack: { [router] in router.pop() },
+                       onOpen: { [router] in router.push($0) })
+        case .faq:
+            FAQScreen { [router] in router.pop() }
+        case .contactSupport:
+            ContactSupportScreen { [router] in router.pop() }
         case .savedPhrases:
             SavedPhrasesScreen(saved: savedPhrases) { [router] in router.pop() }
         case let .roleplayChat(roleplay):
@@ -169,7 +190,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             languageDefaults: UserDefaults(suiteName: "preview") ?? .standard,
             remoteConfig: MockRemoteConfig(),
             purchase: MockPurchaseService(),
-            speech: MockSpeechRecognizer(transcripts: ["hello"])
+            speech: MockSpeechRecognizer(transcripts: ["hello"]),
+            reminders: MockReminderScheduler()
         )
     }
 

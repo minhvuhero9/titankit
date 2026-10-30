@@ -33,6 +33,11 @@ struct AppConfig: Equatable, Sendable {
         termsURL: termsURL,
         privacyURL: privacyURL
     )
+    /// Placeholders until the support inbox and website exist.
+    static let supportEmail = "support@example.com"
+    static let websiteURL = URL(string: "https://www.example.com")!
+    /// Where "Manage subscription" leads: the App Store's subscription list.
+    static let manageSubscriptionsURL = URL(string: "https://apps.apple.com/account/subscriptions")!
     /// Placeholder until the app is registered on App Store Connect.
     static let appStoreID = "0000000000"
     /// Opened by the force update screen.

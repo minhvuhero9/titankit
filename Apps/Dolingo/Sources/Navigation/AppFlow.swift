@@ -19,6 +19,8 @@ enum DolingoKeys {
     static let savedPhrases = PreferenceKey<[Phrase]>("dolingo.savedPhrases", default: [])
     /// Counts, streak days and badges for My Progress.
     static let activity = PreferenceKey("dolingo.activity", default: ActivityStats())
+    /// The daily study reminder.
+    static let reminder = PreferenceKey("dolingo.reminder", default: ReminderSettings())
 }
 
 /// Which part of the app is showing: splash, onboarding, the sign-up steps, sign-in,

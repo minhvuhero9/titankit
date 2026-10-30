@@ -139,6 +139,13 @@ final class ActivityStore: ObservableObject {
         addTime(seconds)
     }
 
+    /// "Restart all progress": counts, streak days and badges back to zero.
+    func reset() {
+        stats = ActivityStats()
+        celebrations = []
+        preferences.set(stats, for: DolingoKeys.activity)
+    }
+
     func dismissCelebration() {
         if !celebrations.isEmpty { celebrations.removeFirst() }
     }

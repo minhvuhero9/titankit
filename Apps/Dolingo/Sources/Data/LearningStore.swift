@@ -37,6 +37,11 @@ final class LearningStore: ObservableObject {
         }
     }
 
+    /// "Restart all progress": every lesson locked again but the first.
+    func reset() {
+        update { $0 = LearningProgress() }
+    }
+
     func complete(_ lesson: Lesson) {
         update { $0.completedLessons.insert(lesson.id) }
     }
