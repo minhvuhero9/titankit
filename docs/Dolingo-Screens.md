@@ -100,8 +100,8 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 65 | my roleplay | `38459:38355` | Chưa làm (cần AI backend) |
 | 66 | my roleplay - more options menu | `38459:38594` | Chưa làm (cần AI backend) |
 | 67 | my roleplay - delete my roleplay | `38459:38791` | Chưa làm (cần AI backend) |
-| 68 | chat with dolingo - type message | `38459:38999` | Chưa làm (cần AI backend) |
-| 69 | chat with dolingo | `38459:39244` | Chưa làm (cần AI backend) |
+| 68 | chat with dolingo - type message | `38459:38999` | Đã có (`TutorChatScreen`) |
+| 69 | chat with dolingo | `38459:39244` | Đã có (`TutorChatScreen`) |
 | 70 | premium content modal | `38459:39897` | Đã có (`ChatsScreen`) |
 
 ## Speak: sổ tay câu và luyện nói (71–82)
@@ -171,4 +171,4 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 - Cài đặt: nhắc học hằng ngày là thông báo đặt ngay trên máy (`ReminderScheduler` trong TitanPush), giờ mặc định lấy từ câu hỏi đăng ký. Email hỗ trợ, trang web trong `AppConfig` đang là chỗ giữ. "Quản lý gói" mở trang đăng ký của App Store; "Khôi phục giao dịch" có cả trong Paywall và Gói & Thanh toán như `Compliance.md` yêu cầu.
 - My Progress: `ActivityStore` đếm trên máy (lưu trong `DolingoKeys.activity`) ngày học, thời gian học, bài học, câu đã nói, số lần nghe, roleplay và 10 huy hiệu. Biểu đồ "Growth Area" dùng 5 trục đo được thật (Bài học, Phát âm, Hội thoại, Sổ tay câu, Đều đặn) thay cho 6 trục của Figma; lịch học chỉ có dạng tháng, thời gian học chỉ có dạng tuần. Hộp chúc mừng chuỗi ngày hiện ở hoạt động đầu tiên trong ngày, hộp huy hiệu hiện khi đạt huy hiệu mới.
 - Speak: sổ tay câu trong `Apps/Dolingo/Resources/Phrasebook/phrasebook-en.json` (7 chủ đề, 56 câu, 3 chủ đề premium). Nghe thường và chậm bằng giọng máy; chấm bằng `PronunciationScore`; câu đã lưu nằm trong `DolingoKeys.savedPhrases`.
-- Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. Tạo roleplay bằng AI, "My Roleplay" và "Chat with Dolingo" (màn 60–69) cần một backend AI: app không gọi thẳng API AI để không lộ khoá. Trước giai đoạn 4 chúng chạy bằng Repository Mock của app.
+- Roleplay chạy theo kịch bản soạn sẵn trong `Apps/Dolingo/Resources/Roleplays/roleplays-en.json` (6 tình huống, 3 miễn phí). Người học nói một trong các câu trả lời mẫu; câu nói được chấm bằng `PronunciationScore` và khớp từ 60 % là được. "Chat with Dolingo" (màn 68–69) chạy qua server AI `Backend/dolingo-ai` (xem [AI.md](modules/AI.md)): app không gọi thẳng API AI để không lộ khoá. Nút robot ở tab Chats mở nó. Tạo roleplay bằng AI và "My Roleplay" (màn 60–67) làm ở đợt sau, cùng server này.

@@ -184,6 +184,7 @@ sequenceDiagram
 | Dịch vụ | TitanRemoteConfig | [RemoteConfig.md](modules/RemoteConfig.md) |
 | Dịch vụ | TitanLocalization | [Localization.md](modules/Localization.md) |
 | Dịch vụ | TitanSpeech | [Speech.md](modules/Speech.md) |
+| Dịch vụ | TitanAI | [AI.md](modules/AI.md) |
 | Màn hình | TitanFeatures | [Features.md](modules/Features.md) |
 | Công cụ | Tạo app, môi trường, CI/CD | [Tooling.md](modules/Tooling.md) |
 | Quy định | Privacy, App Store | [Compliance.md](modules/Compliance.md) |
