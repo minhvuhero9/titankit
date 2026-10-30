@@ -89,7 +89,7 @@ final class ComponentSnapshotTests: XCTestCase {
     /// setting rather than the view's `dynamicTypeSize`.
     func testLargeDynamicType() {
         let theme = Theme.base.merged(with: ThemePatch(fontFamily: TKFonts.urbanist))
-        snapshot(width: 360, dynamicTypeSize: .accessibility3, theme: theme) {
+        snapshot(width: 360, dynamicTypeSize: .accessibility3, theme: theme, fitsHeight: true) {
             VStack(spacing: Spacing.md) {
                 TKButton(Text(verbatim: "Continue with email")) {}
                 TKTextField(label: Text(verbatim: "Email"), text: .constant("minh@dolingo.app"), icon: Image(tk: TKIcon.message))

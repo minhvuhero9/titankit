@@ -15,6 +15,7 @@ extension XCTestCase {
         locale: Locale = Locale(identifier: "en"),
         dynamicTypeSize: DynamicTypeSize = .large,
         theme: Theme = .base,
+        fitsHeight: Bool = false,
         @ViewBuilder content: () -> Content,
         file: StaticString = #filePath,
         testName: String = #function,
@@ -25,6 +26,9 @@ extension XCTestCase {
         for scheme in [ColorScheme.light, .dark] {
             let page = SnapshotPage(scheme: scheme, locale: locale, dynamicTypeSize: dynamicTypeSize, padded: padded,
                                     theme: theme) { view }
+                // Size-to-fit offers the smallest height, which cuts wrapped text to one line;
+                // `fitsHeight` gives the content the height it asks for instead.
+                .fixedSize(horizontal: false, vertical: fitsHeight)
                 .frame(width: width, height: height)
             let traits = UITraitCollection(traitsFrom: [
                 UITraitCollection(displayScale: 2),
@@ -75,9 +79,6 @@ private struct ThemedPage<Content: View>: View {
     var body: some View {
         content
             .padding(padded ? Spacing.lg : 0)
-            // A component takes the height its content needs: the snapshot's size-to-fit
-            // layout offers the smallest height, which would cut wrapped text to one line.
-            .fixedSize(horizontal: false, vertical: padded)
             .background(theme.colors.surfaceBackground.color)
     }
 }
