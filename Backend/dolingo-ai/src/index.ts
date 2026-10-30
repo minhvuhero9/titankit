@@ -39,7 +39,10 @@ export interface Services {
  */
 export async function handle(request: Request, env: Env, services: Services): Promise<Response> {
   const url = new URL(request.url);
-  if (url.pathname === "/health") return new Response("ok");
+  if (url.pathname === "/health") {
+    // What the deploy workflow checks: the Worker runs and has its key.
+    return env.ANTHROPIC_API_KEY ? new Response("ok") : new Response("missing ANTHROPIC_API_KEY", { status: 503 });
+  }
   if (request.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms")) {
     const lang = legalLanguage(url, request.headers.get("Accept-Language"));
     const info = { company: env.LEGAL_COMPANY || "Titan Studio", email: env.SUPPORT_EMAIL || "support@example.com" };

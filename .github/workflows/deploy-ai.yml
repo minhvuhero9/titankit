@@ -1,0 +1,100 @@
+# Deploys Backend/dolingo-ai to Cloudflare Workers.
+#   - push to main that changes the server: staging (dolingo-ai-staging)
+#   - Actions > Deploy AI server > Run workflow: staging or prod (dolingo-ai)
+# Needs the repository secrets CLOUDFLARE_API_TOKEN (template "Edit Cloudflare Workers") and
+# CLOUDFLARE_ACCOUNT_ID; without them the run says so and stops. ANTHROPIC_API_KEY and
+# AI_CLIENT_KEY, when set, are copied into the Worker's secrets on each run. See docs/AI-Deploy.md.
+name: Deploy AI server
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - Backend/dolingo-ai/**
+      - .github/workflows/deploy-ai.yml
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Which Worker
+        type: choice
+        options: [staging, prod]
+        default: staging
+
+concurrency:
+  group: deploy-ai-${{ github.event.inputs.environment || 'staging' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ github.event.inputs.environment || 'staging' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: ai-${{ github.event.inputs.environment || 'staging' }}
+    defaults:
+      run:
+        working-directory: Backend/dolingo-ai
+    env:
+      TARGET: ${{ github.event.inputs.environment || 'staging' }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check for Cloudflare credentials
+        id: ready
+        working-directory: .
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not set; nothing to deploy. See docs/AI-Deploy.md."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.go == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.ready.outputs.go == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Backend/dolingo-ai/package-lock.json
+      - if: steps.ready.outputs.go == 'true'
+        run: npm ci
+      - if: steps.ready.outputs.go == 'true'
+        run: npm run check && npm test
+      - name: Deploy
+        id: deploy
+        if: steps.ready.outputs.go == 'true'
+        run: |
+          npx wrangler deploy --env "$TARGET" | tee deploy.log
+          url=$(grep -oE 'https://[a-zA-Z0-9.-]+\.workers\.dev' deploy.log | head -1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Set secrets
+        if: steps.ready.outputs.go == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_CLIENT_KEY: ${{ secrets.AI_CLIENT_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            printf '%s' "$ANTHROPIC_API_KEY" | npx wrangler secret put ANTHROPIC_API_KEY --env "$TARGET"
+          fi
+          if [ -n "$AI_CLIENT_KEY" ]; then
+            printf '%s' "$AI_CLIENT_KEY" | npx wrangler secret put CLIENT_KEY --env "$TARGET"
+          fi
+      - name: Smoke test
+        if: steps.ready.outputs.go == 'true' && steps.deploy.outputs.url != ''
+        run: |
+          # A new secret takes a few seconds to reach every location.
+          for attempt in 1 2 3 4 5; do
+            npm run smoke -- "${{ steps.deploy.outputs.url }}" && exit 0
+            sleep 10
+          done
+          exit 1
+      - name: Summary
+        if: steps.ready.outputs.go == 'true' && steps.deploy.outputs.url != ''
+        run: |
+          {
+            echo "### dolingo-ai ($TARGET)"
+            echo ""
+            echo "URL: ${{ steps.deploy.outputs.url }}"
+            echo ""
+            echo "Put it in AI_BASE_URL_${TARGET^^} of Secrets.xcconfig and DOLINGO_SECRETS_XCCONFIG (docs/AI-Deploy.md)."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -97,6 +97,11 @@ test("only POST /v1/chat", async () => {
   assert.equal(await health.text(), "ok");
 });
 
+test("health fails until the Anthropic key is set", async () => {
+  const health = await handle(new Request("https://ai.dolingo.test/health"), { ...env, ANTHROPIC_API_KEY: "" }, services());
+  assert.equal(health.status, 503);
+});
+
 test("drafts a roleplay from the form", async () => {
   const roleplay = new FakeRoleplay();
   const response = await handle(

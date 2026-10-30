@@ -1,26 +1,63 @@
-name = "dolingo-ai"
+# Three Workers from one codebase:
+#   npm run dev              local, with .dev.vars (this top-level section)
+#   npm run deploy:staging   dolingo-ai-staging, for the Dev and Staging app builds
+#   npm run deploy:prod      dolingo-ai, for the App Store build
+# A plain `wrangler deploy` makes "dolingo-ai-dev", never touching production.
+name = "dolingo-ai-dev"
 main = "src/index.ts"
 compatibility_date = "2026-10-01"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
+# Request logs and errors in the Cloudflare dashboard (Workers > dolingo-ai > Logs).
+[observability]
+enabled = true
+
+# Vars are not inherited by environments, so each one lists them all.
+#   FIREBASE_PROJECT_ID  the Firebase project whose sign-ins are accepted (Project settings >
+#                        Project ID); empty accepts only CLIENT_KEY.
+#   DAILY_LIMIT          requests a signed-in user may make per day (UTC).
+#   REQUIRE_SIGN_IN      "true" once every build signs in with Firebase, to stop accepting CLIENT_KEY.
+#   LEGAL_COMPANY, SUPPORT_EMAIL  shown on /privacy and /terms.
 [vars]
-# The Firebase project whose sign-ins are accepted (Project settings > Project ID).
-# One Worker per environment: deploy with --env staging / --env prod, or change this value.
 FIREBASE_PROJECT_ID = ""
-# Requests a signed-in user may make per day (UTC).
 DAILY_LIMIT = "100"
-# Set to "true" once every build signs in with Firebase, to stop accepting CLIENT_KEY.
 REQUIRE_SIGN_IN = "false"
-# Shown on /privacy and /terms, which the app and App Store Connect link to.
 LEGAL_COMPANY = "Titan Studio"
 SUPPORT_EMAIL = "support@example.com"
 
-# Daily counts per user. Create it once with `npx wrangler kv namespace create USAGE`
-# and paste the id it prints; without it there is no daily limit.
-# [[kv_namespaces]]
-# binding = "USAGE"
-# id = "<id>"
+# Daily counts per user. Without an id, Wrangler creates the namespace on the first deploy
+# and reuses it afterwards; locally it is simulated.
+[[kv_namespaces]]
+binding = "USAGE"
 
-# Secrets, set once per environment (never in this file):
-#   npx wrangler secret put ANTHROPIC_API_KEY
-#   npx wrangler secret put CLIENT_KEY      (only while builds without Firebase are allowed)
+[env.staging]
+name = "dolingo-ai-staging"
+
+[env.staging.vars]
+FIREBASE_PROJECT_ID = ""
+DAILY_LIMIT = "300"
+REQUIRE_SIGN_IN = "false"
+LEGAL_COMPANY = "Titan Studio"
+SUPPORT_EMAIL = "support@example.com"
+
+[[env.staging.kv_namespaces]]
+binding = "USAGE"
+
+[env.prod]
+name = "dolingo-ai"
+
+[env.prod.vars]
+FIREBASE_PROJECT_ID = ""
+DAILY_LIMIT = "100"
+REQUIRE_SIGN_IN = "false"
+LEGAL_COMPANY = "Titan Studio"
+SUPPORT_EMAIL = "support@example.com"
+
+[[env.prod.kv_namespaces]]
+binding = "USAGE"
+
+# Secrets, set per environment (never in this file); the Deploy AI server workflow sets them
+# from GitHub Secrets, or by hand:
+#   npx wrangler secret put ANTHROPIC_API_KEY --env prod
+#   npx wrangler secret put CLIENT_KEY --env prod   (only while builds without Firebase are allowed)

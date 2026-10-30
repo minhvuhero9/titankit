@@ -5,7 +5,9 @@
   "description": "Dolingo's AI server: keeps the Anthropic API key off the phone and streams Claude's replies to the app.",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:prod": "wrangler deploy --env prod",
+    "smoke": "node --experimental-strip-types --no-warnings scripts/smoke.ts",
     "check": "tsc --noEmit",
     "test": "node --test --experimental-strip-types --no-warnings test/*.test.ts"
   },
