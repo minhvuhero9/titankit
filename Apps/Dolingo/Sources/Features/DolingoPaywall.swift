@@ -10,16 +10,21 @@ struct DolingoPaywall: View {
 
     @State private var isPremium = false
 
+    /// What Premium unlocks in Dolingo today, on the paywall and again after buying.
+    static var benefits: [Text] {
+        [
+            Text("premium.benefit.lessons"),
+            Text("premium.benefit.roleplays"),
+            Text("premium.benefit.topics"),
+            Text("premium.benefit.createRoleplay"),
+        ]
+    }
+
     var body: some View {
         if isPremium {
             PremiumWelcomeScreen(
                 message: Text("premium.welcome.message"),
-                benefits: [
-                    Text("premium.benefit.lessons"),
-                    Text("premium.benefit.roleplays"),
-                    Text("premium.benefit.topics"),
-                    Text("premium.benefit.createRoleplay"),
-                ],
+                benefits: Self.benefits,
                 footnote: Text("premium.welcome.footnote"),
                 actionTitle: Text("premium.welcome.action"),
                 action: onDismiss
@@ -29,11 +34,7 @@ struct DolingoPaywall: View {
             PaywallScreen(
                 purchase: purchase,
                 config: AppConfig.paywall,
-                benefits: [
-                    Text("paywall.benefit.noAds"),
-                    Text("paywall.benefit.unlimited"),
-                    Text("paywall.benefit.offline"),
-                ],
+                benefits: Self.benefits,
                 onClose: onDismiss,
                 onPurchased: { withAnimation { isPremium = true } }
             )

@@ -2177,57 +2177,6 @@
         }
       }
     },
-    "paywall.benefit.noAds": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Learn with no ads"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Học không có quảng cáo"
-          }
-        }
-      }
-    },
-    "paywall.benefit.offline": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Learn offline"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Học cả khi không có mạng"
-          }
-        }
-      }
-    },
-    "paywall.benefit.unlimited": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlock every lesson"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mở khoá mọi bài học"
-          }
-        }
-      }
-    },
     "plan.preparing.message": {
       "extractionState": "manual",
       "localizations": {
