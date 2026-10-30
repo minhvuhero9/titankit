@@ -39,6 +39,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let tutorChat: TutorChat
     let roleplayAI: any RoleplayAI
     let myRoleplays: MyRoleplays
+    let practice: PracticeSettingsStore
     /// The learner's name and level, for the AI.
     let learner: @MainActor () async -> ChatLearner
     /// One navigation stack per tab.
@@ -115,6 +116,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
                               learner: learner)
         self.roleplayAI = roleplayAI ?? AppContainer.roleplayAI(config: config)
         myRoleplays = MyRoleplays(preferences: preferences)
+        practice = PracticeSettingsStore(preferences: preferences)
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -149,7 +151,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         case .paywall:
             DolingoPaywall(purchase: purchase) { [router] in router.dismiss() }
         case let .lesson(id):
-            LessonScreen(learning: learning, speech: speech, activity: activity, lessonId: id) { [router] in router.dismiss() }
+            LessonScreen(learning: learning, speech: speech, activity: activity, practice: practice, lessonId: id) { [router] in router.dismiss() }
         case let .roleplay(roleplay):
             RoleplayDetailScreen(roleplay: roleplay, onBack: { [router] in router.pop() }) { [router] in
                 router.push(.roleplayChat(roleplay))
@@ -182,7 +184,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
             TutorChatScreen(chat: tutorChat) { [router] in router.dismiss() }
         case let .createRoleplay(editing):
             CreateRoleplayScreen(
-                viewModel: CreateRoleplayViewModel(editing: editing, ai: roleplayAI, learner: learner),
+                viewModel: CreateRoleplayViewModel(editing: editing, ai: self.roleplayAI, learner: self.learner),
                 onBack: { [router] in router.pop() }
             ) { [myRoleplays, router] roleplay in
                 myRoleplays.save(roleplay)
@@ -195,15 +197,17 @@ final class AppContainer: ObservableObject, DependencyContainer {
             }
         case let .aiRoleplayChat(roleplay):
             AIRoleplayChatScreen(
-                viewModel: AIRoleplayViewModel(roleplay: roleplay, language: AppConfig.learningLanguage, ai: roleplayAI,
-                                               speech: speech, activity: activity, learner: learner),
-                activity: activity
+                viewModel: AIRoleplayViewModel(roleplay: roleplay, language: AppConfig.learningLanguage,
+                                               ai: self.roleplayAI, speech: self.speech, activity: self.activity,
+                                               learner: self.learner),
+                activity: activity,
+                practice: practice
             ) { [router] in router.pop() }
         case .savedPhrases:
             SavedPhrasesScreen(saved: savedPhrases) { [router] in router.pop() }
         case let .roleplayChat(roleplay):
             RoleplayChatScreen(roleplay: roleplay, language: AppConfig.learningLanguage, speech: speech,
-                               activity: activity) { [router] in
+                               activity: activity, practice: practice) { [router] in
                 router.popToRoot()
             }
         }
