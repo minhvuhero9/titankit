@@ -1,0 +1,104 @@
+{
+  "appPolicies": {
+    "eula": "",
+    "policies": [
+      {
+        "locale": "en_US",
+        "policyText": "",
+        "policyURL": ""
+      }
+    ]
+  },
+  "identifier": "D0L1460A",
+  "nonRenewingSubscriptions": [],
+  "products": [],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "vi",
+    "_storeKitErrors": [],
+    "_storefront": "VNM"
+  },
+  "subscriptionGroups": [
+    {
+      "id": "21500001",
+      "localizations": [
+        {
+          "description": "",
+          "displayName": "Dolingo Premium",
+          "locale": "vi"
+        },
+        {
+          "description": "",
+          "displayName": "Dolingo Premium",
+          "locale": "en_US"
+        }
+      ],
+      "name": "Premium",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "99000",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6500000001",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Mở khoá mọi bài học và roleplay",
+              "displayName": "Premium theo tháng",
+              "locale": "vi"
+            },
+            {
+              "description": "Unlock every lesson and roleplay",
+              "displayName": "Premium Monthly",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.titanstudio.dolingo.premium.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Premium Monthly",
+          "subscriptionGroupID": "21500001",
+          "type": "RecurringSubscription",
+          "winbackOffers": []
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "599000",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6500000002",
+          "introductoryOffer": {
+            "internalID": "6500000003",
+            "numberOfPeriods": 1,
+            "paymentMode": "free",
+            "subscriptionPeriod": "P1W"
+          },
+          "localizations": [
+            {
+              "description": "Mở khoá mọi bài học và roleplay",
+              "displayName": "Premium theo năm",
+              "locale": "vi"
+            },
+            {
+              "description": "Unlock every lesson and roleplay",
+              "displayName": "Premium Yearly",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.titanstudio.dolingo.premium.yearly",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Premium Yearly",
+          "subscriptionGroupID": "21500001",
+          "type": "RecurringSubscription",
+          "winbackOffers": []
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 4,
+    "minor": 0
+  }
+}

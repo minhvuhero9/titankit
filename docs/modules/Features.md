@@ -257,7 +257,7 @@ PaywallScreen(
 - `PaywallViewModel`: không có sản phẩm nào (sai id hoặc chưa tạo trên App Store Connect) thì hiện lỗi `.notFound` có nút thử lại. Huỷ mua thì im lặng; giao dịch chờ duyệt (Ask to Buy) thì báo bằng toast; khôi phục không ra premium thì báo "Không tìm thấy gói nào để khôi phục". Trong lúc mua hoặc khôi phục, nút khác không chạy.
 - Màn hình nghe `entitlementStream`, nên gói được duyệt muộn vẫn cập nhật đúng.
 - Figma Dolingo chưa đọc được màn paywall (hết lượt gọi Figma), bố cục đang theo "Subscriptions Card" và các màn khác của kit.
-- Dolingo: Cài đặt có băng rôn "Nâng cấp ngay!" mở paywall trong sheet; deep link `dolingo://premium` cũng mở paywall. Sản phẩm vẫn là id giữ chỗ, nên trên simulator sẽ thấy lỗi "không tìm thấy" cho tới khi có file `.storekit` hoặc sản phẩm thật. Dùng `MockPurchaseService` trong preview để xem đủ giao diện.
+- Dolingo: Cài đặt có băng rôn "Nâng cấp ngay!" mở paywall trong sheet; deep link `dolingo://premium` cũng mở paywall. Chạy scheme `Dolingo-Dev` từ Xcode thì sản phẩm lấy từ `Dolingo.storekit` và mua thử được; các scheme khác cần sản phẩm thật trên App Store Connect. Dùng `MockPurchaseService` trong preview để xem đủ giao diện.
 
 ## 8h. Đã làm (giai đoạn 5, Đăng ký)
 

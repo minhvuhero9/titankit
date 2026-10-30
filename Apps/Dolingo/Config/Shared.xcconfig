@@ -3,3 +3,6 @@ APP_DISPLAY_NAME = Dolingo
 // Where /privacy and /terms are served: the AI server (Backend/dolingo-ai) unless set otherwise.
 // Empty uses the example.com placeholders. Write URLs as https:/$()/host so // isn't read as a comment.
 LEGAL_BASE_URL = $(AI_BASE_URL)
+// Signing capabilities (Sign in with Apple). A free Personal Team can't sign them: set
+// DOLINGO_ENTITLEMENTS = (empty) in Secrets.xcconfig to run on your iPhone without them.
+DOLINGO_ENTITLEMENTS = Dolingo.entitlements

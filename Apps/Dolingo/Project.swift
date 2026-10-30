@@ -25,6 +25,9 @@ let project = Project(
             "MARKETING_VERSION": "1.0.0",
             "CURRENT_PROJECT_VERSION": "1",
             "DEVELOPMENT_TEAM": "",
+            // Dolingo.entitlements (Sign in with Apple) unless Secrets.xcconfig empties it, as a
+            // free Personal Team must: those teams can't sign Sign in with Apple.
+            "CODE_SIGN_ENTITLEMENTS": "$(DOLINGO_ENTITLEMENTS)",
             // Firebase's static libraries register their Objective-C categories only with -ObjC.
             "OTHER_LDFLAGS": "$(inherited) -ObjC",
         ],
@@ -66,7 +69,6 @@ let project = Project(
             ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            entitlements: .file(path: "Dolingo.entitlements"),
             dependencies: (kitModules + firebaseModules).map { .external(name: $0) }
         ),
         .target(
@@ -86,8 +88,13 @@ let project = Project(
             shared: true,
             buildAction: .buildAction(targets: [.target(appName)]),
             testAction: .targets(["\(appName)Tests"], configuration: .configuration(env)),
-            runAction: .runAction(configuration: .configuration(env)),
+            // Dev buys from Dolingo.storekit inside Xcode; Staging and Prod use the App Store sandbox.
+            runAction: .runAction(
+                configuration: .configuration(env),
+                options: env == "Dev" ? .options(storeKitConfigurationPath: "Dolingo.storekit") : .options()
+            ),
             archiveAction: .archiveAction(configuration: .configuration(env))
         )
-    }
+    },
+    additionalFiles: ["Dolingo.storekit"]
 )
