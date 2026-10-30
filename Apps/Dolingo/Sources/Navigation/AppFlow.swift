@@ -24,6 +24,9 @@ enum DolingoKeys {
     static let reminder = PreferenceKey("dolingo.reminder", default: ReminderSettings())
     /// The "Chat with Dolingo" conversation.
     static let tutorChat = PreferenceKey<[ChatMessage]>("dolingo.tutorChat", default: [])
+    /// "My Roleplay", and how many free creations are used.
+    static let myRoleplays = PreferenceKey<[CustomRoleplay]>("dolingo.myRoleplays", default: [])
+    static let roleplayCreations = PreferenceKey("dolingo.roleplayCreations", default: 0)
 }
 
 /// Which part of the app is showing: splash, onboarding, the sign-up steps, sign-in,

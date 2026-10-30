@@ -545,6 +545,142 @@
         }
       }
     },
+    "chats.create": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create Roleplay"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tạo roleplay"
+          }
+        }
+      }
+    },
+    "chats.create.trials %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have %lld trials to create your own roleplay. Upgrade to premium subscription to create unlimited roleplay."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn còn %lld lượt tự tạo roleplay. Nâng cấp lên Premium để tạo không giới hạn."
+          }
+        }
+      }
+    },
+    "chats.delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xóa"
+          }
+        }
+      }
+    },
+    "chats.delete.cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hủy"
+          }
+        }
+      }
+    },
+    "chats.delete.confirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes, Delete"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xóa"
+          }
+        }
+      }
+    },
+    "chats.delete.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This action cannot be undone."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể hoàn tác thao tác này."
+          }
+        }
+      }
+    },
+    "chats.delete.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this roleplay?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xóa roleplay này?"
+          }
+        }
+      }
+    },
+    "chats.edit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Roleplay"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sửa roleplay"
+          }
+        }
+      }
+    },
     "chats.empty.message": {
       "extractionState": "manual",
       "localizations": {
@@ -602,13 +738,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You'll be able to set the roles and the scene and let AI write a scenario for you."
+            "value": "Pick the roles and the scene, and AI writes the scenario and goals for you to practise."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bạn sẽ có thể đặt vai, tình huống và để AI tạo kịch bản cho riêng mình."
+            "value": "Chọn vai và tình huống, AI sẽ viết kịch bản và mục tiêu để bạn luyện nói."
           }
         }
       }
@@ -619,13 +755,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your own roleplays are coming soon"
+            "value": "No roleplays of your own yet"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tự tạo roleplay sắp ra mắt"
+            "value": "Bạn chưa tạo roleplay nào"
           }
         }
       }
@@ -728,6 +864,295 @@
           "stringUnit": {
             "state": "translated",
             "value": "Email hỗ trợ"
+          }
+        }
+      }
+    },
+    "createRoleplay.aiRole": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI's Role"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vai của AI"
+          }
+        }
+      }
+    },
+    "createRoleplay.aiRole.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. teacher, seller, etc."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ví dụ: giáo viên, người bán..."
+          }
+        }
+      }
+    },
+    "createRoleplay.editTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Roleplay"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sửa roleplay"
+          }
+        }
+      }
+    },
+    "createRoleplay.error.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI couldn't answer right now. Please try again in a moment."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI chưa trả lời được lúc này. Hãy thử lại sau ít phút."
+          }
+        }
+      }
+    },
+    "createRoleplay.error.refused": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI can't help with that. Try a different scene."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI không hỗ trợ nội dung này. Hãy thử một tình huống khác."
+          }
+        }
+      }
+    },
+    "createRoleplay.fill": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill in with AI"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để AI điền"
+          }
+        }
+      }
+    },
+    "createRoleplay.generating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generating scenario..."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tạo kịch bản..."
+          }
+        }
+      }
+    },
+    "createRoleplay.goals": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Generated Goals"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu do AI tạo"
+          }
+        }
+      }
+    },
+    "createRoleplay.myRole": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My Role"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vai của tôi"
+          }
+        }
+      }
+    },
+    "createRoleplay.myRole.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. student, buyer, etc."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ví dụ: học sinh, người mua..."
+          }
+        }
+      }
+    },
+    "createRoleplay.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thử lại"
+          }
+        }
+      }
+    },
+    "createRoleplay.save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu thay đổi"
+          }
+        }
+      }
+    },
+    "createRoleplay.scenario": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scenario"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tình huống"
+          }
+        }
+      }
+    },
+    "createRoleplay.scenario.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set scenarios, topics, & related matters here..."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mô tả tình huống, chủ đề và những điều liên quan..."
+          }
+        }
+      }
+    },
+    "createRoleplay.start": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Chatting"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bắt đầu trò chuyện"
+          }
+        }
+      }
+    },
+    "createRoleplay.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create Roleplay"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tạo roleplay"
+          }
+        }
+      }
+    },
+    "createRoleplay.titlePrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Roleplay Title"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm tên roleplay"
           }
         }
       }
@@ -4757,6 +5182,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Không có kết nối mạng. Tin nhắn đã được giữ lại, hãy gửi lại khi có mạng."
+          }
+        }
+      }
+    },
+    "tutor.error.offline.short": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No internet connection."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có kết nối mạng."
           }
         }
       }

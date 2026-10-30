@@ -37,6 +37,10 @@ final class AppContainer: ObservableObject, DependencyContainer {
     let activity: ActivityStore
     let reminder: StudyReminder
     let tutorChat: TutorChat
+    let roleplayAI: any RoleplayAI
+    let myRoleplays: MyRoleplays
+    /// The learner's name and level, for the AI.
+    let learner: @MainActor () async -> ChatLearner
     /// One navigation stack per tab.
     let tabs: TabRouter<AppTab, AppRoute>
     let deepLinks: DeepLinkHandler<DolingoDeepLinkParser>
@@ -58,7 +62,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         phrasebook: any PhrasebookRepository = BundledPhrasebookRepository(),
         reminders: any ReminderScheduler = UserNotificationReminderScheduler(),
         speech: (any SpeechRecognizer)? = nil,
-        chat: (any ChatService)? = nil
+        chat: (any ChatService)? = nil,
+        roleplayAI: (any RoleplayAI)? = nil
     ) {
         let logger = OSLogger(subsystem: "com.titanstudio.dolingo", minLevel: config.environment.defaultLogLevel)
         self.config = config
@@ -100,14 +105,16 @@ final class AppContainer: ObservableObject, DependencyContainer {
         activity.chaptersDone = { learning.chaptersDone }
         self.activity = activity
         reminder = StudyReminder(scheduler: reminders, preferences: preferences)
-        tutorChat = TutorChat(
-            service: chat ?? AppContainer.chatService(config: config),
-            preferences: preferences
-        ) {
+        let learner: @MainActor () async -> ChatLearner = {
             let user = await auth.currentUser()
             return ChatLearner(name: user?.displayName,
                                level: flow.surveyAnswers[DolingoSurvey.Step.level]?.optionIds.first)
         }
+        self.learner = learner
+        tutorChat = TutorChat(service: chat ?? AppContainer.chatService(config: config), preferences: preferences,
+                              learner: learner)
+        self.roleplayAI = roleplayAI ?? AppContainer.roleplayAI(config: config)
+        myRoleplays = MyRoleplays(preferences: preferences)
         let tabs = TabRouter<AppTab, AppRoute>(initial: .home)
         self.tabs = tabs
         deepLinks = DeepLinkHandler(parser: DolingoDeepLinkParser()) { link in
@@ -173,6 +180,25 @@ final class AppContainer: ObservableObject, DependencyContainer {
             ContactSupportScreen { [router] in router.pop() }
         case .tutorChat:
             TutorChatScreen(chat: tutorChat) { [router] in router.dismiss() }
+        case let .createRoleplay(editing):
+            CreateRoleplayScreen(
+                viewModel: CreateRoleplayViewModel(editing: editing, ai: roleplayAI, learner: learner),
+                onBack: { [router] in router.pop() }
+            ) { [myRoleplays, router] roleplay in
+                myRoleplays.save(roleplay)
+                if editing == nil, !router.path.isEmpty {
+                    // A new roleplay starts right away, in place of the form.
+                    router.path[router.path.count - 1] = .aiRoleplayChat(roleplay)
+                } else {
+                    router.pop()
+                }
+            }
+        case let .aiRoleplayChat(roleplay):
+            AIRoleplayChatScreen(
+                viewModel: AIRoleplayViewModel(roleplay: roleplay, language: AppConfig.learningLanguage, ai: roleplayAI,
+                                               speech: speech, activity: activity, learner: learner),
+                activity: activity
+            ) { [router] in router.pop() }
         case .savedPhrases:
             SavedPhrasesScreen(saved: savedPhrases) { [router] in router.pop() }
         case let .roleplayChat(roleplay):
@@ -192,6 +218,14 @@ final class AppContainer: ObservableObject, DependencyContainer {
             "I'm not connected yet: the Dolingo AI server isn't set up in this build. "
                 + "Once it is, I'll answer your questions about English here."
         }
+    }
+
+    /// The AI server's roleplay calls when it is configured, otherwise a canned pizza order.
+    static func roleplayAI(config: AppConfig) -> any RoleplayAI {
+        if let url = config.aiBaseURL, !config.aiClientKey.isEmpty {
+            return RemoteRoleplayAI(client: AIServerClient(baseURL: url, clientKey: config.aiClientKey))
+        }
+        return MockRoleplayAI(delay: .milliseconds(800))
     }
 
     /// Until the real remote config exists, the blocking screens can be tried from Xcode:
@@ -222,7 +256,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
             purchase: MockPurchaseService(),
             reminders: MockReminderScheduler(),
             speech: MockSpeechRecognizer(transcripts: ["hello"]),
-            chat: MockChatService()
+            chat: MockChatService(),
+            roleplayAI: MockRoleplayAI()
         )
     }
 

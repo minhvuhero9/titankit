@@ -51,7 +51,7 @@ struct MainTabView: View {
         case .home:
             HomeScreen(learning: container.learning, purchase: container.purchase, router: router)
         case .chats:
-            ChatsScreen(roleplays: container.roleplays, purchase: container.purchase, router: router)
+            ChatsScreen(roleplays: container.roleplays, purchase: container.purchase, mine: container.myRoleplays, router: router)
         case .speak:
             SpeakScreen(phrasebook: container.phrasebook, purchase: container.purchase, router: router)
         case .progress:

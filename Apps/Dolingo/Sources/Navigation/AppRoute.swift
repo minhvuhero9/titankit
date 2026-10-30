@@ -19,6 +19,10 @@ enum AppRoute: Routable {
     case savedPhrases
     /// Figma "chat with dolingo": free conversation with the AI tutor, full screen.
     case tutorChat
+    /// Figma "create roleplay"; with a roleplay, its "Edit Roleplay".
+    case createRoleplay(editing: CustomRoleplay?)
+    /// A roleplay from My Roleplay, played with the AI.
+    case aiRoleplayChat(CustomRoleplay)
     /// Settings sub-screens (Figma 94, 96, 97, 98, 107–109).
     case preferences, notifications, security, billing, help, faq, contactSupport
     /// "Change password" in Account & Security: the forgot password steps with the email filled in.

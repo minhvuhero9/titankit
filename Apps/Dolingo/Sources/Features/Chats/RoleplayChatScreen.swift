@@ -208,7 +208,7 @@ struct RoleplayChatScreen: View {
 
 /// Figma roleplay bubble: the partner's in grey on the left, the learner's in the brand colour
 /// on the right; the meaning shows after tapping translate; listen, translate and copy below.
-private struct RoleplayBubble: View {
+struct RoleplayBubble: View {
     let message: RoleplayViewModel.Message
     let languageCode: String
     let onListen: () -> Void
