@@ -1,5 +1,6 @@
 import Foundation
 import TitanAI
+import TitanAnalytics
 import TitanAuth
 import TitanPurchase
 import TitanPush
