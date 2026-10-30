@@ -11,6 +11,9 @@ FIREBASE_PROJECT_ID = ""
 DAILY_LIMIT = "100"
 # Set to "true" once every build signs in with Firebase, to stop accepting CLIENT_KEY.
 REQUIRE_SIGN_IN = "false"
+# Shown on /privacy and /terms, which the app and App Store Connect link to.
+LEGAL_COMPANY = "Titan Studio"
+SUPPORT_EMAIL = "support@example.com"
 
 # Daily counts per user. Create it once with `npx wrangler kv namespace create USAGE`
 # and paste the id it prints; without it there is no daily limit.

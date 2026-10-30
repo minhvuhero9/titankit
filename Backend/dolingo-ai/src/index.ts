@@ -1,5 +1,6 @@
 import { GoogleKeys, type KeySource, verifyFirebaseToken } from "./auth.ts";
 import { parseChatRequest } from "./chat.ts";
+import { legalLanguage, privacyPage, termsPage } from "./legal.ts";
 import { type AIResult, ClaudeReplySource, type ReplyErrorCode, type ReplyEvent, type ReplySource, type RoleplayAI } from "./claude.ts";
 import { parseDraftRequest, parseTurnRequest } from "./roleplay.ts";
 import { KVUsageStore, today, type UsageStore } from "./usage.ts";
@@ -17,6 +18,9 @@ export interface Env {
   DAILY_LIMIT?: string;
   /** KV namespace for the daily counts; without it there is no limit. */
   USAGE?: KVNamespace;
+  /** Shown on the Privacy Policy and Terms pages. */
+  LEGAL_COMPANY?: string;
+  SUPPORT_EMAIL?: string;
 }
 
 /** Where answers come from; tests pass fakes. */
@@ -36,6 +40,14 @@ export interface Services {
 export async function handle(request: Request, env: Env, services: Services): Promise<Response> {
   const url = new URL(request.url);
   if (url.pathname === "/health") return new Response("ok");
+  if (request.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms")) {
+    const lang = legalLanguage(url, request.headers.get("Accept-Language"));
+    const info = { company: env.LEGAL_COMPANY || "Titan Studio", email: env.SUPPORT_EMAIL || "support@example.com" };
+    const html = url.pathname === "/privacy" ? privacyPage(lang, info) : termsPage(lang, info);
+    return new Response(html, {
+      headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=3600" },
+    });
+  }
   const routes = ["/v1/chat", "/v1/roleplay/draft", "/v1/roleplay/turn"];
   if (!routes.includes(url.pathname)) return json({ error: "not found" }, 404);
   if (request.method !== "POST") return json({ error: "use POST" }, 405);
