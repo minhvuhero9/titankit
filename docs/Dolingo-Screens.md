@@ -69,7 +69,7 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 39 | share streak milestone | `36443:83530` | Đã có (`CelebrationView`, chia sẻ dạng chữ) |
 | 40 | user earned badge modal | `36443:83722` | Đã có (`CelebrationView`) |
 | 41 | share badge achievements | `36444:83903` | Đã có (`CelebrationView`, chia sẻ dạng chữ) |
-| 42 | learn a language - settings | `38443:36657` | Chưa làm |
+| 42 | learn a language - settings | `38443:36657` | Đã có (`PracticeSettingsSheet`, bỏ chất lượng video vì bài học chưa có video) |
 | 43 | home - learning language progress fit page | `38444:40404` | Đã có (`HomeScreen`) |
 | 44 | home - my courses | `38444:40811` | Bỏ: chỉ có một khoá tiếng Anh |
 | 45 | home - my courses (multiple courses) | `38444:41201` | Bỏ: chỉ có một khoá tiếng Anh |
@@ -88,7 +88,7 @@ Danh sách 112 màn hình của file Figma [DOLINGO-MUNIR-CLONE](https://www.fig
 | 53 | roleplay chat - speak with active hint | `38456:35755` | Đã có (`RoleplayChatScreen`) |
 | 54 | roleplay chat - chat sent | `38456:35923` | Đã có (`RoleplayChatScreen`) |
 | 55 | roleplay chat - tasks & goal | `38456:36146` | Đã có (`RoleplayChatScreen`) |
-| 56 | roleplay chat - settings | `38456:36481` | Chưa làm (cài đặt trong roleplay) |
+| 56 | roleplay chat - settings | `38456:36481` | Đã có (`PracticeSettingsSheet`) |
 | 57 | roleplay chat - continue chat & speak | `38456:36945` | Đã có (`RoleplayChatScreen`) |
 | 58 | roleplay chat - tasks & goal achieved | `38456:37136` | Đã có (`RoleplayChatScreen`) |
 | 59 | roleplay chat - tasks & goal achieved modal | `38456:37337` | Đã có (`RoleplayChatScreen`) |
