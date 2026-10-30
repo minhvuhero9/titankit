@@ -42,6 +42,22 @@ final class RemoteChatServiceTests: XCTestCase {
     }
 }
 
+final class AIServerClientTests: XCTestCase {
+    private struct Form: Codable, Sendable {
+        let title: String
+    }
+
+    func testPostsJSONWithTheKey() throws {
+        let client = AIServerClient(baseURL: URL(string: "https://ai.example.com")!, clientKey: "key")
+        let request = try client.makeRequest("v1/roleplay/draft", body: Form(title: "Pizza"))
+        XCTAssertEqual(request.url?.absoluteString, "https://ai.example.com/v1/roleplay/draft")
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Dolingo-Key"), "key")
+        let body = try JSONDecoder().decode(Form.self, from: try XCTUnwrap(request.httpBody))
+        XCTAssertEqual(body.title, "Pizza")
+    }
+}
+
 final class MockChatServiceTests: XCTestCase {
     func testStreamsTheAnswerWordByWord() async {
         let service = MockChatService(wordDelay: .zero) { "Hi \($0)!" }
