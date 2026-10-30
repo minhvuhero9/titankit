@@ -1,0 +1,43 @@
+# Records the reference images of the kit's snapshot tests on CI, so nobody needs a Mac for it.
+# Actions > Snapshots > Run workflow on a branch: rewrites __Snapshots__, checks the tests pass
+# with the new images, and commits them to that branch. Look at the images in the commit before
+# merging: they become what every later build is compared with.
+name: Snapshots
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  record:
+    name: Record snapshots
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record and verify
+        run: Tools/snapshots.sh record
+      - name: Commit the images
+        run: |
+          git add Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__
+          if git diff --cached --quiet; then
+            echo "::notice::The images did not change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "[Kit] Record component snapshots"
+          git push
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshots
+          path: |
+            Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__
+            build-snapshots.log

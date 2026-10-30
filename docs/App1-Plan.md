@@ -57,7 +57,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] Base theme sáng và tối.
 - [x] Component `TK*` cơ bản: Button, TextField, Card, Toast, Loading, EmptyState, ErrorView, AsyncContent. List row và Sheet làm khi màn hình cần.
 - [x] Trang Catalog (`TKCatalogView`) hiển thị mọi component với theme của app; Dolingo mở từ màn hình đầu.
-- [ ] Snapshot test cho từng component (hiện có unit test cho màu và trạng thái; snapshot cần thêm thư viện, để sau).
+- [x] Snapshot test component (`TitanSnapshotTests`, swift-snapshot-testing): nút, ô nhập, thẻ gói, tab, ô mã, dòng cài đặt, trạng thái rỗng, ở light và dark. Ảnh gốc ghi bằng workflow **Snapshots** trên CI. Còn: thêm dần component khác, Dynamic Type lớn.
 - [x] Lấy token Figma của App 1, tạo `DolingoTheme` (chép tay; `gen-tokens` để sau).
 
 **Xong khi:** Catalog chạy được với base theme và `App1Theme`; snapshot test xanh.
@@ -73,7 +73,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] TitanFeatures: Splash, Onboarding, Login, Settings, App Appearance, WebPage, Maintenance, Force update, Profile, Delete account.
 - [x] Rate app prompt (`RatePromptState`, `tkRequestReview`).
 - [x] Paywall (`PaywallScreen`, `PaywallViewModel`); Dolingo mở từ Cài đặt và `dolingo://premium`.
-- [ ] Mỗi màn hình có trang Catalog và snapshot test.
+- [ ] Mỗi màn hình có trang Catalog và snapshot test (đã có cho component; màn hình dựng sẵn chưa có).
 - [ ] Nối các màn hình vào Router của App 1 bằng `Config` và callback.
 
 **Xong khi:** đi hết luồng chính trên simulator với service Mock, ở cả `vi` và `en`, sáng và tối.
