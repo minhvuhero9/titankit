@@ -14,6 +14,7 @@ extension XCTestCase {
         padded: Bool = true,
         locale: Locale = Locale(identifier: "en"),
         dynamicTypeSize: DynamicTypeSize = .large,
+        theme: Theme = .base,
         @ViewBuilder content: () -> Content,
         file: StaticString = #filePath,
         testName: String = #function,
@@ -22,7 +23,8 @@ extension XCTestCase {
         TKFonts.registerBundledFonts()
         let view = content()
         for scheme in [ColorScheme.light, .dark] {
-            let page = SnapshotPage(scheme: scheme, locale: locale, dynamicTypeSize: dynamicTypeSize, padded: padded) { view }
+            let page = SnapshotPage(scheme: scheme, locale: locale, dynamicTypeSize: dynamicTypeSize, padded: padded,
+                                    theme: theme) { view }
                 .frame(width: width, height: height)
             let traits = UITraitCollection(traitsFrom: [
                 UITraitCollection(displayScale: 2),
@@ -53,11 +55,12 @@ private struct SnapshotPage<Content: View>: View {
     let locale: Locale
     let dynamicTypeSize: DynamicTypeSize
     let padded: Bool
+    let theme: Theme
     @ViewBuilder let content: Content
 
     var body: some View {
         ThemedPage(padded: padded) { content }
-            .titanTheme(.base)
+            .titanTheme(theme)
             .environment(\.colorScheme, scheme)
             .environment(\.locale, locale)
             .environment(\.dynamicTypeSize, dynamicTypeSize)

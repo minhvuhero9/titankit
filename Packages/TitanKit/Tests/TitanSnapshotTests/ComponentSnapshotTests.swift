@@ -84,9 +84,12 @@ final class ComponentSnapshotTests: XCTestCase {
         }
     }
 
-    /// Large accessibility text: labels wrap and controls grow instead of clipping.
+    /// Large accessibility text: labels wrap and controls grow instead of clipping. With a
+    /// bundled font family, as the apps use: the base theme's system font follows the device
+    /// setting rather than the view's `dynamicTypeSize`.
     func testLargeDynamicType() {
-        snapshot(width: 360, dynamicTypeSize: .accessibility3) {
+        let theme = Theme.base.merged(with: ThemePatch(fontFamily: TKFonts.urbanist))
+        snapshot(width: 360, dynamicTypeSize: .accessibility3, theme: theme) {
             VStack(spacing: Spacing.md) {
                 TKButton(Text(verbatim: "Continue with email")) {}
                 TKTextField(label: Text(verbatim: "Email"), text: .constant("minh@dolingo.app"), icon: Image(tk: TKIcon.message))
