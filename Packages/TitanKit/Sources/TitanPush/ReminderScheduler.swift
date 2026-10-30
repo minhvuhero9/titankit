@@ -54,6 +54,13 @@ public final class MockReminderScheduler: ReminderScheduler, @unchecked Sendable
         public let minute: Int
         public let title: String
         public let body: String
+
+        public init(hour: Int, minute: Int, title: String, body: String) {
+            self.hour = hour
+            self.minute = minute
+            self.title = title
+            self.body = body
+        }
     }
 
     private let lock = NSLock()
