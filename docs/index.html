@@ -970,7 +970,7 @@ enum ${n}Theme {
   }
 }`;
   document.getElementById("gOut").innerHTML=`<div class="gsteps">
-   <div class="gstep"><div class="dot">1</div><div style="min-width:0"><h3>Tạo app từ mẫu</h3><p>Một lệnh tạo đủ thư mục, cấu hình và màn hình mẫu.</p><pre class="term"><span class="p">$</span> tuist scaffold NewApp --name ${n} --bundle-id ${bid}
+   <div class="gstep"><div class="dot">1</div><div style="min-width:0"><h3>Tạo app từ mẫu</h3><p>Một lệnh tạo đủ thư mục, cấu hình và màn hình mẫu.</p><pre class="term"><span class="p">$</span> tuist scaffold NewApp --name ${n} --company ${co}
 <span class="c">✔ Đã tạo Apps/${n}</span></pre></div></div>
    <div class="gstep"><div class="dot">2</div><div style="min-width:0"><h3>Điền khóa bí mật</h3><p>Copy file mẫu rồi điền khóa Firebase${G.svc.Ads?", AdMob":""}. File này không được đưa lên git.</p><pre class="term"><span class="p">$</span> cp Apps/${n}/Config/Secrets.example.xcconfig Apps/${n}/Config/Secrets.xcconfig</pre></div></div>
    <div class="gstep"><div class="dot">3</div><div style="min-width:0"><h3>Sinh project và mở Xcode</h3><p>Tuist chỉ kéo vào các module bạn đã chọn: ${on.length?on.map(s=>"Titan"+s).join(", "):"không có dịch vụ nào"}.</p><pre class="term"><span class="p">$</span> tuist install && tuist generate ${n}
