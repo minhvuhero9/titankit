@@ -3,5 +3,6 @@
 
 APP_ENV = dev
 API_BASE_URL = https:/$()/api-dev.example.com
-BUNDLE_ID_SUFFIX = .dev
+// PERSONAL_BUNDLE_SUFFIX comes from Secrets.xcconfig, for signing with a free Personal Team.
+BUNDLE_ID_SUFFIX = .dev$(PERSONAL_BUNDLE_SUFFIX)
 APP_DISPLAY_NAME = Dolingo Dev
