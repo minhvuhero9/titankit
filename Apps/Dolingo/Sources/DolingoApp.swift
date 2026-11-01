@@ -29,6 +29,7 @@ struct DolingoApp: App {
             }
             // Reads what the user owns and listens for renewals and refunds.
             .task { container.purchase.start() }
+            .task { await container.trackPremium() }
         }
     }
 }

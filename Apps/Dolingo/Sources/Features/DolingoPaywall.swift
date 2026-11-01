@@ -1,4 +1,5 @@
 import SwiftUI
+import TitanAnalytics
 import TitanFeatures
 import TitanPurchase
 
@@ -6,6 +7,7 @@ import TitanPurchase
 /// Figma "upgrade plan subscription successful".
 struct DolingoPaywall: View {
     let purchase: any PurchaseService
+    var analytics: any AnalyticsService = NoOpAnalyticsService()
     let onDismiss: () -> Void
 
     @State private var isPremium = false
@@ -37,8 +39,12 @@ struct DolingoPaywall: View {
                 planTitle: Text(verbatim: "Dolingo Premium"),
                 benefits: Self.benefits,
                 onClose: onDismiss,
-                onPurchased: { withAnimation { isPremium = true } }
+                onPurchased: {
+                    analytics.track(.premiumUnlocked)
+                    withAnimation { isPremium = true }
+                }
             )
+            .onAppear { analytics.track(.paywallViewed(source: "app")) }
         }
     }
 }

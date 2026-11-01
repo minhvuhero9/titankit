@@ -1,5 +1,6 @@
 import Foundation
 import TitanAI
+import TitanAnalytics
 import TitanCore
 import TitanStorage
 
@@ -21,13 +22,16 @@ final class TutorChat: ObservableObject {
 
     private let service: any ChatService
     private let preferences: Preferences
+    private let analytics: any AnalyticsService
     private let learner: @MainActor () async -> ChatLearner
     private var replyTask: Task<Void, Never>?
 
     init(service: any ChatService, preferences: Preferences,
+         analytics: any AnalyticsService = NoOpAnalyticsService(),
          learner: @escaping @MainActor () async -> ChatLearner = { ChatLearner() }) {
         self.service = service
         self.preferences = preferences
+        self.analytics = analytics
         self.learner = learner
         var saved = preferences.value(DolingoKeys.tutorChat)
         // The app closed before the last question got its reply: offer it again.
@@ -52,6 +56,7 @@ final class TutorChat: ObservableObject {
         errorKey = nil
         messages.append(ChatMessage(role: .user, text: text))
         save()
+        analytics.track(.tutorMessageSent)
         isReplying = true
         replyTask = Task { [weak self] in await self?.streamReply() }
     }

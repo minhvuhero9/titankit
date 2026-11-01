@@ -127,7 +127,8 @@ final class AppContainer: ObservableObject, DependencyContainer {
         let launchChecker = LaunchChecker(config: remoteConfig, appVersion: config.appVersion, storeURL: AppConfig.appStoreURL)
         let socialSignIn: SocialSignIn? = usesFirebase ? AppContainer.socialSignIn : nil
         let flow = AppFlow(auth: auth, preferences: preferences, launchChecker: launchChecker,
-                           appVersion: config.appVersion, analytics: analytics, socialSignIn: socialSignIn)
+                           appVersion: config.appVersion, analytics: analytics, crash: crash,
+                           socialSignIn: socialSignIn)
         self.flow = flow
         let learning = LearningStore(repository: courses, preferences: preferences)
         self.learning = learning
@@ -135,7 +136,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
         self.roleplays = roleplays
         self.phrasebook = phrasebook
         savedPhrases = SavedPhrases(preferences: preferences)
-        let activity = ActivityStore(preferences: preferences)
+        let activity = ActivityStore(preferences: preferences, analytics: analytics)
         activity.chaptersDone = { learning.chaptersDone }
         self.activity = activity
         reminder = StudyReminder(scheduler: reminders, preferences: preferences)
@@ -153,7 +154,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
             }
         }
         tutorChat = TutorChat(service: chat ?? AppContainer.chatService(config: config, token: aiToken),
-                              preferences: preferences, learner: learner)
+                              preferences: preferences, analytics: analytics, learner: learner)
         self.roleplayAI = roleplayAI ?? AppContainer.roleplayAI(config: config, token: aiToken)
         myRoleplays = MyRoleplays(preferences: preferences)
         practice = PracticeSettingsStore(preferences: preferences)
@@ -166,6 +167,14 @@ final class AppContainer: ObservableObject, DependencyContainer {
             } else {
                 tabs.open(link, in: .home)
             }
+        }
+    }
+
+    /// Keeps the `is_premium` user property in step with what the user owns, so analytics can
+    /// split by plan. Runs for the app's lifetime (`DolingoApp`'s task).
+    func trackPremium() async {
+        for await entitlements in purchase.entitlementStream {
+            analytics.setUserProperty(entitlements.isPremium ? "true" : "false", for: "is_premium")
         }
     }
 
@@ -189,7 +198,7 @@ final class AppContainer: ObservableObject, DependencyContainer {
                 router.popToRoot()
             }
         case .paywall:
-            DolingoPaywall(purchase: purchase) { [router] in router.dismiss() }
+            DolingoPaywall(purchase: purchase, analytics: analytics) { [router] in router.dismiss() }
         case let .lesson(id):
             LessonScreen(learning: learning, speech: speech, activity: activity, practice: practice, lessonId: id) { [router] in router.dismiss() }
         case let .roleplay(roleplay):
@@ -336,7 +345,11 @@ final class AppContainer: ObservableObject, DependencyContainer {
     }
 
     /// Container for tests and previews: no network, no Keychain, nothing written to disk.
-    static func preview(environment: AppEnvironment = .dev) -> AppContainer {
+    static func preview(
+        environment: AppEnvironment = .dev,
+        analytics: (any AnalyticsService)? = nil,
+        purchase: any PurchaseService = MockPurchaseService()
+    ) -> AppContainer {
         AppContainer(
             // swiftlint:disable:next force_unwrapping
             config: AppConfig(environment: environment, apiBaseURL: URL(string: "https://api-dev.example.com")!),
@@ -348,10 +361,11 @@ final class AppContainer: ObservableObject, DependencyContainer {
             networkMonitor: NetworkMonitor(startMonitoring: false),
             languageDefaults: UserDefaults(suiteName: "preview") ?? .standard,
             remoteConfig: MockRemoteConfig(),
-            purchase: MockPurchaseService(),
+            purchase: purchase,
             reminders: MockReminderScheduler(),
             speech: MockSpeechRecognizer(transcripts: ["hello"]),
             chat: MockChatService(),
+            analytics: analytics,
             roleplayAI: MockRoleplayAI()
         )
     }

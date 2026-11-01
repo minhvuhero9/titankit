@@ -152,11 +152,11 @@ Dev và Staging gửi vào Firebase project riêng của môi trường đó nê
 
 ## 8. Checklist cho App 1
 
-- [ ] Liệt kê sự kiện chính của App 1 trong một file `App1Events.swift`
-- [ ] Composite gồm Firebase + Console (Debug)
-- [ ] Bật Crashlytics, thêm bước upload dSYM vào build (fastlane)
-- [ ] Đặt `setUserId` sau đăng nhập, xóa khi đăng xuất
-- [ ] Đặt thuộc tính `is_premium` theo `entitlementStream`
-- [ ] Tắt thu thập khi người dùng từ chối trong Settings
-- [ ] Kiểm tra không có dữ liệu cá nhân trong tham số sự kiện
-- [ ] Khai báo dữ liệu thu thập trong privacy manifest
+- [x] Sự kiện của Dolingo trong `Apps/Dolingo/Sources/Data/DolingoEvents.swift`: `lesson_completed` (accuracy %, minutes), `roleplay_completed` (tasks), `badge_earned`, `tutor_message_sent`, `premium_unlocked`; cùng các sự kiện của kit `login_completed`, `sign_up_completed`, `paywall_viewed`, `account_deleted`. Gửi từ `ActivityStore`, `TutorChat`, `DolingoPaywall`, `AppFlow`.
+- [x] Composite gồm Firebase + Console (Debug)
+- [x] Bật Crashlytics; lane `beta`/`release` tải dSYM lên Crashlytics khi có file `GoogleService-Info-<Env>.plist`
+- [x] `setUserId` (Analytics và Crashlytics) sau đăng nhập, xoá khi đăng xuất và khi xoá tài khoản
+- [x] Thuộc tính `is_premium` theo `entitlementStream` (`AppContainer.trackPremium`)
+- [x] Tắt thu thập khi người dùng từ chối trong Settings (`DataSharing`)
+- [x] Không có dữ liệu cá nhân trong tham số sự kiện: chỉ số đếm, id nội dung có sẵn, lựa chọn; tin nhắn gửi gia sư không được gửi kèm
+- [x] Khai báo dữ liệu thu thập trong privacy manifest (Product Interaction, Crash Data)
