@@ -91,6 +91,11 @@ enum ScreenshotMode {
     /// A learner one week in: three lessons done, a seven-day streak, some phrases saved.
     private static func seed(_ preferences: Preferences, language: String) {
         preferences.set(true, for: DolingoKeys.hasSeenOnboarding)
+        // The lesson waits on its phrase instead of listening once the tutor has read it, which
+        // happens after a time that varies and would make two pictures of it differ.
+        var practice = PracticeSettings()
+        practice.autoMicrophone = false
+        preferences.set(practice, for: DolingoKeys.practiceSettings)
         preferences.set(LearningProgress(completedLessons: [
             "en.basics.greetings", "en.basics.introductions", "en.basics.numbers",
         ]), for: DolingoKeys.learningProgress)
