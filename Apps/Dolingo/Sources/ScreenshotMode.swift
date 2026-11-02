@@ -2,6 +2,7 @@ import Foundation
 import TitanAI
 import TitanAnalytics
 import TitanAuth
+import TitanDesignSystem
 import TitanPurchase
 import TitanPush
 import TitanRemoteConfig
@@ -11,7 +12,7 @@ import TitanStorage
 /// The App Store screenshots: launched by `DolingoUITests` with `-screenshots <screen>
 /// -screenshotLanguage vi`, the app starts signed in as a learner a few lessons in, on mock
 /// services (no network, no permission prompts), and opens on that screen. Nothing it writes
-/// touches the real app's data.
+/// touches the real app's data. `-freshStart` is the same mock app on its very first launch.
 enum ScreenshotMode {
     enum Screen: String, CaseIterable, Sendable {
         case home, lesson, chats, tutor, speak, progress, paywall
@@ -34,6 +35,26 @@ enum ScreenshotMode {
 
     static let suiteName = "com.titanstudio.dolingo.screenshots"
 
+    /// `-freshStart`: a first launch on mock services, for `MainFlowUITests`, which goes from the
+    /// welcome screen through sign-in (demo@titan.app, 123456) to Home.
+    static func isFreshStart(in arguments: [String]) -> Bool {
+        arguments.contains("-freshStart")
+    }
+
+    /// `-appearance light|dark` forces the look under UI tests; nil keeps the user's choice.
+    static func appearance(in arguments: [String]) -> TKAppearance? {
+        value(after: "-appearance", in: arguments).flatMap(TKAppearance.init)
+    }
+
+    /// Nobody signed in, the welcome screen not seen yet, nothing learnt.
+    @MainActor
+    static func freshContainer(language: String) -> AppContainer {
+        let defaults = UserDefaults(suiteName: suiteName) ?? .standard
+        defaults.removePersistentDomain(forName: suiteName)
+        defaults.set(language, forKey: "titan.language")
+        return mockContainer(preferences: Preferences(defaults: defaults), defaults: defaults, auth: MockAuthService())
+    }
+
     @MainActor
     static func container(for screen: Screen, language: String) -> AppContainer {
         let defaults = UserDefaults(suiteName: suiteName) ?? .standard
@@ -43,11 +64,18 @@ enum ScreenshotMode {
         seed(preferences, language: language)
 
         let learner = AuthUser(id: "screenshots", email: "minh@dolingo.app", displayName: "Minh", provider: .email)
-        let container = AppContainer(
+        let container = mockContainer(preferences: preferences, defaults: defaults, auth: MockAuthService(signedIn: learner))
+        open(screen, in: container)
+        return container
+    }
+
+    @MainActor
+    private static func mockContainer(preferences: Preferences, defaults: UserDefaults, auth: MockAuthService) -> AppContainer {
+        AppContainer(
             config: .current,
             preferences: preferences,
             languageDefaults: defaults,
-            auth: MockAuthService(signedIn: learner),
+            auth: auth,
             remoteConfig: MockRemoteConfig(),
             purchase: MockPurchaseService(products: sampleProducts),
             reminders: MockReminderScheduler(),
@@ -56,8 +84,6 @@ enum ScreenshotMode {
             analytics: NoOpAnalyticsService(),
             roleplayAI: MockRoleplayAI()
         )
-        open(screen, in: container)
-        return container
     }
 
     @MainActor
@@ -152,6 +178,9 @@ extension AppContainer {
     static func launch(arguments: [String] = ProcessInfo.processInfo.arguments) -> AppContainer {
         if let screen = ScreenshotMode.screen(in: arguments) {
             return ScreenshotMode.container(for: screen, language: ScreenshotMode.language(in: arguments))
+        }
+        if ScreenshotMode.isFreshStart(in: arguments) {
+            return ScreenshotMode.freshContainer(language: ScreenshotMode.language(in: arguments))
         }
         return AppContainer(config: .current)
     }

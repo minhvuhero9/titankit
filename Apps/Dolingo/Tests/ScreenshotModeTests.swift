@@ -1,4 +1,5 @@
 import XCTest
+import TitanAuth
 import TitanCore
 @testable import Dolingo
 
@@ -30,5 +31,23 @@ final class ScreenshotModeTests: XCTestCase {
         // Written to its own suite, so the app's real data is never touched.
         let suite = UserDefaults(suiteName: ScreenshotMode.suiteName)
         XCTAssertNotNil(suite?.object(forKey: DolingoKeys.activity.name))
+    }
+
+    func testFreshStartOpensOnTheWelcomeScreenSignedOut() async {
+        XCTAssertTrue(ScreenshotMode.isFreshStart(in: ["Dolingo", "-freshStart"]))
+        XCTAssertFalse(ScreenshotMode.isFreshStart(in: ["Dolingo"]))
+        XCTAssertEqual(ScreenshotMode.appearance(in: ["-appearance", "dark"]), .dark)
+        XCTAssertNil(ScreenshotMode.appearance(in: ["-appearance", "sepia"]))
+
+        let container = AppContainer.launch(arguments: ["Dolingo", "-freshStart", "-screenshotLanguage", "en"])
+        XCTAssertEqual(container.localization.currentLanguage.code, "en")
+        let user = await container.auth.currentUser()
+        XCTAssertNil(user)
+        await container.flow.prepareLaunch()
+        container.flow.finishSplash()
+        XCTAssertEqual(container.flow.stage, .onboarding)
+        // The account MainFlowUITests signs in with.
+        let signedIn = try? await container.auth.signIn(.email(email: "demo@titan.app", password: "123456"))
+        XCTAssertNotNil(signedIn)
     }
 }

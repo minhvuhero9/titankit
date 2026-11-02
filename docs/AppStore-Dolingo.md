@@ -44,6 +44,8 @@ Bảy ảnh theo thứ tự, mỗi ngôn ngữ `vi` và `en`: Home, bài học, 
 
 Ảnh lấy từ chế độ chụp ảnh của app (`Apps/Dolingo/Sources/ScreenshotMode.swift`): mở app với `-screenshots <màn> -screenshotLanguage <vi|en>`, app đăng nhập sẵn tài khoản mẫu "Minh" đã học 3 bài, chuỗi 7 ngày, 4 huy hiệu, một đoạn chat với gia sư; dịch vụ đều là bản giả lập nên không cần mạng và không hỏi quyền. Dữ liệu mẫu nằm riêng, không đụng dữ liệu thật trên máy. Muốn đổi nội dung ảnh thì sửa hàm `seed` ở file đó; thêm màn thì thêm vào `ScreenshotMode.Screen` và `AppStoreScreenshots.screens`.
 
+Cùng workflow chạy `MainFlowUITests`: mở app với `-freshStart` (lần mở đầu tiên, chưa đăng nhập, dịch vụ giả lập) và `-appearance light|dark`, bấm "Tôi đã có tài khoản", đăng nhập `demo@titan.app` / `123456`, chờ Home. Ảnh từng bước có tên `flow-<ngôn ngữ>-<sáng/tối>-<bước>.png` trong cùng artifact.
+
 ## Nhãn App Privacy (khớp `Apps/Dolingo/Resources/PrivacyInfo.xcprivacy`)
 
 "Do you or your third-party partners collect data?" → **Yes**. Không dùng để theo dõi (tracking).

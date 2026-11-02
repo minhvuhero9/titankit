@@ -74,7 +74,7 @@ Cần trả lời trước hoặc trong giai đoạn 0:
 - [x] Rate app prompt (`RatePromptState`, `tkRequestReview`).
 - [x] Paywall (`PaywallScreen`, `PaywallViewModel`); Dolingo mở từ Cài đặt và `dolingo://premium`.
 - [x] Snapshot test cho màn dựng sẵn (`ScreenSnapshotTests`): onboarding, đăng nhập, đăng ký, quên mật khẩu, thành công, chào mừng Premium, cài đặt, xoá tài khoản, bảo trì, bắt buộc cập nhật; tiếng Việt, 390 × 844, sáng và tối. Paywall chưa có vì tải sản phẩm trước khi vẽ.
-- [ ] Nối các màn hình vào Router của App 1 bằng `Config` và callback.
+- [x] Nối các màn hình vào Router của App 1 bằng `Config` và callback (`AppFlow`, `RootView`, `AppContainer.makeView`). UI test `MainFlowUITests` đi luồng chào mừng → đăng nhập → Home với Mock, ở `vi` và `en`, sáng và tối; chạy trong workflow **Screenshots**, ảnh từng bước nằm trong artifact.
 
 **Xong khi:** đi hết luồng chính trên simulator với service Mock, ở cả `vi` và `en`, sáng và tối.
 
