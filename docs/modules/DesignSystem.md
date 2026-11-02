@@ -343,5 +343,6 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - [x] Checkbox, Radio, Switch, Chips, Tag, Dropdown theo Figma
 - [ ] Số điện thoại, ô mã PIN: làm cùng màn hình đăng nhập ở giai đoạn 3
 - [x] Kiểm tra màn hình ở dark mode và Dynamic Type lớn: snapshot test của kit (`TitanSnapshotTests`) và của Dolingo (`Apps/Dolingo/SnapshotTests`: Home, Chats, Speak, Tiến độ, Bài học, Gia sư, Paywall ở sáng, tối; Home, Bài học, Paywall ở `.accessibility2`). `Tools/snapshots.sh` chạy cả hai.
+- Quy tắc cỡ chữ lớn rút ra từ ảnh chụp: chữ người dùng cần đọc (câu luyện trong bài học, nút) không bao giờ bị cắt, được xuống dòng và phần khác nhường chỗ (`fixedSize` theo chiều dọc, `TKButton` tối đa 2 dòng); thanh tab và số trong vòng tiến độ ngừng to ở `.xLarge` như thanh tab của iOS, nhấn giữ tab hiện nhãn phóng to; tiêu đề thanh trên thu nhỏ tới 75 % trước khi cắt. Còn: ở `.accessibility2`, chữ "Chạm để nói" dưới micro trong bài học bị đẩy sát mép dưới vì màn không cuộn.
 - [ ] Không dùng mã màu hay cỡ chữ trực tiếp trong màn hình của app
 - [ ] Mở Catalog với theme App 1 để duyệt cùng designer
