@@ -21,5 +21,7 @@ let package = Package(
         .package(path: "../Packages/TitanKit"),
         // Firebase behind the kit's protocols; only AppContainer imports it.
         .package(path: "../Adapters/TitanFirebase"),
+        // Apps' snapshot tests only; the same version as the kit's.
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.17.6"),
     ]
 )

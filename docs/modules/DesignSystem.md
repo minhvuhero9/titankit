@@ -342,6 +342,6 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - [x] Nút và ô nhập theo trang Button, Input Form của Figma
 - [x] Checkbox, Radio, Switch, Chips, Tag, Dropdown theo Figma
 - [ ] Số điện thoại, ô mã PIN: làm cùng màn hình đăng nhập ở giai đoạn 3
-- [ ] Kiểm tra mọi màn hình ở dark mode và Dynamic Type lớn
+- [x] Kiểm tra màn hình ở dark mode và Dynamic Type lớn: snapshot test của kit (`TitanSnapshotTests`) và của Dolingo (`Apps/Dolingo/SnapshotTests`: Home, Chats, Speak, Tiến độ, Bài học, Gia sư, Paywall ở sáng, tối; Home, Bài học, Paywall ở `.accessibility2`). `Tools/snapshots.sh` chạy cả hai.
 - [ ] Không dùng mã màu hay cỡ chữ trực tiếp trong màn hình của app
 - [ ] Mở Catalog với theme App 1 để duyệt cùng designer
