@@ -31,14 +31,21 @@ app() {
   return "$status"
 }
 
+# Recording reports each image it writes as a failure; that run's result is ignored.
+record() {
+  case "${1:-}" in
+    record) export TEST_RUNNER_SNAPSHOT_RECORD=1; "$2" || true; unset TEST_RUNNER_SNAPSHOT_RECORD ;;
+    missing) "$2" || true ;;
+  esac
+}
+
+# The kit first: once Tuist has generated the workspace, Packages/TitanKit holds a generated
+# .xcodeproj and xcodebuild no longer sees the package's TitanKit-Package scheme.
+record "${1:-}" kit
+kit && kit_status=0 || kit_status=$?
+
 tuist install
 tuist generate --no-open
-
-# Recording reports each image it writes as a failure; that run's result is ignored.
-case "${1:-}" in
-  record) export TEST_RUNNER_SNAPSHOT_RECORD=1; kit || true; app || true; unset TEST_RUNNER_SNAPSHOT_RECORD ;;
-  missing) kit || true; app || true ;;
-esac
-kit && kit_status=0 || kit_status=$?
+record "${1:-}" app
 app && app_status=0 || app_status=$?
 exit $((kit_status + app_status))
