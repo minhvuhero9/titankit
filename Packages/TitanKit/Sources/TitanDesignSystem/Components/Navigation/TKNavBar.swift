@@ -56,6 +56,8 @@ public struct TKNavBar<Trailing: View>: View {
                     .tkTextStyle(.title2)
                     .foregroundStyle(theme.colors.textPrimary.color)
                     .lineLimit(1)
+                    // "Trò chuyện với Dolingo" fits instead of ending in "…".
+                    .minimumScaleFactor(0.75)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityAddTraits(.isHeader)
             case let .progress(value)?:

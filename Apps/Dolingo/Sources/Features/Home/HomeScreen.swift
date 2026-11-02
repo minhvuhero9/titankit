@@ -109,7 +109,7 @@ private struct ChapterBanner: View {
                     .tkTextStyle(.headline)
                 title
                     .tkTextStyle(.caption)
-                    .lineLimit(1)
+                    .lineLimit(2)
             }
             .foregroundStyle(theme.colors.actionOnPrimary.color)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,9 +117,12 @@ private struct ChapterBanner: View {
                 Circle().fill(theme.colors.surfaceBackground.color)
                 if let progress {
                     TKProgressRing(progress, size: 52) {
+                        // Inside a fixed 52 pt ring: stops growing past xLarge, then shrinks.
                         Text(progress, format: .percent.precision(.fractionLength(0)))
                             .tkTextStyle(.caption)
                             .foregroundStyle(theme.colors.textPrimary.color)
+                            .dynamicTypeSize(...DynamicTypeSize.xLarge)
+                            .minimumScaleFactor(0.7)
                     }
                 } else {
                     Image(tk: .lock)

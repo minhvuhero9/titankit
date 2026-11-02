@@ -66,8 +66,15 @@ public struct TKTabBar<Tab: Hashable>: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(isSelected ? .isSelected : [])
+                .accessibilityShowsLargeContentViewer {
+                    Image(tk: item.icon, style: .bold)
+                    item.title
+                }
             }
         }
+        // Like the system tab bar: five labels can't grow with the text size, so they stop at
+        // xLarge and a long press shows the large content viewer instead.
+        .dynamicTypeSize(...DynamicTypeSize.xLarge)
         .padding(.horizontal, Spacing.lg)
         .padding(.top, Spacing.xs)
         .padding(.bottom, Spacing.xxs)

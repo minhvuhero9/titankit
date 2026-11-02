@@ -125,6 +125,9 @@ private struct LessonPlayer: View {
                     }
                 }
                 .multilineTextAlignment(.center)
+                // The phrase to say is never cut short: at large text sizes the rest of the
+                // screen gives up room rather than this card.
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(Spacing.lg)
                 .frame(maxWidth: .infinity)
                 .background(theme.colors.surfaceCard.color, in: RoundedRectangle(cornerRadius: 16, style: .continuous))

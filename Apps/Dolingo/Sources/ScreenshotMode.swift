@@ -49,7 +49,7 @@ enum ScreenshotMode {
             languageDefaults: defaults,
             auth: MockAuthService(signedIn: learner),
             remoteConfig: MockRemoteConfig(),
-            purchase: MockPurchaseService(),
+            purchase: MockPurchaseService(products: sampleProducts),
             reminders: MockReminderScheduler(),
             speech: MockSpeechRecognizer(transcripts: ["Nice to meet you"]),
             chat: MockChatService(),
@@ -74,6 +74,18 @@ enum ScreenshotMode {
         case .progress: tabs.selected = .progress
         case .paywall: tabs.router(for: .home).present(.paywall)
         }
+    }
+
+    /// Dolingo's two plans under their real ids, priced as in Dolingo.storekit, so the paywall
+    /// finds them (the kit's sample products use other ids).
+    static var sampleProducts: [StoreProduct] {
+        let ids = AppConfig.purchase.productIds
+        return [
+            StoreProduct(id: ids[0], displayName: "Premium theo tháng", displayPrice: "99.000 ₫", price: 99_000,
+                         kind: .autoRenewable, subscriptionPeriod: .month),
+            StoreProduct(id: ids[1], displayName: "Premium theo năm", displayPrice: "599.000 ₫", price: 599_000,
+                         kind: .autoRenewable, subscriptionPeriod: .year, freeTrialDays: 7),
+        ]
     }
 
     /// A learner one week in: three lessons done, a seven-day streak, some phrases saved.
