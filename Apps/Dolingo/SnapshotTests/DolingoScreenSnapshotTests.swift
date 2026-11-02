@@ -7,8 +7,9 @@ import XCTest
 @testable import Dolingo
 
 /// Dolingo's own screens with the App Store sample learner (`ScreenshotMode`): Vietnamese,
-/// 390 × 844, light and dark, and the busiest ones again at a large text size. Compared with
-/// the images in __Snapshots__ on every PR; Tools/snapshots.sh records them.
+/// 390 × 844 in a window of the test host, light and dark, and the busiest ones again at a
+/// large text size. Compared with the images in __Snapshots__ on every PR; Tools/snapshots.sh
+/// records them.
 @MainActor
 final class DolingoScreenSnapshotTests: XCTestCase {
     func testHome() async { await snapshot(.home) }
@@ -34,23 +35,34 @@ final class DolingoScreenSnapshotTests: XCTestCase {
         for scheme in schemes {
             let container = ScreenshotMode.container(for: screen, language: "vi")
             await container.learning.load()
-            let traits = UITraitCollection(traitsFrom: [
-                UITraitCollection(displayScale: 2),
-                UITraitCollection(userInterfaceStyle: scheme == .dark ? .dark : .light),
-            ])
-            // The screens load their content in `.task` (roleplays, phrases, products): give it
-            // a moment before taking the picture.
-            let strategy: Snapshotting<SnapshotScreen, UIImage> = .wait(
-                for: 1,
-                on: .image(precision: 0.99, perceptualPrecision: 0.98,
-                           layout: .fixed(width: 390, height: 844), traits: traits)
-            )
-            let view = SnapshotScreen(container: container, screen: screen, scheme: scheme,
-                                      dynamicTypeSize: dynamicTypeSize)
+            let image = await render(SnapshotScreen(container: container, screen: screen, scheme: scheme,
+                                                    dynamicTypeSize: dynamicTypeSize), scheme: scheme)
             withSnapshotTesting(record: Self.record) {
-                assertSnapshot(of: view, as: strategy, named: scheme == .dark ? "dark" : "light",
+                assertSnapshot(of: image, as: .image(precision: 0.99, perceptualPrecision: 0.98),
+                               named: scheme == .dark ? "dark" : "light",
                                file: file, testName: testName, line: line)
             }
+        }
+    }
+
+    /// Shows `view` in a window of the running app, lets its `.task`s load (roleplays, phrases,
+    /// products), then draws the window. Drawing the window itself, rather than handing the view
+    /// to the snapshot library, keeps what the tasks loaded on screen.
+    private func render(_ view: SnapshotScreen, scheme: ColorScheme) async -> UIImage {
+        let bounds = CGRect(x: 0, y: 0, width: 390, height: 844)
+        let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+        let window = scene.map(UIWindow.init(windowScene:)) ?? UIWindow(frame: bounds)
+        window.frame = bounds
+        window.overrideUserInterfaceStyle = scheme == .dark ? .dark : .light
+        window.rootViewController = UIHostingController(rootView: view)
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true }
+        try? await Task.sleep(for: .seconds(1.5))
+
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 2
+        return UIGraphicsImageRenderer(bounds: bounds, format: format).image { _ in
+            window.drawHierarchy(in: bounds, afterScreenUpdates: true)
         }
     }
 
