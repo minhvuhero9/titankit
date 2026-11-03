@@ -328,7 +328,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - Unit test gradient: theme base bắt đầu từ màu thương hiệu, patch thay được gradient.
 - Unit test `PaletteGenerator`: độ tương phản chữ trên nền đạt WCAG AA.
 - Snapshot test mỗi component ở light, dark và Dynamic Type lớn (`.accessibility3`).
-- Đã làm: `Packages/TitanKit/Tests/TitanSnapshotTests` (swift-snapshot-testing 1.17.6) chụp nút, ô nhập, thẻ gói, tab, ô mã, dòng cài đặt, trạng thái rỗng ở light và dark, rộng 360 pt, scale 2, theme base. Ảnh gốc ở `__Snapshots__`; CI (job TitanKit tests) so sánh với độ khớp 99 % (cảm nhận 98 %). Chưa có Dynamic Type lớn.
+- Đã làm: `Packages/TitanKit/Tests/TitanSnapshotTests` (swift-snapshot-testing 1.17.6) chụp nút, ô nhập, thẻ gói, tab, ô mã, dòng cài đặt, trạng thái rỗng ở light và dark, rộng 360 pt, scale 2, theme base, và một ảnh cỡ chữ `.accessibility3`. `ScreenSnapshotTests` chụp các màn dựng sẵn của TitanFeatures ở 390 × 844, tiếng Việt. Ảnh gốc ở `__Snapshots__`; CI (job TitanKit tests) so sánh với độ khớp 99 % (cảm nhận 98 %). Helper dùng chung ở `SnapshotSupport.swift`. Ảnh cỡ chữ lớn chụp với font Urbanist (như Dolingo), vì font hệ thống của theme base phóng theo cài đặt của máy chứ không theo `dynamicTypeSize` của view; ảnh đó cho thấy `TKButton` xuống tối đa 2 dòng và tự cao lên, còn ô nhập giữ một dòng.
 - Ghi ảnh gốc: PR có sửa design system hay snapshot test thì workflow **Snapshots** tự chụp các ảnh còn thiếu, kiểm tra test qua, rồi commit vào branch của PR; ảnh đã có mà khác đi vẫn làm job TitanKit tests đỏ. Đổi giao diện có chủ ý: Actions → **Snapshots** → Run workflow trên branch đó để chụp lại toàn bộ (chỉ chạy được khi workflow đã có trên `main`). Mở commit ảnh xem trước khi merge. Trên máy Mac: `Tools/snapshots.sh record`.
 - `Theme.preview` dùng cho SwiftUI Preview; Catalog hiển thị mọi component với theme của từng app.
 
@@ -342,6 +342,7 @@ Khi Figma đổi màu: sửa số hex trong file theme của app, không đụng
 - [x] Nút và ô nhập theo trang Button, Input Form của Figma
 - [x] Checkbox, Radio, Switch, Chips, Tag, Dropdown theo Figma
 - [ ] Số điện thoại, ô mã PIN: làm cùng màn hình đăng nhập ở giai đoạn 3
-- [ ] Kiểm tra mọi màn hình ở dark mode và Dynamic Type lớn
+- [x] Kiểm tra màn hình ở dark mode và Dynamic Type lớn: snapshot test của kit (`TitanSnapshotTests`) và của Dolingo (`Apps/Dolingo/SnapshotTests`: Home, Chats, Speak, Tiến độ, Bài học, Gia sư, Paywall ở sáng, tối; Home, Bài học, Paywall ở `.accessibility2`). `Tools/snapshots.sh` chạy cả hai.
+- Quy tắc cỡ chữ lớn rút ra từ ảnh chụp: chữ người dùng cần đọc (câu luyện trong bài học, nút) không bao giờ bị cắt, được xuống dòng và phần khác nhường chỗ (`fixedSize` theo chiều dọc, `TKButton` tối đa 2 dòng); thanh tab và số trong vòng tiến độ ngừng to ở `.xLarge` như thanh tab của iOS, nhấn giữ tab hiện nhãn phóng to; tiêu đề thanh trên thu nhỏ tới 75 % trước khi cắt. Còn: ở `.accessibility2`, chữ "Chạm để nói" dưới micro trong bài học bị đẩy sát mép dưới vì màn không cuộn.
 - [ ] Không dùng mã màu hay cỡ chữ trực tiếp trong màn hình của app
 - [ ] Mở Catalog với theme App 1 để duyệt cùng designer

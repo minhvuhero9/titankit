@@ -2,6 +2,7 @@ import Foundation
 import TitanAI
 import TitanAnalytics
 import TitanAuth
+import TitanDesignSystem
 import TitanPurchase
 import TitanPush
 import TitanRemoteConfig
@@ -11,7 +12,7 @@ import TitanStorage
 /// The App Store screenshots: launched by `DolingoUITests` with `-screenshots <screen>
 /// -screenshotLanguage vi`, the app starts signed in as a learner a few lessons in, on mock
 /// services (no network, no permission prompts), and opens on that screen. Nothing it writes
-/// touches the real app's data.
+/// touches the real app's data. `-freshStart` is the same mock app on its very first launch.
 enum ScreenshotMode {
     enum Screen: String, CaseIterable, Sendable {
         case home, lesson, chats, tutor, speak, progress, paywall
@@ -34,6 +35,26 @@ enum ScreenshotMode {
 
     static let suiteName = "com.titanstudio.dolingo.screenshots"
 
+    /// `-freshStart`: a first launch on mock services, for `MainFlowUITests`, which goes from the
+    /// welcome screen through sign-in (demo@titan.app, 123456) to Home.
+    static func isFreshStart(in arguments: [String]) -> Bool {
+        arguments.contains("-freshStart")
+    }
+
+    /// `-appearance light|dark` forces the look under UI tests; nil keeps the user's choice.
+    static func appearance(in arguments: [String]) -> TKAppearance? {
+        value(after: "-appearance", in: arguments).flatMap(TKAppearance.init)
+    }
+
+    /// Nobody signed in, the welcome screen not seen yet, nothing learnt.
+    @MainActor
+    static func freshContainer(language: String) -> AppContainer {
+        let defaults = UserDefaults(suiteName: suiteName) ?? .standard
+        defaults.removePersistentDomain(forName: suiteName)
+        defaults.set(language, forKey: "titan.language")
+        return mockContainer(preferences: Preferences(defaults: defaults), defaults: defaults, auth: MockAuthService())
+    }
+
     @MainActor
     static func container(for screen: Screen, language: String) -> AppContainer {
         let defaults = UserDefaults(suiteName: suiteName) ?? .standard
@@ -43,21 +64,26 @@ enum ScreenshotMode {
         seed(preferences, language: language)
 
         let learner = AuthUser(id: "screenshots", email: "minh@dolingo.app", displayName: "Minh", provider: .email)
-        let container = AppContainer(
+        let container = mockContainer(preferences: preferences, defaults: defaults, auth: MockAuthService(signedIn: learner))
+        open(screen, in: container)
+        return container
+    }
+
+    @MainActor
+    private static func mockContainer(preferences: Preferences, defaults: UserDefaults, auth: MockAuthService) -> AppContainer {
+        AppContainer(
             config: .current,
             preferences: preferences,
             languageDefaults: defaults,
-            auth: MockAuthService(signedIn: learner),
+            auth: auth,
             remoteConfig: MockRemoteConfig(),
-            purchase: MockPurchaseService(),
+            purchase: MockPurchaseService(products: sampleProducts),
             reminders: MockReminderScheduler(),
             speech: MockSpeechRecognizer(transcripts: ["Nice to meet you"]),
             chat: MockChatService(),
             analytics: NoOpAnalyticsService(),
             roleplayAI: MockRoleplayAI()
         )
-        open(screen, in: container)
-        return container
     }
 
     @MainActor
@@ -76,9 +102,26 @@ enum ScreenshotMode {
         }
     }
 
+    /// Dolingo's two plans under their real ids, priced as in Dolingo.storekit, so the paywall
+    /// finds them (the kit's sample products use other ids).
+    static var sampleProducts: [StoreProduct] {
+        let ids = AppConfig.purchase.productIds
+        return [
+            StoreProduct(id: ids[0], displayName: "Premium theo tháng", displayPrice: "99.000 ₫", price: 99_000,
+                         kind: .autoRenewable, subscriptionPeriod: .month),
+            StoreProduct(id: ids[1], displayName: "Premium theo năm", displayPrice: "599.000 ₫", price: 599_000,
+                         kind: .autoRenewable, subscriptionPeriod: .year, freeTrialDays: 7),
+        ]
+    }
+
     /// A learner one week in: three lessons done, a seven-day streak, some phrases saved.
     private static func seed(_ preferences: Preferences, language: String) {
         preferences.set(true, for: DolingoKeys.hasSeenOnboarding)
+        // The lesson waits on its phrase instead of listening once the tutor has read it, which
+        // happens after a time that varies and would make two pictures of it differ.
+        var practice = PracticeSettings()
+        practice.autoMicrophone = false
+        preferences.set(practice, for: DolingoKeys.practiceSettings)
         preferences.set(LearningProgress(completedLessons: [
             "en.basics.greetings", "en.basics.introductions", "en.basics.numbers",
         ]), for: DolingoKeys.learningProgress)
@@ -135,6 +178,9 @@ extension AppContainer {
     static func launch(arguments: [String] = ProcessInfo.processInfo.arguments) -> AppContainer {
         if let screen = ScreenshotMode.screen(in: arguments) {
             return ScreenshotMode.container(for: screen, language: ScreenshotMode.language(in: arguments))
+        }
+        if ScreenshotMode.isFreshStart(in: arguments) {
+            return ScreenshotMode.freshContainer(language: ScreenshotMode.language(in: arguments))
         }
         return AppContainer(config: .current)
     }

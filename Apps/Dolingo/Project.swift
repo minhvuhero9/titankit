@@ -91,6 +91,18 @@ let project = Project(
             sources: ["Tests/**"],
             dependencies: [.target(name: appName)] + kitModules.map { .external(name: $0) }
         ),
+        // Pictures of Dolingo's own screens, compared on every PR (Tools/snapshots.sh records them).
+        .target(
+            name: "\(appName)SnapshotTests",
+            destinations: [.iPhone],
+            product: .unitTests,
+            bundleId: "\(bundlePrefix).dolingo.snapshottests",
+            deploymentTargets: .iOS("16.0"),
+            infoPlist: .default,
+            sources: ["SnapshotTests/**/*.swift"],
+            dependencies: [.target(name: appName), .external(name: "SnapshotTesting")]
+                + kitModules.map { .external(name: $0) }
+        ),
         // App Store screenshots (Tools/screenshots.sh): launches the app in ScreenshotMode.
         .target(
             name: "\(appName)UITests",
@@ -108,7 +120,7 @@ let project = Project(
             name: "\(appName)-\(env)",
             shared: true,
             buildAction: .buildAction(targets: [.target(appName)]),
-            testAction: .targets(["\(appName)Tests"], configuration: .configuration(env)),
+            testAction: .targets(["\(appName)Tests", "\(appName)SnapshotTests"], configuration: .configuration(env)),
             // Dev buys from Dolingo.storekit inside Xcode; Staging and Prod use the App Store sandbox.
             runAction: .runAction(
                 configuration: .configuration(env),

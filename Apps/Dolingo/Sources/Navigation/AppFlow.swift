@@ -62,6 +62,8 @@ final class AppFlow: ObservableObject {
     private let launchChecker: LaunchChecker?
     private let appVersion: String
     private let analytics: any AnalyticsService
+    /// Crash reports carry the user id too, to find one user's crashes.
+    private let crash: any CrashService
     /// Gets Apple's or Google's credential for a social button; nil signs in as a guest.
     private let socialSignIn: SocialSignIn?
     /// Asks only after good moments, never on the first launches. Lessons (phase 5) call
@@ -75,6 +77,7 @@ final class AppFlow: ObservableObject {
         launchChecker: LaunchChecker? = nil,
         appVersion: String = "0.0.0",
         analytics: any AnalyticsService = NoOpAnalyticsService(),
+        crash: any CrashService = NoOpAnalyticsService(),
         socialSignIn: SocialSignIn? = nil
     ) {
         self.auth = auth
@@ -82,6 +85,7 @@ final class AppFlow: ObservableObject {
         self.launchChecker = launchChecker
         self.appVersion = appVersion
         self.analytics = analytics
+        self.crash = crash
         self.socialSignIn = socialSignIn
     }
 
@@ -180,7 +184,7 @@ final class AppFlow: ObservableObject {
 
     /// After email sign-in or sign-up: tells analytics, then opens the app.
     func didSignIn(_ user: AuthUser, isNew: Bool) {
-        analytics.setUserId(user.id)
+        setUserId(user.id)
         analytics.track(isNew ? .signUp(method: user.provider.rawValue) : .login(method: user.provider.rawValue))
         didSignIn()
     }
@@ -213,6 +217,8 @@ final class AppFlow: ObservableObject {
 
     /// The account is already gone on the backend; back to sign-in.
     func didDeleteAccount() {
+        analytics.track(.accountDeleted)
+        setUserId(nil)
         stage = .login
     }
 
@@ -238,7 +244,12 @@ final class AppFlow: ObservableObject {
 
     func signOut() async {
         try? await auth.signOut()
-        analytics.setUserId(nil)
+        setUserId(nil)
         stage = .login
+    }
+
+    private func setUserId(_ id: String?) {
+        analytics.setUserId(id)
+        crash.setUserId(id)
     }
 }

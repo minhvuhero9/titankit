@@ -98,6 +98,8 @@ private struct PageView: View {
             }
             .multilineTextAlignment(.center)
             .padding(.horizontal, Spacing.lg)
+            // Room above the buttons, which sit right under the page.
+            .padding(.bottom, Spacing.xl)
         }
     }
 }

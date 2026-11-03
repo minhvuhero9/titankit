@@ -1,5 +1,6 @@
-# App Store screenshots of Dolingo (Vietnamese and English, iPhone Pro Max), as an artifact.
-# Run by hand from Actions > Screenshots, and on pull requests that change the screenshot code.
+# App Store screenshots of Dolingo (Vietnamese and English, iPhone Pro Max), as an artifact, and
+# MainFlowUITests: welcome screen, sign-in, Home, in vi and en, light and dark.
+# Run by hand from Actions > Screenshots, and on pull requests that change that code or the flow.
 name: Screenshots
 
 on:
@@ -8,6 +9,12 @@ on:
     paths:
       - Apps/Dolingo/UITests/**
       - Apps/Dolingo/Sources/ScreenshotMode.swift
+      - Apps/Dolingo/Sources/DolingoApp.swift
+      - Apps/Dolingo/Sources/RootView.swift
+      - Apps/Dolingo/Sources/Navigation/**
+      - Packages/TitanKit/Sources/TitanFeatures/Splash/**
+      - Packages/TitanKit/Sources/TitanFeatures/Onboarding/**
+      - Packages/TitanKit/Sources/TitanFeatures/Login/**
       - Tools/screenshots.sh
       - .github/workflows/screenshots.yml
 

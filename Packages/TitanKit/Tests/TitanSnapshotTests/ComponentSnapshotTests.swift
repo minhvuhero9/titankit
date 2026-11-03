@@ -84,65 +84,17 @@ final class ComponentSnapshotTests: XCTestCase {
         }
     }
 
-    // MARK: - Helpers
-
-    /// Images of `content` on the page background, in light and in dark, at a fixed width and
-    /// scale so they don't depend on the simulator.
-    private func snapshot<Content: View>(
-        width: CGFloat,
-        @ViewBuilder content: () -> Content,
-        file: StaticString = #filePath,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        TKFonts.registerBundledFonts()
-        let view = content()
-        for scheme in [ColorScheme.light, .dark] {
-            let page = SnapshotPage(scheme: scheme) { view }
-                .frame(width: width)
-            let traits = UITraitCollection(traitsFrom: [
-                UITraitCollection(displayScale: 2),
-                UITraitCollection(userInterfaceStyle: scheme == .dark ? .dark : .light),
-            ])
-            withSnapshotTesting(record: Self.record) {
-                assertSnapshot(
-                    of: page,
-                    as: .image(precision: 0.99, perceptualPrecision: 0.98, layout: .sizeThatFits, traits: traits),
-                    named: scheme == .dark ? "dark" : "light",
-                    file: file,
-                    testName: testName,
-                    line: line
-                )
+    /// Large accessibility text: labels wrap and controls grow instead of clipping. With a
+    /// bundled font family, as the apps use: the base theme's system font follows the device
+    /// setting rather than the view's `dynamicTypeSize`.
+    func testLargeDynamicType() {
+        let theme = Theme.base.merged(with: ThemePatch(fontFamily: TKFonts.urbanist))
+        snapshot(width: 360, dynamicTypeSize: .accessibility3, theme: theme, fitsHeight: true) {
+            VStack(spacing: Spacing.md) {
+                TKButton(Text(verbatim: "Continue with email")) {}
+                TKTextField(label: Text(verbatim: "Email"), text: .constant("minh@dolingo.app"), icon: Image(tk: TKIcon.message))
+                TKSettingsRow(title: Text(verbatim: "Notifications"), icon: Image(tk: TKIcon.notification)) {}
             }
         }
-    }
-
-    /// SNAPSHOT_RECORD=1 rewrites every image; otherwise only missing ones are recorded (and fail).
-    private static var record: SnapshotTestingConfiguration.Record {
-        ProcessInfo.processInfo.environment["SNAPSHOT_RECORD"] == "1" ? .all : .missing
-    }
-}
-
-/// The kit's base theme and page background around a component, in one colour scheme.
-private struct SnapshotPage<Content: View>: View {
-    let scheme: ColorScheme
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        ThemedPage { content }
-            .titanTheme(.base)
-            .environment(\.colorScheme, scheme)
-            .environment(\.locale, Locale(identifier: "en"))
-    }
-}
-
-private struct ThemedPage<Content: View>: View {
-    @ViewBuilder let content: Content
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        content
-            .padding(Spacing.lg)
-            .background(theme.colors.surfaceBackground.color)
     }
 }

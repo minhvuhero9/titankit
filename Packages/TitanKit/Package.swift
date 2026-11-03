@@ -85,7 +85,7 @@ let package = Package(
         .testTarget(
             name: "TitanSnapshotTests",
             dependencies: [
-                "TitanDesignSystem", "TitanIcons",
+                "TitanDesignSystem", "TitanIcons", "TitanAuth", "TitanLocalization", "TitanFeatures",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             exclude: ["__Snapshots__"]

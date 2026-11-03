@@ -77,6 +77,24 @@ platform :ios do
       xcargs: "DEVELOPMENT_TEAM=#{ENV['DEVELOPMENT_TEAM']} CURRENT_PROJECT_VERSION=#{build_number} " \
               "CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='match AppStore #{bundle_id}'"
     )
+    upload_crash_symbols(app, environment)
     yield ipa
+  end
+
+  # Crashlytics needs the build's dSYMs to turn crash addresses into function names (paths are
+  # relative to fastlane/, where lanes run). Skipped
+  # when the app has no Firebase file for this environment (it then runs without Crashlytics).
+  def upload_crash_symbols(app, environment)
+    plist = File.expand_path("../Apps/#{app}/Resources/Firebase/GoogleService-Info-#{environment}.plist")
+    unless File.exist?(plist)
+      UI.important("No #{File.basename(plist)}: dSYMs not sent to Crashlytics")
+      return
+    end
+    upload_symbols_to_crashlytics(
+      dsym_path: lane_context[SharedValues::DSYM_OUTPUT_PATH],
+      gsp_path: plist,
+      # Tuist checks Firebase out here; the script ships with the Crashlytics sources.
+      binary_path: File.expand_path("../Tuist/.build/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols")
+    )
   end
 end

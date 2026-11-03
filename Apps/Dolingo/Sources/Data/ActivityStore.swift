@@ -1,4 +1,5 @@
 import Foundation
+import TitanAnalytics
 import TitanSpeech
 import TitanStorage
 
@@ -86,13 +87,16 @@ final class ActivityStore: ObservableObject {
     @Published private(set) var celebrations: [Celebration] = []
 
     private let preferences: Preferences
+    private let analytics: any AnalyticsService
     private let calendar: Calendar
     private let now: () -> Date
     /// Chapters of the course finished, read when checking badges.
     var chaptersDone: @MainActor () -> Int = { 0 }
 
-    init(preferences: Preferences, calendar: Calendar = .current, now: @escaping () -> Date = Date.init) {
+    init(preferences: Preferences, analytics: any AnalyticsService = NoOpAnalyticsService(),
+         calendar: Calendar = .current, now: @escaping () -> Date = Date.init) {
         self.preferences = preferences
+        self.analytics = analytics
         self.calendar = calendar
         self.now = now
         stats = preferences.value(DolingoKeys.activity)
@@ -118,6 +122,8 @@ final class ActivityStore: ObservableObject {
 
     /// - Parameter accuracy: nil when the lesson was done without the microphone.
     func recordLesson(accuracy: Double?, seconds: TimeInterval) {
+        analytics.track(.lessonCompleted(accuracy: accuracy.map { Int(($0 * 100).rounded()) },
+                                         minutes: Int((seconds / 60).rounded())))
         addTime(seconds)
         update { stats in
             stats.lessonsPassed += 1
@@ -126,6 +132,7 @@ final class ActivityStore: ObservableObject {
     }
 
     func recordRoleplay(tasksDone: Int, tasksTotal: Int, seconds: TimeInterval) {
+        analytics.track(.roleplayCompleted(tasksDone: tasksDone, tasksTotal: tasksTotal))
         addTime(seconds)
         update { stats in
             stats.roleplaysFinished += 1
@@ -223,6 +230,7 @@ final class ActivityStore: ObservableObject {
             if badge.isEarned(stats, chaptersDone: chaptersDone(), streak: streak) {
                 stats.badges[badge.rawValue] = now()
                 celebrations.append(.badge(badge))
+                analytics.track(.badgeEarned(badge.rawValue))
             }
         }
         preferences.set(stats, for: DolingoKeys.activity)

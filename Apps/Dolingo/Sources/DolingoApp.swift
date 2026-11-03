@@ -9,6 +9,8 @@ import TitanStorage
 struct DolingoApp: App {
     @StateObject private var container = AppContainer.launch()
     @Preference(DolingoKeys.appearance) private var appearance
+    /// Set by UI tests to check both looks.
+    private let forcedAppearance = ScreenshotMode.appearance(in: ProcessInfo.processInfo.arguments)
 
     var body: some Scene {
         WindowGroup {
@@ -21,7 +23,7 @@ struct DolingoApp: App {
             .environment(\.container, container)
             .environment(\.logger, container.logger)
             .environment(\.imageCache, container.imageCache)
-            .tkAppearance(appearance)
+            .tkAppearance(forcedAppearance ?? appearance)
             .onOpenURL { url in
                 // Google Sign-In comes back through its own URL scheme.
                 if GoogleSignInHelper.handle(url) { return }
@@ -29,6 +31,7 @@ struct DolingoApp: App {
             }
             // Reads what the user owns and listens for renewals and refunds.
             .task { container.purchase.start() }
+            .task { await container.trackPremium() }
         }
     }
 }

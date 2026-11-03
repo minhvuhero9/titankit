@@ -13,6 +13,7 @@ on:
     paths:
       - Packages/TitanKit/Tests/TitanSnapshotTests/**
       - Packages/TitanKit/Sources/TitanDesignSystem/**
+      - Apps/Dolingo/SnapshotTests/**
       - Tools/snapshots.sh
       - .github/workflows/snapshots.yml
 
@@ -27,17 +28,18 @@ jobs:
   record:
     name: Record snapshots
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
         with:
           # The PR's branch rather than the merge commit, so the images can be pushed to it.
           ref: ${{ github.head_ref || github.ref }}
+      - uses: jdx/mise-action@v2
       - name: Record and verify
         run: Tools/snapshots.sh ${{ github.event_name == 'workflow_dispatch' && 'record' || 'missing' }}
       - name: Commit the images
         run: |
-          git add Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__
+          git add Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__ Apps/Dolingo/SnapshotTests/__Snapshots__
           if git diff --cached --quiet; then
             echo "::notice::The images did not change."
             exit 0
@@ -54,4 +56,5 @@ jobs:
           name: snapshots
           path: |
             Packages/TitanKit/Tests/TitanSnapshotTests/__Snapshots__
-            build-snapshots.log
+            Apps/Dolingo/SnapshotTests/__Snapshots__
+            build-snapshots-*.log
